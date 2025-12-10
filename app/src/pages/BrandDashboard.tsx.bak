@@ -1,0 +1,434 @@
+/**
+ * BrandDashboard Page
+ * BRAND-004: Brand Configuration Dashboard
+ * Main dashboard for brand configuration overview
+ * Academia Lendária Design System
+ */
+
+import * as React from "react"
+import { Button } from "@/components/ui/button"
+import { Icon } from "@/components/ui/icon"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { LanguageSelector } from "@/components/ui/language-selector"
+import { CompletenessIndicator, CompletenessBreakdown } from "@/components/brand/CompletenessIndicator"
+import { ExportButton } from "@/components/brand/ExportButton"
+import { ColorPalettePreview } from "@/components/brand/ColorPicker"
+import { VisualIdentityForm } from "@/components/brand/VisualIdentityForm"
+import { VoiceAttributesSelector } from "@/components/brand/VoiceAttributesSelector"
+import { ToneGuidelinesEditor } from "@/components/brand/ToneGuidelinesEditor"
+import { CopyExamplesManager } from "@/components/brand/CopyExamplesManager"
+import { ExampleUploader } from "@/components/brand/ExampleUploader"
+import { ExampleGallery } from "@/components/brand/ExampleGallery"
+import {
+  useBrandStore,
+  selectVisualIdentity,
+  selectVoice,
+  selectExamples,
+  selectActiveSection,
+} from "@/store/brandStore"
+import type { ConfigSection } from "@/types/brand"
+
+export function BrandDashboard() {
+  const visualIdentity = useBrandStore(selectVisualIdentity)
+  const voice = useBrandStore(selectVoice)
+  const examples = useBrandStore(selectExamples)
+  const activeSection = useBrandStore(selectActiveSection)
+  const {
+    config,
+    setActiveSection,
+    toggleVoiceAttribute,
+    addToneGuideline,
+    updateToneGuideline,
+    removeToneGuideline,
+    addCopyExample,
+    removeCopyExample,
+    addExample,
+    removeExample,
+    calculateCompleteness,
+  } = useBrandStore()
+
+  const completeness = calculateCompleteness()
+
+  const formatDate = (date: Date | null) => {
+    if (!date) return "Not configured"
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
+
+  // All colors for preview
+  const allColors = [
+    visualIdentity.colors.primary,
+    visualIdentity.colors.secondary,
+    visualIdentity.colors.accent,
+    ...visualIdentity.colors.custom,
+  ]
+
+  // Example counts by type
+  const exampleCounts = React.useMemo(() => {
+    const counts: Record<string, number> = {}
+    examples.examples.forEach((e) => {
+      counts[e.type] = (counts[e.type] || 0) + 1
+    })
+    return counts
+  }, [examples.examples])
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+        <div className="mx-auto max-w-7xl px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              {/* Logo */}
+              {visualIdentity.logo.url ? (
+                <img
+                  src={visualIdentity.logo.url}
+                  alt="Brand Logo"
+                  className="h-10 w-10 object-contain"
+                />
+              ) : (
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Icon name="building" size="size-5" />
+                </div>
+              )}
+              <div>
+                <h1 className="font-sans text-xl font-bold tracking-tight">
+                  {config.name}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Brand Configuration
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <LanguageSelector />
+              <ThemeToggle />
+              <Separator orientation="vertical" className="h-6" />
+              <ExportButton config={config} />
+              <Button onClick={() => setActiveSection("visual")}>
+                <Icon name="pencil" size="size-4" className="mr-2" />
+                Edit Brand
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        <Tabs
+          value={activeSection}
+          onValueChange={(v) => setActiveSection(v as ConfigSection)}
+          className="space-y-8"
+        >
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="dashboard">
+              <Icon name="apps" size="size-4" className="mr-2" />
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="visual">
+              <Icon name="palette" size="size-4" className="mr-2" />
+              Visual Identity
+            </TabsTrigger>
+            <TabsTrigger value="voice">
+              <Icon name="comment" size="size-4" className="mr-2" />
+              Brand Voice
+            </TabsTrigger>
+            <TabsTrigger value="examples">
+              <Icon name="picture" size="size-4" className="mr-2" />
+              Examples
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Dashboard Tab */}
+          <TabsContent value="dashboard" className="space-y-6">
+            {/* Completeness Overview */}
+            <div className="grid gap-6 md:grid-cols-3">
+              {/* Overall Progress */}
+              <Card className="md:col-span-1">
+                <CardHeader>
+                  <CardTitle className="text-lg">Configuration Status</CardTitle>
+                  <CardDescription>
+                    Overall brand setup progress
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center pt-4">
+                  <CompletenessIndicator
+                    value={completeness.overall}
+                    size="lg"
+                    label="Complete"
+                  />
+                  <Separator className="my-6" />
+                  <CompletenessBreakdown
+                    sections={[
+                      { label: "Visual Identity", value: completeness.visualIdentity },
+                      { label: "Brand Voice", value: completeness.voice },
+                      { label: "Examples", value: completeness.examples },
+                    ]}
+                    className="w-full"
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card className="md:col-span-2">
+                <CardHeader>
+                  <CardTitle className="text-lg">Quick Actions</CardTitle>
+                  <CardDescription>
+                    Jump to configuration sections
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-4 sm:grid-cols-3">
+                  {/* Visual Identity Card */}
+                  <button
+                    onClick={() => setActiveSection("visual")}
+                    className="flex flex-col items-start gap-3 rounded-lg border border-border p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/30"
+                  >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Icon name="palette" size="size-5" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Visual Identity</p>
+                      <p className="text-xs text-muted-foreground">
+                        Logo, colors, fonts
+                      </p>
+                    </div>
+                    <Badge variant={completeness.visualIdentity >= 80 ? "success" : "outline"}>
+                      {completeness.visualIdentity}%
+                    </Badge>
+                  </button>
+
+                  {/* Voice Card */}
+                  <button
+                    onClick={() => setActiveSection("voice")}
+                    className="flex flex-col items-start gap-3 rounded-lg border border-border p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/30"
+                  >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Icon name="comment" size="size-5" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Brand Voice</p>
+                      <p className="text-xs text-muted-foreground">
+                        Tone, attributes, copy
+                      </p>
+                    </div>
+                    <Badge variant={completeness.voice >= 80 ? "success" : "outline"}>
+                      {completeness.voice}%
+                    </Badge>
+                  </button>
+
+                  {/* Examples Card */}
+                  <button
+                    onClick={() => setActiveSection("examples")}
+                    className="flex flex-col items-start gap-3 rounded-lg border border-border p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/30"
+                  >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Icon name="picture" size="size-5" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Examples</p>
+                      <p className="text-xs text-muted-foreground">
+                        {examples.examples.length} uploaded
+                      </p>
+                    </div>
+                    <Badge variant={completeness.examples >= 80 ? "success" : "outline"}>
+                      {completeness.examples}%
+                    </Badge>
+                  </button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Summary Cards */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {/* Color Palette Summary */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium">Color Palette</CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setActiveSection("visual")}
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ColorPalettePreview colors={allColors} className="h-10" />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {allColors.length} colors configured
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Typography Summary */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium">Typography</CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setActiveSection("visual")}
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Heading</span>
+                    <span
+                      className="text-sm font-semibold"
+                      style={{ fontFamily: visualIdentity.typography.heading.family }}
+                    >
+                      {visualIdentity.typography.heading.family}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Body</span>
+                    <span
+                      className="text-sm"
+                      style={{ fontFamily: visualIdentity.typography.body.family }}
+                    >
+                      {visualIdentity.typography.body.family}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Voice Summary */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium">Voice Attributes</CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setActiveSection("voice")}
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {voice.attributes.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {voice.attributes.map((attr) => (
+                        <Badge key={attr} variant="secondary" size="sm">
+                          {attr}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No attributes selected
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Last Updated */}
+            <Card>
+              <CardContent className="py-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Last updated</span>
+                  <span>{formatDate(config.updatedAt)}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Visual Identity Tab */}
+          <TabsContent value="visual">
+            <VisualIdentityForm />
+          </TabsContent>
+
+          {/* Voice Tab */}
+          <TabsContent value="voice" className="space-y-8">
+            <div>
+              <h2 className="font-sans text-2xl font-bold tracking-tight">
+                Brand Voice
+              </h2>
+              <p className="font-serif text-muted-foreground mt-1">
+                Define how your brand speaks and communicates
+              </p>
+            </div>
+
+            <div className="grid gap-8 lg:grid-cols-2">
+              <VoiceAttributesSelector
+                selected={voice.attributes}
+                onChange={toggleVoiceAttribute}
+              />
+              <div className="space-y-8">
+                <ToneGuidelinesEditor
+                  guidelines={voice.toneGuidelines}
+                  onAdd={addToneGuideline}
+                  onUpdate={updateToneGuideline}
+                  onRemove={removeToneGuideline}
+                />
+                <CopyExamplesManager
+                  examples={voice.copyExamples}
+                  onAdd={addCopyExample}
+                  onRemove={removeCopyExample}
+                />
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Examples Tab */}
+          <TabsContent value="examples" className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-sans text-2xl font-bold tracking-tight">
+                  Brand Examples
+                </h2>
+                <p className="font-serif text-muted-foreground mt-1">
+                  Upload examples of on-brand content for AI reference
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {Object.entries(exampleCounts).map(([type, count]) => (
+                  <Badge key={type} variant="outline">
+                    {type}: {count}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Upload New Example</CardTitle>
+                <CardDescription>
+                  Add existing brand assets to train the AI
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ExampleUploader onUpload={addExample} />
+              </CardContent>
+            </Card>
+
+            <ExampleGallery
+              examples={examples.examples}
+              onDelete={removeExample}
+              emptyMessage="Upload your first brand example to help the AI learn your style"
+            />
+          </TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  )
+}

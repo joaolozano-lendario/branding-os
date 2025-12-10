@@ -1,0 +1,228 @@
+@import "tailwindcss";
+
+/* Academia Lendaria Design System v4.1 */
+/* Custom Theme Configuration */
+@theme {
+  /* Primary Color - Brand Gold (max 8% visual area) */
+  --color-primary: #C9B298;
+  --color-primary-foreground: #1A1A1A;
+  
+  /* Primary Scale */
+  --color-primary-50: #F2EBE4;
+  --color-primary-100: #E8DED2;
+  --color-primary-200: #D9CBB8;
+  --color-primary-300: #C9B298;
+  --color-primary-400: #B89F7E;
+  --color-primary-500: #A78C64;
+  --color-primary-600: #8A7352;
+  --color-primary-700: #6D5A40;
+  --color-primary-800: #50412E;
+  --color-primary-900: #383025;
+  
+  /* Semantic Colors */
+  --color-destructive: #FF3B30;
+  --color-destructive-foreground: #FFFFFF;
+  --color-warning: #FF9500;
+  --color-warning-foreground: #1A1A1A;
+  --color-success: #34C759;
+  --color-success-foreground: #FFFFFF;
+  --color-info: #007AFF;
+  --color-info-foreground: #FFFFFF;
+  
+  /* Brand Niche Colors */
+  --color-brand-mint: #00C7BE;
+  --color-brand-teal: #30B0C7;
+  --color-brand-cyan: #32ADE6;
+  --color-brand-indigo: #5856D6;
+  --color-brand-pink: #FF2D55;
+  --color-brand-brown: #A2845E;
+  
+  /* Border Radius - Rule of 8 */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  
+  /* Fonts */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4", ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  
+  /* Animations */
+  --animate-fade-in: fade-in 0.3s ease-out forwards;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 3s linear infinite;
+}
+
+/* Light Mode (Default) */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 10%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 10%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 32 27% 69%;
+  --radius: 0.75rem;
+}
+
+/* Dark Mode */
+.dark {
+  --background: 0 0% 4%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 95%;
+  --popover: 0 0% 7%;
+  --popover-foreground: 0 0% 95%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 95%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 60%;
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 95%;
+  --border: 0 0% 18%;
+  --input: 0 0% 18%;
+  --ring: 32 27% 69%;
+}
+
+/* Keyframes */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Base Styles */
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility Classes */
+@layer utilities {
+  .bg-background {
+    background-color: hsl(var(--background));
+  }
+  
+  .bg-foreground {
+    background-color: hsl(var(--foreground));
+  }
+  
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+  
+  .bg-card {
+    background-color: hsl(var(--card));
+  }
+  
+  .text-card-foreground {
+    color: hsl(var(--card-foreground));
+  }
+  
+  .bg-popover {
+    background-color: hsl(var(--popover));
+  }
+  
+  .text-popover-foreground {
+    color: hsl(var(--popover-foreground));
+  }
+  
+  .bg-secondary {
+    background-color: hsl(var(--secondary));
+  }
+  
+  .text-secondary-foreground {
+    color: hsl(var(--secondary-foreground));
+  }
+  
+  .bg-muted {
+    background-color: hsl(var(--muted));
+  }
+  
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
+  
+  .bg-accent {
+    background-color: hsl(var(--accent));
+  }
+  
+  .text-accent-foreground {
+    color: hsl(var(--accent-foreground));
+  }
+  
+  .border-border {
+    border-color: hsl(var(--border));
+  }
+  
+  .border-input {
+    border-color: hsl(var(--input));
+  }
+  
+  .ring-ring {
+    --tw-ring-color: hsl(var(--ring));
+  }
+}
