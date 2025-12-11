@@ -1,118 +1,188 @@
 # BRANDING OS - Session Handoff
 
-> **COLE ESTE PROMPT** no início da próxima sessão Claude Code.
-> Última atualização: 2025-12-10
+> **COLE O PROMPT ABAIXO** no início da próxima sessão Claude Code.
+> Última atualização: 2025-12-11
 
 ---
 
 ## PROMPT DE CONTINUAÇÃO
 
 ```
-*workflow Projeto: Branding OS (AIOS Native)
+## TAREFA: Continuar UI/UX Polish do Branding OS
 
-    LEIA PRIMEIRO (nesta ordem):
-    1. D:/genesis-meta-system/branding-os/.state/STATE.md
-    2. D:/genesis-meta-system/branding-os/.state/AIOS-STATE-OF-THE-ART.md
-    3. D:/genesis-meta-system/branding-os/docs/prd/branding-os-prd.md
+Leia primeiro:
+1. D:/genesis-meta-system/branding-os/.state/HANDOFF.md
+2. D:/genesis-meta-system/branding-os/.state/STATE.md
 
-    Design System (consultar sempre):
-    D:/design-system-academia-lendária (1)/academia-lendaria-skill/
+### Contexto
+O Branding OS está com o wizard V2 (/app/generate-v2) implementado pixel-perfect do Figma.
+Agora preciso que você aplique o MESMO design system em todas as outras páginas do app.
 
-    Contexto E5 em Andamento:
-    - BRAND-029/030/032: Polish & A11y 95% DONE
-    - BRAND-031: Responsive Design PENDING (5 SP)
-    - BRAND-033: Performance PENDING (3 SP)
-    - Build: 485.98KB JS, TypeCheck PASS
-    - 131 Story Points entregues (E0-E4 + E5 partial)
+### Design System (FIGMA SPECS EXATAS)
 
-    Estrutura atual:
-    app/src/
-    - components/ui/ (21), components/brand/ (12), components/wizard/ (7)
-    - i18n/ (EN/ES/PT-BR 100% localizado)
-    - services/, store/ (6 stores)
-    - pages/ (7 pages)
+#### Cores
+| Elemento | Hex | Uso |
+|----------|-----|-----|
+| Primary | #5856D6 | Botões ativos, ícones, step atual |
+| Background | #FFFFFF | Fundo principal |
+| Card inactive | #F8F8F8 | Cards não selecionados, stepper inativo |
+| Text inactive | #888888 | Texto secundário, placeholders |
+| Text disabled | #C8C8C8 | Texto desabilitado |
+| Border | #E8E8E8 | Bordas de inputs, cards |
+| Selected card text | #312D65 | Texto dentro de card selecionado |
 
-    ---
+#### Typography (Inter only)
+| Elemento | Weight | Size |
+|----------|--------|------|
+| Title principal | SemiBold 600 | 32px |
+| Subtitle | Medium 500 | 16px |
+| Card title | SemiBold 600 | 16px |
+| Card description | Medium 500 | 12px |
+| Label | SemiBold 600 | 12px |
+| Input placeholder | Medium 500 | 16px |
+| Button | SemiBold 600 | 14px |
+| Stepper label | SemiBold 600 | 12px |
 
-    ## E5 - Polish & Production (78% DONE)
+#### Componentes
+| Componente | Specs |
+|------------|-------|
+| Stepper cards | 128x128px, gap 6px, radius 8px |
+| Asset cards | 194x280px, gap 8px, radius 8px |
+| Icon container | 42x42px, radius full |
+| Icon size | 18x18px |
+| Input height | 62px, radius 8px |
+| Button pill | radius full, height 41px |
 
-    ### Completado
-    | Story ID | Nome | Points | Status |
-    |----------|------|--------|--------|
-    | BRAND-028 | Language Selector Fix | 2 | DONE |
-    | BRAND-029 | Visual Polish | 5 | DONE (95%) |
-    | BRAND-030 | Error Handling | 5 | DONE (95%) |
-    | BRAND-032 | Accessibility | 3 | DONE (90%) |
+### Figma Access (para extrair mais specs se necessário)
+- Token: figd_GLhqcYCuiaMTGL0UFv-sKoy5rbfvPCepoqVB6Cbr
+- File: b9KEYc9qrAJfkJA4wNfcrd
+- Dev Mode: https://www.figma.com/design/b9KEYc9qrAJfkJA4wNfcrd/CreatorOs?node-id=12-320&m=dev
 
-    ### Pendentes
-    | Story ID | Nome | Points | Prioridade |
-    |----------|------|--------|------------|
-    | BRAND-031 | Responsive Design | 5 | HIGH |
-    | BRAND-033 | Performance | 3 | MEDIUM |
+### Tarefas Pendentes
+1. Criar Home/Dashboard page conforme PRD (seção 5.2):
+   - Recent Assets: Últimos 10 criados
+   - Quick Actions: New Asset, Brand Config
+   - Performance: Top assets
+2. Atualizar BrandDashboard.tsx com design system Figma
+3. Atualizar Landing.tsx
+4. Atualizar Login.tsx e Register.tsx
+5. Atualizar AssetLibrary.tsx
+6. Atualizar Settings.tsx
+7. Atualizar AppLayout.tsx (sidebar)
 
-    ### Issues Restantes (9)
-    - 0 CRITICAL, 0 HIGH
-    - 1 MEDIUM: skeleton states in galleries
-    - 4 LOW: design system compliance
-    - 4 Edge Cases: error boundaries
+### Regras INVIOLÁVEIS
+- NUNCA emojis na UI
+- NUNCA outras icon libraries (só Flaticon UIcons via componente Icon)
+- SEMPRE manter lógica funcional existente
+- SEMPRE usar cores exatas: text-[#5856D6], bg-[#F8F8F8], etc.
+- SEMPRE rodar typecheck após mudanças
 
-    ---
+### Comandos
+cd D:/genesis-meta-system/branding-os/app
+npm run dev          # localhost:5173
+npm run typecheck    # Verificar tipos
 
-    AI Provider: GEMINI (Google AI)
-    Workflow: @dev implementar -> @qa validar -> checkpoint
-    Design System INVIOLAVEL.
-
-    Proximo trabalho sugerido:
-    1. BRAND-031: Responsive Design (mobile sidebar, wizard, cards)
-    2. BRAND-033: Code splitting, lazy loading
-    3. Issues restantes (LOW/Edge)
+### Rotas do App
+- /app/generate-v2 → Wizard V2 (JÁ ATUALIZADO - referência)
+- /app/dashboard → BrandDashboard
+- /app/library → AssetLibrary
+- /app/settings → Settings
 ```
 
 ---
 
-## ESTADO ATUAL (2025-12-10)
+## ESTADO ATUAL (2025-12-11)
 
-### Métricas
-| Métrica | Valor |
-|---------|-------|
-| Versão | 0.7.2 |
-| E5 Progress | 78% |
-| Progresso Geral | 92% |
-| Issues Resolvidos | 38/47 |
-| Build | 485.98KB JS |
+### O QUE FOI FEITO NESTA SESSÃO
 
-### Último Commit
+#### 1. Integração Figma API
+- Conectou via API com token de acesso
+- Extraiu specs exatas de cores, tipografia, espaçamentos
+- Mapeou Node IDs: 12-320 (Tela 1), 12-420 (Tela 2)
+
+#### 2. Arquivos ATUALIZADOS (pixel-perfect)
 ```
-ef6a11b feat(E5): Polish & Production - aria-labels, i18n, error handling
+app/src/components/wizard/
+├── WizardStepIndicator.tsx  ✅
+├── AssetTypeStep.tsx        ✅
+├── ProductContextStep.tsx   ✅
+├── GoalAngleStep.tsx        ✅ (parcial)
+
+app/src/pages/
+└── GenerateWizardV2.tsx     ✅ (navegação pixel-perfect)
 ```
 
-### Trabalho Realizado (Sessão 2025-12-10)
-1. 11 aria-labels em icon buttons
-2. Toast integration no GenerateWizard
-3. i18n: 6 strings localizadas (3 idiomas)
-4. Form aria-invalid (Login/Register)
-5. CSS truncation (no JS slice)
-6. Alert component em uploaders
+#### 3. TypeCheck: PASSING
 
-### Arquivos Modificados (21)
-- i18n: types.ts, en.ts, es.ts, pt-br.ts
-- Forms: Login.tsx, Register.tsx
-- Components: GenerationStep, ToneGuidelinesEditor, ExampleCard,
-  LogoUploader, ExampleUploader, ColorPicker, CopyExamplesManager,
-  ExampleGallery, ProductContextStep, theme-toggle, GenerateWizard
+### ARQUIVOS QUE FALTAM ATUALIZAR
+| Página | Arquivo | Status |
+|--------|---------|--------|
+| BrandDashboard | pages/BrandDashboard.tsx | Pendente |
+| Landing | pages/Landing.tsx | Pendente |
+| Login | pages/Login.tsx | Pendente |
+| Register | pages/Register.tsx | Pendente |
+| AssetLibrary | pages/AssetLibrary.tsx | Pendente |
+| Settings | pages/Settings.tsx | Pendente |
+| AppLayout | layouts/AppLayout.tsx | Pendente |
 
 ---
 
-## REGRAS INVIOLÁVEIS
+## COMO EXTRAIR MAIS SPECS DO FIGMA
 
-- Design System Academia Lendária obrigatório
-- Cor primária (#C9B298) máx 8% da área
-- NUNCA usar emojis na interface
-- NUNCA usar Lucide/FontAwesome (apenas Flaticon UIcons)
-- Dark mode obrigatório
-- Tipografia: Inter (UI) + Source Serif 4 (corpo)
-- Espaçamento em múltiplos de 8px
-- AI Provider: GEMINI (Google AI)
+```bash
+# Listar todos os frames Interface-*
+curl -s -H "X-Figma-Token: figd_GLhqcYCuiaMTGL0UFv-sKoy5rbfvPCepoqVB6Cbr" \
+  "https://api.figma.com/v1/files/b9KEYc9qrAJfkJA4wNfcrd" | \
+  python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+def find(node):
+    if 'Interface' in node.get('name', ''):
+        print(f\"{node.get('id')}: {node.get('name')}\")
+    for c in node.get('children', []): find(c)
+find(data.get('document', {}))
+"
+
+# Extrair specs de um frame específico
+curl -s -H "X-Figma-Token: figd_GLhqcYCuiaMTGL0UFv-sKoy5rbfvPCepoqVB6Cbr" \
+  "https://api.figma.com/v1/files/b9KEYc9qrAJfkJA4wNfcrd/nodes?ids=NODE_ID_AQUI"
+```
+
+### Node IDs conhecidos:
+- 12-320: Interface-01-Select (Asset Type)
+- 12-420: Interface-02 (Context Form)
+- 28-735: Interface-06-Gerar
+- 28-877: Interface-06-Gerar-2
+
+---
+
+## REFERÊNCIA: Padrão Visual do GenerateWizardV2
+
+Este arquivo já está pixel-perfect e serve como referência:
+
+```tsx
+// Cores
+bg-white                    // Background principal
+bg-[#5856D6]               // Primary/ativo
+bg-[#F8F8F8]               // Card inativo
+text-[#888888]             // Texto secundário
+text-[#C8C8C8]             // Texto desabilitado
+border-[#E8E8E8]           // Bordas
+
+// Botões Pill
+h-[41px] px-[18px] rounded-full  // Dimensões
+bg-[#5856D6] text-white          // Primary
+bg-[#F8F8F8] border-[#E8E8E8]    // Secondary
+
+// Typography
+text-[32px] font-semibold        // Título
+text-base font-medium            // Subtítulo (16px)
+text-xs font-semibold            // Labels (12px)
+text-sm font-semibold            // Buttons (14px)
+
+// Inputs
+h-[62px] rounded-lg border-[#E8E8E8]
+```
 
 ---
 
@@ -120,11 +190,10 @@ ef6a11b feat(E5): Polish & Production - aria-labels, i18n, error handling
 
 ```bash
 cd D:/genesis-meta-system/branding-os/app
-npm run build  # Verificar build
-npm run dev    # Iniciar dev server
+npm run dev       # localhost:5173
+npm run typecheck # Verificar tipos
 ```
 
 ---
 
-*Template Version: 2.0.0*
-*Last Updated: 2025-12-10*
+*Last Updated: 2025-12-11 - UI/UX Polish Session*

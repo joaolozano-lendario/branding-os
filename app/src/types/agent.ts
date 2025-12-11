@@ -349,3 +349,89 @@ export const DEFAULT_GEMINI_CONFIG: Omit<GeminiAPIConfig, 'apiKey'> = {
 }
 
 export const GEMINI_IMAGE_MODEL = 'models/gemini-3-pro-image-preview' as const
+
+// ============================================
+// PIPELINE V2 TYPES (6-Agent Synergy Pipeline)
+// ============================================
+
+// V2 Agent IDs (new pipeline with synergy)
+export type AgentIdV2 =
+  | 'brand-strategist'
+  | 'story-architect'
+  | 'copywriter-v2'
+  | 'visual-compositor'
+  | 'quality-validator'
+  | 'render-engine'
+
+export interface AgentMetadataV2 {
+  id: AgentIdV2
+  name: string
+  description: string
+  icon: string
+  color: string
+}
+
+export const AGENT_METADATA_V2: Record<AgentIdV2, AgentMetadataV2> = {
+  'brand-strategist': {
+    id: 'brand-strategist',
+    name: 'Brand Strategist',
+    description: 'Selects template and defines strategy',
+    icon: 'target',
+    color: '#5856D6',
+  },
+  'story-architect': {
+    id: 'story-architect',
+    name: 'Story Architect',
+    description: 'Builds narrative structure slide-by-slide',
+    icon: 'document',
+    color: '#007AFF',
+  },
+  'copywriter-v2': {
+    id: 'copywriter-v2',
+    name: 'Copywriter',
+    description: 'Writes copy specific to each slide',
+    icon: 'edit',
+    color: '#34C759',
+  },
+  'visual-compositor': {
+    id: 'visual-compositor',
+    name: 'Visual Compositor',
+    description: 'Creates pixel-perfect visual specs',
+    icon: 'palette',
+    color: '#FF9500',
+  },
+  'quality-validator': {
+    id: 'quality-validator',
+    name: 'Quality Validator',
+    description: 'Validates brand compliance with technical checks',
+    icon: 'shield-check',
+    color: '#C9B298',
+  },
+  'render-engine': {
+    id: 'render-engine',
+    name: 'Render Engine',
+    description: 'Generates HTML/CSS for each slide',
+    icon: 'code',
+    color: '#FF2D55',
+  },
+}
+
+// V2 Agent Order for UI display
+export const AGENT_ORDER_V2: AgentIdV2[] = [
+  'brand-strategist',
+  'story-architect',
+  'copywriter-v2',
+  'visual-compositor',
+  'quality-validator',
+  'render-engine',
+]
+
+// Initial V2 Agent Statuses
+export const INITIAL_AGENT_STATUSES_V2: Record<AgentIdV2, AgentStatus> = {
+  'brand-strategist': 'idle',
+  'story-architect': 'idle',
+  'copywriter-v2': 'idle',
+  'visual-compositor': 'idle',
+  'quality-validator': 'idle',
+  'render-engine': 'idle',
+}

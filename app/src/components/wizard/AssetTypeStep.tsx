@@ -1,13 +1,11 @@
 /**
  * Asset Type Selection Step
  * Branding OS - Academia Lendaria
- * E4: BRAND-022 - Step 1 of Generation Wizard
+ * Pixel-perfect from Figma specs
  */
 
 import { cn } from '@/lib/utils'
-import { Card, CardContent } from '@/components/ui/card'
 import { Icon } from '@/components/ui/icon'
-import { useTranslation } from '@/store/i18nStore'
 import type { AssetType } from '@/types/agent'
 
 interface AssetTypeStepProps {
@@ -16,96 +14,116 @@ interface AssetTypeStepProps {
   errors: string[]
 }
 
-interface AssetTypeOption {
+// Figma specs: Cards 194x280, icon 42x42 circle, icon inner 18x18
+const ASSET_TYPES: Array<{
   type: AssetType
   icon: string
-  color: string
-}
-
-const ASSET_TYPES: AssetTypeOption[] = [
-  { type: 'carousel', icon: 'layers', color: '#5856D6' },
-  { type: 'slide', icon: 'presentation', color: '#007AFF' },
-  { type: 'ad', icon: 'megaphone', color: '#FF2D55' },
-  { type: 'post', icon: 'picture', color: '#34C759' },
+  label: string
+  description: string
+}> = [
+  {
+    type: 'carousel',
+    icon: 'images',
+    label: 'Carrossel',
+    description: 'Conteúdo multi-slide para redes sociais',
+  },
+  {
+    type: 'ad',
+    icon: 'megaphone',
+    label: 'Ads',
+    description: 'Criativos para campanhas pagas',
+  },
+  {
+    type: 'post',
+    icon: 'picture',
+    label: 'Posts',
+    description: 'Imagens únicas para redes sociais',
+  },
+  {
+    type: 'slide',
+    icon: 'presentation',
+    label: 'Slide',
+    description: 'Apresentação para Aulas, Pitchs e Decks',
+  },
 ]
 
 export function AssetTypeStep({ selectedType, onSelect, errors }: AssetTypeStepProps) {
-  const { t } = useTranslation()
-
-  const getTypeLabel = (type: AssetType): string => {
-    switch (type) {
-      case 'carousel':
-        return t.wizard.steps.assetType.carousel
-      case 'slide':
-        return t.wizard.steps.assetType.slide
-      case 'ad':
-        return t.wizard.steps.assetType.ad
-      case 'post':
-        return t.wizard.steps.assetType.post
-      default:
-        return type
-    }
-  }
-
-  const getTypeDescription = (type: AssetType): string => {
-    switch (type) {
-      case 'carousel':
-        return t.wizard.steps.assetType.carouselDesc
-      case 'slide':
-        return t.wizard.steps.assetType.slideDesc
-      case 'ad':
-        return t.wizard.steps.assetType.adDesc
-      case 'post':
-        return t.wizard.steps.assetType.postDesc
-      default:
-        return ''
-    }
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="font-sans text-2xl font-bold tracking-tight">
-          {t.wizard.steps.assetType.title}
+    <div className="space-y-8">
+      {/* Figma: Title left, subtitle right, gap 288px */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+        {/* Figma: Inter SemiBold 32px, black */}
+        <h2 className="font-sans text-[32px] font-semibold leading-tight text-black">
+          O que deseja
+          <br />
+          criar Lendário?
         </h2>
-        <p className="mt-2 font-serif text-muted-foreground">
-          {t.wizard.steps.assetType.subtitle}
+        {/* Figma: Inter Medium 16px, #888888 */}
+        <p className="text-base font-medium text-[#888888] md:text-right md:max-w-[278px]">
+          Clique em uma das opções abaixo
+          <br className="hidden md:block" />e comece a criar agora mesmo.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {ASSET_TYPES.map(({ type, icon, color }) => (
-          <Card
-            key={type}
-            className={cn(
-              'cursor-pointer transition-all hover:shadow-lg hover:border-primary/50',
-              selectedType === type && 'ring-2 ring-primary border-primary'
-            )}
-            onClick={() => onSelect(type)}
-          >
-            <CardContent className="flex items-start gap-4 p-6">
+      {/* Figma: Cards 194x280, gap 8px, radius 8px */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {ASSET_TYPES.map(({ type, icon, label, description }) => {
+          const isSelected = selectedType === type
+          return (
+            <button
+              key={type}
+              type="button"
+              onClick={() => onSelect(type)}
+              className={cn(
+                // Figma: 194x280, radius 8px
+                'flex flex-col items-start p-6 rounded-lg transition-all text-left',
+                'min-h-[280px]',
+                // Figma: Selected = bg #5856D6, border #5856D6
+                isSelected && 'bg-[#5856D6] border border-[#5856D6]',
+                // Figma: Unselected = border #E8E8E8
+                !isSelected && 'border border-[#E8E8E8] hover:border-[#5856D6]/50'
+              )}
+            >
+              {/* Figma: Icon container 42x42, radius 200 (circle), bg #5856D6 */}
               <div
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
-                style={{ backgroundColor: `${color}20`, color }}
+                className={cn(
+                  'flex h-[42px] w-[42px] items-center justify-center rounded-full',
+                  isSelected ? 'bg-[#5856D6]' : 'bg-[#5856D6]'
+                )}
               >
-                <Icon name={icon} size="size-6" />
+                {/* Figma: Icon 18x18, white */}
+                <Icon name={icon} className="w-[18px] h-[18px] text-white" />
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-sans font-semibold text-lg">
-                  {getTypeLabel(type)}
+
+              {/* Spacer to push text to bottom */}
+              <div className="flex-1" />
+
+              {/* Figma: gap 12px between title and description */}
+              <div className="space-y-3">
+                {/* Figma: Inter SemiBold 16px */}
+                <h3
+                  className={cn(
+                    'font-semibold text-base',
+                    // Figma: Selected text = #312D65, Unselected = black
+                    isSelected ? 'text-[#312D65]' : 'text-black'
+                  )}
+                >
+                  {label}
                 </h3>
-                <p className="mt-1 font-serif text-sm text-muted-foreground">
-                  {getTypeDescription(type)}
+                {/* Figma: Inter Medium 12px */}
+                <p
+                  className={cn(
+                    'text-xs font-medium leading-relaxed',
+                    // Figma: Selected = #312D65, Unselected = #888888
+                    isSelected ? 'text-[#312D65]' : 'text-[#888888]'
+                  )}
+                >
+                  {description}
                 </p>
               </div>
-              {selectedType === type && (
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Icon name="check" size="size-4" />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+            </button>
+          )
+        })}
       </div>
 
       {errors.length > 0 && (

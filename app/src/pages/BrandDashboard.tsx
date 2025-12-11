@@ -3,15 +3,15 @@
  * BRAND-004: Brand Configuration Dashboard
  * BRAND-016: i18n integration fix
  * Main dashboard for brand configuration overview
- * Academia Lendária Design System
+ * FIGMA SPECS: #5856D6 primary, #F8F8F8 inactive, #E8E8E8 border
  */
 
 import * as React from "react"
-import { Button } from "@/components/ui/button"
+
 import { Icon } from "@/components/ui/icon"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CompletenessIndicator, CompletenessBreakdown } from "@/components/brand/CompletenessIndicator"
 import { ExportButton } from "@/components/brand/ExportButton"
@@ -88,11 +88,12 @@ export function BrandDashboard() {
   }, [examples.examples])
 
   return (
+    // Figma: bg #FFFFFF
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+      <header className="border-b border-border bg-background sticky top-0 z-10">
         <div className="mx-auto max-w-7xl px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               {/* Logo */}
               {visualIdentity.logo.url ? (
@@ -102,26 +103,25 @@ export function BrandDashboard() {
                   className="h-10 w-10 object-contain"
                 />
               ) : (
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Icon name="building" size="size-5" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-indigo/10 text-brand-indigo">
+                  <Icon name="building" className="w-[18px] h-[18px]" />
                 </div>
               )}
               <div>
-                <h1 className="font-sans text-xl font-bold tracking-tight truncate max-w-[200px]" title={config.name}>
+                <h1 className="text-base font-semibold text-foreground truncate max-w-[200px]" title={config.name}>
                   {config.name}
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs font-medium text-muted-foreground">
                   {t.nav.brandConfig}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
                             <ExportButton config={config} />
-              <Button onClick={() => setActiveSection("visual")}>
-                <Icon name="pencil" size="size-4" className="mr-2" />
+              <button onClick={() => setActiveSection("visual")} className="inline-flex items-center gap-2 h-[41px] px-[18px] rounded-full bg-brand-indigo text-sm font-semibold text-white hover:bg-brand-indigo/90 transition-colors"><Icon name="pencil" className="w-[14px] h-[14px]" />
                 {t.common.edit}
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -134,21 +134,21 @@ export function BrandDashboard() {
           onValueChange={(v) => setActiveSection(v as ConfigSection)}
           className="space-y-8"
         >
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="dashboard">
-              <Icon name="apps" size="size-4" className="mr-2" />
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+            <TabsTrigger value="dashboard" className="text-xs sm:text-sm">
+              <Icon name="apps" className="w-[14px] h-[14px] mr-1 sm:mr-2 hidden xs:inline-block" />
               {t.nav.dashboard}
             </TabsTrigger>
-            <TabsTrigger value="visual">
-              <Icon name="palette" size="size-4" className="mr-2" />
+            <TabsTrigger value="visual" className="text-xs sm:text-sm">
+              <Icon name="palette" className="w-[14px] h-[14px] mr-1 sm:mr-2 hidden xs:inline-block" />
               {t.nav.visualIdentity}
             </TabsTrigger>
-            <TabsTrigger value="voice">
-              <Icon name="comment" size="size-4" className="mr-2" />
+            <TabsTrigger value="voice" className="text-xs sm:text-sm">
+              <Icon name="comment" className="w-[14px] h-[14px] mr-1 sm:mr-2 hidden xs:inline-block" />
               {t.nav.brandVoice}
             </TabsTrigger>
-            <TabsTrigger value="examples">
-              <Icon name="picture" size="size-4" className="mr-2" />
+            <TabsTrigger value="examples" className="text-xs sm:text-sm">
+              <Icon name="picture" className="w-[14px] h-[14px] mr-1 sm:mr-2 hidden xs:inline-block" />
               {t.nav.examples}
             </TabsTrigger>
           </TabsList>
@@ -171,7 +171,7 @@ export function BrandDashboard() {
                     size="lg"
                     label={t.brand.completeness}
                   />
-                  <Separator className="my-6" />
+                  <div className="w-full h-px bg-[#E8E8E8] my-6" />
                   <CompletenessBreakdown
                     sections={[
                       { label: t.nav.visualIdentity, value: completeness.visualIdentity },
@@ -191,14 +191,14 @@ export function BrandDashboard() {
                     {t.brand.subtitle}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-4 sm:grid-cols-3">
+                <CardContent className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                   {/* Visual Identity Card */}
                   <button
                     onClick={() => setActiveSection("visual")}
-                    className="flex flex-col items-start gap-3 rounded-lg border border-border p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/30"
+                    className="flex flex-col items-start gap-3 rounded-lg border border-border p-4 text-left transition-colors hover:border-brand-indigo/50 hover:bg-secondary"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Icon name="palette" size="size-5" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-indigo/10 text-brand-indigo">
+                      <Icon name="palette" className="w-[18px] h-[18px]" />
                     </div>
                     <div>
                       <p className="font-semibold">{t.brand.visual.title}</p>
@@ -214,10 +214,10 @@ export function BrandDashboard() {
                   {/* Voice Card */}
                   <button
                     onClick={() => setActiveSection("voice")}
-                    className="flex flex-col items-start gap-3 rounded-lg border border-border p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/30"
+                    className="flex flex-col items-start gap-3 rounded-lg border border-border p-4 text-left transition-colors hover:border-brand-indigo/50 hover:bg-secondary"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Icon name="comment" size="size-5" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-indigo/10 text-brand-indigo">
+                      <Icon name="comment" className="w-[18px] h-[18px]" />
                     </div>
                     <div>
                       <p className="font-semibold">{t.brand.voice.title}</p>
@@ -233,10 +233,10 @@ export function BrandDashboard() {
                   {/* Examples Card */}
                   <button
                     onClick={() => setActiveSection("examples")}
-                    className="flex flex-col items-start gap-3 rounded-lg border border-border p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/30"
+                    className="flex flex-col items-start gap-3 rounded-lg border border-border p-4 text-left transition-colors hover:border-brand-indigo/50 hover:bg-secondary"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Icon name="picture" size="size-5" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-indigo/10 text-brand-indigo">
+                      <Icon name="picture" className="w-[18px] h-[18px]" />
                     </div>
                     <div>
                       <p className="font-semibold">{t.brand.examples.title}</p>
@@ -253,19 +253,13 @@ export function BrandDashboard() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {/* Color Palette Summary */}
               <Card>
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-medium">{t.brand.visual.colors}</CardTitle>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setActiveSection("visual")}
-                    >
-                      {t.common.edit}
-                    </Button>
+                    <button onClick={() => setActiveSection("visual")} className="text-xs font-semibold text-brand-indigo hover:underline">{t.common.edit}</button>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -281,13 +275,7 @@ export function BrandDashboard() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-medium">{t.brand.visual.typography}</CardTitle>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setActiveSection("visual")}
-                    >
-                      {t.common.edit}
-                    </Button>
+                    <button onClick={() => setActiveSection("visual")} className="text-xs font-semibold text-brand-indigo hover:underline">{t.common.edit}</button>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2">
@@ -317,13 +305,7 @@ export function BrandDashboard() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-medium">{t.brand.voice.attributes}</CardTitle>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setActiveSection("voice")}
-                    >
-                      {t.common.edit}
-                    </Button>
+                    <button onClick={() => setActiveSection("voice")} className="text-xs font-semibold text-brand-indigo hover:underline">{t.common.edit}</button>
                   </div>
                 </CardHeader>
                 <CardContent>

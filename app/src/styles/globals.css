@@ -60,7 +60,7 @@
   --animate-spin-slow: spin 3s linear infinite;
 }
 
-/* Light Mode (Default) */
+/* Light Mode (Default) - Figma Design System */
 :root {
   --background: 0 0% 100%;
   --foreground: 0 0% 10%;
@@ -68,19 +68,28 @@
   --card-foreground: 0 0% 10%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 10%;
-  --secondary: 0 0% 96%;
+  --secondary: 0 0% 97%;
   --secondary-foreground: 0 0% 10%;
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 45%;
-  --accent: 0 0% 96%;
+  --muted: 0 0% 97%;
+  --muted-foreground: 0 0% 53%;
+  --accent: 0 0% 97%;
   --accent-foreground: 0 0% 10%;
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
-  --ring: 32 27% 69%;
+  --border: 0 0% 91%;
+  --input: 0 0% 91%;
+  --ring: 241 64% 59%;
   --radius: 0.75rem;
+
+  /* Figma Design System Colors */
+  --figma-primary: #5856D6;
+  --figma-primary-hover: #4745B5;
+  --figma-surface: #F8F8F8;
+  --figma-border: #E8E8E8;
+  --figma-text-heading: #312D65;
+  --figma-text-secondary: #888888;
+  --figma-text-disabled: #C8C8C8;
 }
 
-/* Dark Mode */
+/* Dark Mode - Figma Design System */
 .dark {
   --background: 0 0% 4%;
   --foreground: 0 0% 95%;
@@ -96,7 +105,16 @@
   --accent-foreground: 0 0% 95%;
   --border: 0 0% 18%;
   --input: 0 0% 18%;
-  --ring: 32 27% 69%;
+  --ring: 241 64% 59%;
+
+  /* Figma Design System Colors - Dark Mode */
+  --figma-primary: #7B79E8;
+  --figma-primary-hover: #6C6AD9;
+  --figma-surface: #1A1A1A;
+  --figma-border: #2A2A2A;
+  --figma-text-heading: #E8E8F0;
+  --figma-text-secondary: #A0A0A0;
+  --figma-text-disabled: #606060;
 }
 
 /* Keyframes */
@@ -224,5 +242,49 @@ body {
   
   .ring-ring {
     --tw-ring-color: hsl(var(--ring));
+  }
+  /* Figma Design System Utilities */
+  .bg-figma-surface {
+    background-color: var(--figma-surface);
+  }
+  
+  .border-figma {
+    border-color: var(--figma-border);
+  }
+  
+  .text-figma-heading {
+    color: var(--figma-text-heading);
+  }
+  
+  .text-figma-secondary {
+    color: var(--figma-text-secondary);
+  }
+  
+  .text-figma-disabled {
+    color: var(--figma-text-disabled);
+  }
+  
+  .bg-figma-primary {
+    background-color: var(--figma-primary);
+  }
+  
+  .text-figma-primary {
+    color: var(--figma-primary);
+  }
+  
+  .hover:bg-figma-primary-hover:hover {
+    background-color: var(--figma-primary-hover);
+  }
+  
+  .bg-figma-primary/10 {
+    background-color: color-mix(in srgb, var(--figma-primary) 10%, transparent);
+  }
+  
+  .hover:bg-figma-surface:hover {
+    background-color: var(--figma-surface);
+  }
+  
+  .hover:border-figma-primary/50:hover {
+    border-color: color-mix(in srgb, var(--figma-primary) 50%, transparent);
   }
 }

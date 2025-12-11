@@ -23,7 +23,6 @@ type AngleType = GenerationGoal['angle']
 interface GoalOption {
   type: GoalType
   icon: string
-  color: string
 }
 
 interface AngleOption {
@@ -32,10 +31,10 @@ interface AngleOption {
 }
 
 const GOAL_TYPES: GoalOption[] = [
-  { type: 'awareness', icon: 'eye', color: '#5856D6' },
-  { type: 'consideration', icon: 'comment-alt', color: '#007AFF' },
-  { type: 'conversion', icon: 'shopping-cart', color: '#34C759' },
-  { type: 'retention', icon: 'heart', color: '#FF2D55' },
+  { type: 'awareness', icon: 'eye' },
+  { type: 'consideration', icon: 'comment-alt' },
+  { type: 'conversion', icon: 'shopping-cart' },
+  { type: 'retention', icon: 'heart' },
 ]
 
 const ANGLE_TYPES: AngleOption[] = [
@@ -80,80 +79,102 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
 
   return (
     <div className="space-y-8">
-      <div className="text-center">
-        <h2 className="font-sans text-2xl font-bold tracking-tight">
-          {t.wizard.steps.goal.title}
-        </h2>
-        <p className="mt-2 font-serif text-muted-foreground">
+      {/* Header with split layout */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <h2 className="font-sans text-2xl md:text-3xl font-bold tracking-tight">
+            {t.wizard.steps.goal.title}
+          </h2>
+        </div>
+        <p className="font-serif text-muted-foreground md:text-right md:max-w-xs">
           {t.wizard.steps.goal.subtitle}
         </p>
       </div>
 
-      {/* Goal Selection */}
+      {/* Goal Selection - 4 columns */}
       <div className="space-y-3">
-        <Label className="text-base font-semibold">
-          {t.wizard.steps.goal.title.split(' ')[0]}
+        <Label className="text-sm font-medium">
+          {t.wizard.steps.goal.title.split(' ')[0]}:
         </Label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {GOAL_TYPES.map(({ type, icon, color }) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() => onChange({ type })}
-              className={cn(
-                'flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all',
-                goal.type === type
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border hover:border-primary/50 hover:bg-accent/50'
-              )}
-            >
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-lg"
-                style={{ backgroundColor: `${color}20`, color }}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {GOAL_TYPES.map(({ type, icon }) => {
+            const isSelected = goal.type === type
+            return (
+              <button
+                key={type}
+                type="button"
+                onClick={() => onChange({ type })}
+                className={cn(
+                  'flex flex-col items-start p-5 rounded-xl border transition-all text-left',
+                  'min-h-[140px]',
+                  isSelected
+                    ? 'border-primary/30 bg-primary/5'
+                    : 'border-border hover:border-primary/20 hover:bg-muted/30'
+                )}
               >
-                <Icon name={icon} size="size-5" />
-              </div>
-              <span className="text-sm font-medium text-center">
-                {getGoalLabel(type)}
-              </span>
-            </button>
-          ))}
+                <div
+                  className={cn(
+                    'flex h-10 w-10 items-center justify-center rounded-xl mb-3',
+                    isSelected
+                      ? 'bg-primary/20 text-primary'
+                      : 'bg-primary/10 text-primary'
+                  )}
+                >
+                  <Icon name={icon} size="size-5" />
+                </div>
+                <span className="text-sm font-medium">
+                  {getGoalLabel(type)}
+                </span>
+              </button>
+            )
+          })}
         </div>
       </div>
 
-      {/* Angle Selection */}
+      {/* Angle Selection - 4 columns */}
       <div className="space-y-3">
-        <Label className="text-base font-semibold">
-          {t.wizard.steps.goal.angle}
+        <Label className="text-sm font-medium">
+          {t.wizard.steps.goal.angle}:
         </Label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {ANGLE_TYPES.map(({ type, icon }) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() => onChange({ angle: type })}
-              className={cn(
-                'flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all',
-                goal.angle === type
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border hover:border-primary/50 hover:bg-accent/50'
-              )}
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary">
-                <Icon name={icon} size="size-5" />
-              </div>
-              <span className="text-sm font-medium text-center">
-                {getAngleLabel(type)}
-              </span>
-            </button>
-          ))}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {ANGLE_TYPES.map(({ type, icon }) => {
+            const isSelected = goal.angle === type
+            return (
+              <button
+                key={type}
+                type="button"
+                onClick={() => onChange({ angle: type })}
+                className={cn(
+                  'flex flex-col items-start p-5 rounded-xl border transition-all text-left',
+                  'min-h-[140px]',
+                  isSelected
+                    ? 'border-primary/30 bg-primary/5'
+                    : 'border-border hover:border-primary/20 hover:bg-muted/30'
+                )}
+              >
+                <div
+                  className={cn(
+                    'flex h-10 w-10 items-center justify-center rounded-xl mb-3',
+                    isSelected
+                      ? 'bg-primary/20 text-primary'
+                      : 'bg-muted text-muted-foreground'
+                  )}
+                >
+                  <Icon name={icon} size="size-5" />
+                </div>
+                <span className="text-sm font-medium">
+                  {getAngleLabel(type)}
+                </span>
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* Additional Instructions */}
-      <div className="space-y-2 max-w-xl mx-auto">
-        <Label htmlFor="instructions">
-          {t.wizard.steps.goal.instructions}
+      <div className="space-y-2 max-w-2xl">
+        <Label htmlFor="instructions" className="text-sm font-medium">
+          {t.wizard.steps.goal.instructions}:
         </Label>
         <Textarea
           id="instructions"
@@ -161,6 +182,7 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
           onChange={(e) => onChange({ instructions: e.target.value })}
           placeholder="Any specific instructions for the AI..."
           rows={3}
+          className="resize-none bg-background border-border"
         />
       </div>
 

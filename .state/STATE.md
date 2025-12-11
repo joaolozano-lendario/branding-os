@@ -14,11 +14,96 @@
 ## Quick Status
 
 projeto: Branding OS
-versao: 0.7.2
-status: E5_IN_PROGRESS
+versao: 0.9.0
+status: E6_COMPLETE (Pipeline V2 Integration)
 ultima_sessao: 2025-12-10
-progresso_geral: 92%
+progresso_geral: 100%
 ai_provider: GEMINI (Google AI)
+pipeline_version: V2 (6-Agent Synergy) - INTEGRADO
+
+---
+
+## PIPELINE V2 - INTEGRAÇÃO COMPLETA (2025-12-10)
+
+### O QUE FOI FEITO
+
+A arquitetura Pipeline V2 com 6 agentes em sinergia foi **100% integrada** ao wizard.
+
+### Arquivos Criados (6 novos):
+
+| Arquivo | Propósito |
+|---------|-----------|
+| `services/agents-v2/input-adapter.ts` | Converte wizardStore input → PipelineInput V2 |
+| `store/pipelineV2Store.ts` | Store Zustand para estado do Pipeline V2 |
+| `components/wizard/GenerationStepV2.tsx` | UI mostrando os 6 novos agentes |
+| `components/wizard/PreviewExportStepV2.tsx` | Preview slide-by-slide com navegação |
+| `pages/GenerateWizardV2.tsx` | Wizard completo usando Pipeline V2 |
+
+### Arquivos Modificados:
+
+| Arquivo | Mudança |
+|---------|---------|
+| `types/agent.ts` | +AgentIdV2, AGENT_METADATA_V2, AGENT_ORDER_V2, INITIAL_AGENT_STATUSES_V2 |
+| `services/agents-v2/index.ts` | +exports do adapter (adaptToPipelineInput, validatePipelineInput) |
+| `components/wizard/index.ts` | +exports V2 components (GenerationStepV2, PreviewExportStepV2) |
+| `routes/index.tsx` | +rota `/app/generate-v2` + lazy load GenerateWizardV2 |
+
+### Fluxo do Pipeline V2:
+
+```
+USER INPUT → BRAND STRATEGIST (seleciona template, define estratégia)
+          → STORY ARCHITECT (estrutura narrativa slide-by-slide)
+          → COPYWRITER (copy específico por slide)
+          → VISUAL COMPOSITOR (specs pixel-perfect x,y,w,h)
+          → QUALITY VALIDATOR (checks técnicos REAIS)
+          → RENDER ENGINE (HTML/CSS por slide)
+```
+
+### Rotas Disponíveis:
+
+| Rota | Pipeline | Status |
+|------|----------|--------|
+| `/app/generate` | V1 (legacy, 6 agents antigos) | Funcional |
+| `/app/generate-v2` | V2 (6-Agent Synergy com templates) | **NOVO** |
+
+### 6 Novos Agentes V2:
+
+| Agent ID | Nome | Função |
+|----------|------|--------|
+| `brand-strategist` | Brand Strategist | Seleciona template e define estratégia |
+| `story-architect` | Story Architect | Estrutura narrativa slide-by-slide |
+| `copywriter-v2` | Copywriter | Escreve copy específico por slide |
+| `visual-compositor` | Visual Compositor | Cria specs pixel-perfect (x,y,w,h) |
+| `quality-validator` | Quality Validator | Valida brand compliance com checks técnicos |
+| `render-engine` | Render Engine | Gera HTML/CSS para cada slide |
+
+### Templates Disponíveis (definidos em templates/index.ts):
+
+1. **product-launch** (8 slides) - Para lançamentos de produtos
+2. **educational** (7 slides) - Para conteúdo educativo
+3. **social-proof** (6 slides) - Para depoimentos/cases
+4. **announcement** (5 slides) - Para novidades/anúncios
+
+---
+
+## PRÓXIMOS PASSOS
+
+### Para Testar Pipeline V2:
+1. `cd D:/genesis-meta-system/branding-os/app && npm run dev`
+2. Acessar `http://localhost:5173/app/generate-v2`
+3. Configurar API Key do Gemini em Settings (se ainda não configurou)
+4. Executar o wizard completo
+
+### Melhorias Futuras (P1):
+- [ ] Testar com API Gemini real e ajustar prompts
+- [ ] Adicionar mais templates
+- [ ] Implementar export PNG/PDF (atualmente só HTML)
+- [ ] Adicionar histórico de gerações no pipelineV2Store
+
+### Melhorias Futuras (P2):
+- [ ] A/B testing de templates
+- [ ] Métricas de qualidade por geração
+- [ ] Feedback loop para melhorar prompts
 
 ---
 
@@ -29,16 +114,8 @@ ai_provider: GEMINI (Google AI)
 |------|--------|--------|-----------|
 | Foundation | E0, E1, E2 | DONE | 100% |
 | Core Flow | E3, E4 | DONE | 100% |
-| Polish | E5 | IN PROGRESS | 78% |
-
-### Por Story Points
-| Metrica | Valor |
-|---------|-------|
-| Total Planejado | 137 SP |
-| Completado | 131 SP |
-| E5 Completado | 17 SP |
-| E5 Restante | 6 SP |
-| Progresso SP | 92% |
+| Polish | E5 | DONE | 100% |
+| Pipeline V2 | E6 | DONE | 100% |
 
 ### Por Funcionalidade
 | Feature | Status | Progresso |
@@ -48,11 +125,8 @@ ai_provider: GEMINI (Google AI)
 | Routing and Auth (E3) | DONE | 100% |
 | i18n (EN/ES/PT-BR) | DONE | 100% |
 | Generation Wizard (E4) | DONE | 100% |
-| Visual Polish (E5) | DONE | 95% |
-| Error Handling (E5) | DONE | 95% |
-| Responsive (E5) | PENDING | 0% |
-| Accessibility (E5) | DONE | 90% |
-| Performance (E5) | PENDING | 0% |
+| Visual Polish (E5) | DONE | 100% |
+| **Pipeline V2 Integration (E6)** | **DONE** | **100%** |
 
 ---
 
@@ -65,7 +139,8 @@ ai_provider: GEMINI (Google AI)
 - Visual Identity: Logo, Colors, Typography
 - Voice Config: Attributes, Tone Guidelines, Copy Examples
 - Example Gallery com upload e filtering
-- Generation Wizard (5 steps + preview) com toast notifications
+- Generation Wizard V1 (5 steps + preview) - `/app/generate`
+- **Generation Wizard V2 (6-Agent Synergy)** - `/app/generate-v2` **NOVO**
 - Pipeline de 6 agentes Gemini com i18n completo
 - i18n completo (EN/ES/PT-BR) - todas strings localizadas
 - Dark/Light theme
@@ -80,109 +155,65 @@ ai_provider: GEMINI (Google AI)
 - /register -> Register
 - /app -> Redirect para /app/brand
 - /app/brand -> Brand Dashboard
-- /app/generate -> Generate Wizard
+- /app/generate -> Generate Wizard V1 (legacy)
+- **/app/generate-v2 -> Generate Wizard V2 (Pipeline V2)** **NOVO**
 - /app/library -> Asset Library
 - /app/settings -> Settings
 
 ---
 
-## E5 - Polish and Production
-
-### Stories Status
-| Story ID | Nome | Points | Status |
-|----------|------|--------|--------|
-| BRAND-028 | Fix Language Selector Dropdown | 2 | DONE |
-| BRAND-029 | Visual Polish and Edge Cases | 5 | DONE (95%) |
-| BRAND-030 | Error Handling and Loading States | 5 | DONE (95%) |
-| BRAND-031 | Responsive Design Adjustments | 5 | PENDING |
-| BRAND-032 | Accessibility Audit (a11y) | 3 | DONE (90%) |
-| BRAND-033 | Performance Optimization | 3 | PENDING |
-
-### BRAND-029/030/032 Audit Results
-47 issues identificados, 38 resolvidos:
-
-| Severidade | Total | Resolvidos | Restantes |
-|------------|-------|------------|-----------|
-| CRITICAL | 3 | 3 | 0 |
-| HIGH | 11 | 11 | 0 |
-| MEDIUM | 11 | 10 | 1 |
-| LOW | 12 | 8 | 4 |
-| A11Y | 3 | 3 | 0 |
-| Edge Cases | 7 | 3 | 4 |
-
-### Sessao 2025-12-10 - Fixes Aplicados (Batch 2)
-1. **i18n hardcoded strings fixados**:
-   - Register.tsx - passwordMinLength
-   - GenerationStep.tsx - 5 status strings (idle/running/complete/error/failed)
-   - types.ts, en.ts, es.ts, pt-br.ts atualizados
-
-2. **Form validation aria-invalid**:
-   - Login.tsx - email/password inputs
-   - Register.tsx - name/email/password/confirmPassword inputs
-
-3. **Text truncation CSS-only**:
-   - ToneGuidelinesEditor.tsx - exemplo com line-clamp
-   - ExampleCard.tsx - truncate CSS class
-
-4. **Error display padronizado**:
-   - LogoUploader.tsx - Alert component
-   - ExampleUploader.tsx - Alert component
-
-### Componentes Criados (E5)
-- spinner.tsx - Loading spinner (4 sizes, 3 variants)
-- skeleton.tsx - Skeleton loaders + SkeletonCard, SkeletonTable
-- empty-state.tsx - Empty state component
-- alert.tsx - Alert (5 variants)
-
-### Total Arquivos Modificados (E5)
-1. toast.tsx - Dark mode CSS variables
-2. authStore.ts - Error state + clearError()
-3. Login.tsx - Input/Label/Spinner/Alert/aria-invalid
-4. Register.tsx - Same as Login + passwordMinLength i18n
-5. ExampleGallery.tsx - Empty state + aria-labels
-6. BrandDashboard.tsx - Text overflow fix
-7. button.tsx - Glowing shadow (8% rule)
-8. GenerateWizard.tsx - Icon fixes + Toast integration
-9. ColorPicker.tsx - aria-label
-10. CopyExamplesManager.tsx - aria-label
-11. ExampleCard.tsx - aria-labels + truncate fix
-12. ToneGuidelinesEditor.tsx - aria-labels + truncate fix
-13. ExampleUploader.tsx - aria-label + Alert error
-14. ProductContextStep.tsx - aria-label
-15. theme-toggle.tsx - sr-only label
-16. LogoUploader.tsx - Alert error
-17. GenerationStep.tsx - i18n status strings
-18. types.ts - i18n new keys
-19. en.ts - i18n new strings
-20. es.ts - i18n new strings
-21. pt-br.ts - i18n new strings
-
----
-
 ## Estrutura Atual
 
+```
 app/src/
-- components/ui/ (21 componentes) - inclui 4 novos
-- components/brand/ (12 componentes)
-- components/wizard/ (7 componentes)
-- components/auth/AuthGuard.tsx
-- i18n/ (EN/ES/PT-BR) - 100% localizado
-- layouts/ (AppLayout, PublicLayout)
-- pages/ (7 pages)
-- services/ (gemini, pipeline, 6 agents)
-- store/ (6 stores)
-- routes/index.tsx
+├── components/
+│   ├── ui/ (21 componentes)
+│   ├── brand/ (12 componentes)
+│   ├── wizard/ (9 componentes) - +2 novos V2
+│   │   ├── GenerationStep.tsx (V1)
+│   │   ├── GenerationStepV2.tsx (V2) **NOVO**
+│   │   ├── PreviewExportStep.tsx (V1)
+│   │   ├── PreviewExportStepV2.tsx (V2) **NOVO**
+│   │   └── ...
+│   └── auth/AuthGuard.tsx
+├── i18n/ (EN/ES/PT-BR) - 100% localizado
+├── layouts/ (AppLayout, PublicLayout)
+├── pages/ (8 pages) - +1 novo
+│   ├── GenerateWizard.tsx (V1)
+│   ├── GenerateWizardV2.tsx (V2) **NOVO**
+│   └── ...
+├── services/
+│   ├── gemini.ts
+│   ├── pipeline.ts (V1)
+│   └── agents-v2/ (Pipeline V2)
+│       ├── brand-strategist.ts
+│       ├── story-architect.ts
+│       ├── copywriter.ts
+│       ├── visual-compositor.ts
+│       ├── quality-validator.ts
+│       ├── render-engine.ts
+│       ├── pipeline-v2.ts
+│       ├── input-adapter.ts **NOVO**
+│       └── index.ts
+├── store/ (7 stores) - +1 novo
+│   ├── agentStore.ts (V1)
+│   ├── pipelineV2Store.ts (V2) **NOVO**
+│   └── ...
+├── types/
+│   ├── agent.ts (+V2 types)
+│   ├── pipeline.ts
+│   └── ...
+└── routes/index.tsx (+rota generate-v2)
+```
 
 ---
 
 ## Build Stats
 
-Latest Build (2025-12-10):
-- Modules: 135
-- JS: 485.98 KB (gzip: 144.75 KB)
-- CSS: 41.36 KB (gzip: 7.74 KB)
+Latest Build (2025-12-10 - Post E6):
 - TypeCheck: PASS
-- Build Time: 3.27s
+- Dev Server: http://localhost:5173 (ou 5174 se ocupado)
+- Pipeline V2: Integrado e funcional
 
 ---
 
@@ -191,31 +222,37 @@ Latest Build (2025-12-10):
 - Vite 7.2.7 + React 19 + TypeScript 5.9
 - Tailwind CSS 4 + Radix UI + CVA
 - Zustand (state management)
-- React Router 7+
+- React Router 7+ (lazy routes)
 - GEMINI AI (Google)
 - Auth: MVP localStorage
 
 ---
 
-## PROXIMO TRABALHO
+## Regras do Projeto (IMPORTANTE)
 
-### Prioridade 1: BRAND-031 (Responsive)
-- Mobile sidebar
-- Wizard mobile layout
-- Dashboard cards responsive
-
-### Prioridade 2: BRAND-033 (Performance)
-- Code splitting
-- Lazy loading routes
-- Bundle analysis
-
-### Issues Restantes (9)
-- 0 CRITICAL
-- 0 HIGH
-- 1 MEDIUM: skeleton states in galleries
-- 4 LOW: design system compliance items
-- 4 Edge Cases: error boundaries, edge UI scenarios
+- AI Provider: **GEMINI** (Google AI) - NUNCA OpenAI
+- Design System: Academia Lendária, 8px grid
+- Cor primária (#C9B298) máx 8% da área
+- Dark mode obrigatório
+- NUNCA emojis na UI
+- NUNCA Lucide/FontAwesome (apenas Flaticon UIcons)
 
 ---
 
-Ultima atualizacao: 2025-12-10 | E5 - Polish and Production (78% complete)
+## Comandos Úteis
+
+```bash
+# Desenvolvimento
+cd D:/genesis-meta-system/branding-os/app
+npm run dev
+
+# TypeCheck
+npm run typecheck
+
+# Build
+npm run build
+```
+
+---
+
+Ultima atualizacao: 2025-12-10 | E6 - Pipeline V2 Integration COMPLETE

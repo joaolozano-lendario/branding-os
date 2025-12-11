@@ -2,10 +2,10 @@
  * Landing Page
  * BRAND-018: Homepage/Landing Page
  * Public landing page for unauthenticated users
+ * FIGMA SPECS: #5856D6 primary, #F8F8F8 cards, #E8E8E8 border
  */
 
 import { Link } from "react-router-dom"
-import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icon"
 import { useTranslation } from "@/store/i18nStore"
 
@@ -13,68 +13,82 @@ export function LandingPage() {
   const { t } = useTranslation()
 
   return (
-    <div className="flex min-h-screen flex-col">
+    // Figma: bg #FFFFFF
+    <div className="flex min-h-screen flex-col bg-background">
       {/* Hero Section */}
       <main className="flex flex-1 flex-col items-center justify-center px-6 text-center">
         <div className="mx-auto max-w-3xl space-y-8">
-          {/* Logo */}
+          {/* Logo - Figma: 42x42 icon container, radius full */}
           <div className="flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-              <Icon name="building" size="size-8" />
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-indigo">
+              <Icon name="building" className="w-8 h-8 text-white" />
             </div>
           </div>
 
-          {/* Headline */}
+          {/* Headline - Figma: Inter SemiBold 32px */}
           <div className="space-y-4">
-            <h1 className="font-sans text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="text-[32px] font-semibold text-foreground">
               {t.brand.title}
             </h1>
-            <p className="mx-auto max-w-xl font-serif text-lg text-muted-foreground sm:text-xl">
+            {/* Figma: Inter Medium 16px, #888888 */}
+            <p className="mx-auto max-w-xl text-base font-medium text-muted-foreground">
               {t.brand.subtitle}
             </p>
           </div>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons - Figma: pill buttons */}
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button asChild size="lg" className="text-base">
-              <Link to="/register">
-                {t.auth.register}
-                <Icon name="chevron-right" size="size-4" className="ml-2" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="text-base">
-              <Link to="/login">
-                {t.auth.login}
-              </Link>
-            </Button>
+            {/* Figma: Primary button - bg #5856D6, h-[41px], radius full */}
+            <Link
+              to="/register"
+              className="inline-flex items-center justify-center gap-2 h-[41px] px-[18px] rounded-full bg-brand-indigo text-sm font-semibold text-white hover:bg-brand-indigo/90 transition-colors"
+            >
+              {t.auth.register}
+              <Icon name="angle-right" className="w-[14px] h-[14px]" />
+            </Link>
+            {/* Figma: Secondary button - bg #F8F8F8, border #E8E8E8 */}
+            <Link
+              to="/login"
+              className="inline-flex items-center justify-center h-[41px] px-[18px] rounded-full bg-secondary border border-border text-sm font-semibold text-muted-foreground hover:bg-secondary transition-colors"
+            >
+              {t.auth.login}
+            </Link>
           </div>
 
-          {/* Features preview */}
+          {/* Features preview - Figma: cards 194x280, gap 8px, radius 8px */}
           <div className="grid gap-6 pt-12 sm:grid-cols-3">
-            <div className="flex flex-col items-center gap-3 rounded-lg border border-border p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Icon name="palette" size="size-6" />
+            {/* Visual Identity Card */}
+            <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-secondary p-6">
+              {/* Figma: 42x42 icon container */}
+              <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-brand-indigo/10">
+                <Icon name="palette" className="w-[18px] h-[18px] text-brand-indigo" />
               </div>
-              <h3 className="font-semibold">{t.brand.visual.title}</h3>
-              <p className="text-sm text-muted-foreground">
+              {/* Figma: Inter SemiBold 16px */}
+              <h3 className="text-base font-semibold text-foreground">{t.brand.visual.title}</h3>
+              {/* Figma: Inter Medium 12px, #888888 */}
+              <p className="text-xs font-medium text-muted-foreground">
                 {t.brand.visual.logo}, {t.brand.visual.colors}, {t.brand.visual.typography}
               </p>
             </div>
-            <div className="flex flex-col items-center gap-3 rounded-lg border border-border p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Icon name="comment" size="size-6" />
+            
+            {/* Voice Card */}
+            <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-secondary p-6">
+              <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-brand-indigo/10">
+                <Icon name="comment" className="w-[18px] h-[18px] text-brand-indigo" />
               </div>
-              <h3 className="font-semibold">{t.brand.voice.title}</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="text-base font-semibold text-foreground">{t.brand.voice.title}</h3>
+              <p className="text-xs font-medium text-muted-foreground">
                 {t.brand.voice.attributes}
               </p>
             </div>
-            <div className="flex flex-col items-center gap-3 rounded-lg border border-border p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Icon name="lightning" size="size-6" />
+            
+            {/* Generate Card */}
+            <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-secondary p-6">
+              <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-brand-indigo/10">
+                <Icon name="lightning" className="w-[18px] h-[18px] text-brand-indigo" />
               </div>
-              <h3 className="font-semibold">{t.nav.generate}</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="text-base font-semibold text-foreground">{t.nav.generate}</h3>
+              <p className="text-xs font-medium text-muted-foreground">
                 AI-powered content generation
               </p>
             </div>
@@ -82,9 +96,10 @@ export function LandingPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground">
-        <p>Branding OS - Academia Lendária</p>
+      {/* Footer - Figma: border #E8E8E8 */}
+      <footer className="border-t border-border py-6 text-center">
+        {/* Figma: Inter Medium 12px, #888888 */}
+        <p className="text-xs font-medium text-muted-foreground">Branding OS - Academia Lendaria</p>
       </footer>
     </div>
   )

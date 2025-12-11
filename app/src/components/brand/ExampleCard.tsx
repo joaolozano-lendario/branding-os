@@ -59,7 +59,7 @@ export function ExampleCard({
       <button
         onClick={onClick}
         className={cn(
-          "group flex items-center gap-3 rounded-lg border p-3 text-left transition-all w-full",
+          "group flex items-center gap-4 rounded-lg border p-4 text-left transition-all w-full",
           selected
             ? "border-primary bg-primary/5"
             : "border-border hover:border-primary/50",

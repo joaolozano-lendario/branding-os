@@ -1,17 +1,13 @@
 /**
  * Product Context Step
  * Branding OS - Academia Lendaria
- * E4: BRAND-023 - Step 2 of Generation Wizard
+ * Pixel-perfect from Figma specs
  */
 
 import * as React from 'react'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
-import { useTranslation } from '@/store/i18nStore'
 import type { ProductContext } from '@/types/agent'
 
 interface ProductContextStepProps {
@@ -21,7 +17,6 @@ interface ProductContextStepProps {
 }
 
 export function ProductContextStep({ context, onChange, errors }: ProductContextStepProps) {
-  const { t } = useTranslation()
   const [newFeature, setNewFeature] = React.useState('')
 
   const handleAddFeature = () => {
@@ -47,80 +42,108 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
   }
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="font-sans text-2xl font-bold tracking-tight">
-          {t.wizard.steps.context.title}
+    <div className="space-y-8">
+      {/* Figma: Title left, subtitle right */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+        {/* Figma: Inter SemiBold 32px, black */}
+        <h2 className="font-sans text-[32px] font-semibold leading-tight text-black">
+          Contextualize
+          <br />
+          sobre a sua criação
         </h2>
-        <p className="mt-2 font-serif text-muted-foreground">
-          {t.wizard.steps.context.subtitle}
+        {/* Figma: Inter Medium 16px, #888888 */}
+        <p className="text-base font-medium text-[#888888] md:text-right md:max-w-[278px]">
+          Conte pra mim qual o contexto do seu produto ou serviço.
         </p>
       </div>
 
-      <div className="space-y-4 max-w-xl mx-auto">
-        {/* Product Name */}
+      {/* Figma: gap 24px between fields, max-width 800px */}
+      <div className="space-y-6 max-w-[800px]">
+        {/* Product Name - Figma: gap 8px label-input, input height 62px */}
         <div className="space-y-2">
-          <Label htmlFor="productName">
-            {t.wizard.steps.context.productName}
-            <span className="text-destructive ml-1">*</span>
-          </Label>
-          <Input
-            id="productName"
+          {/* Figma: Inter SemiBold 12px, black */}
+          <label className="text-xs font-semibold text-black">
+            Nome do Produto / Serviço:
+          </label>
+          {/* Figma: height 62px, border #E8E8E8, radius 8px */}
+          <input
+            type="text"
             value={context.name}
             onChange={(e) => onChange({ name: e.target.value })}
-            placeholder="e.g., Branding OS"
+            placeholder="ex: CreatorOs"
+            className={cn(
+              'w-full h-[62px] px-4 rounded-lg border border-border bg-background',
+              'text-base font-medium placeholder:text-[#888888]',
+              'focus:outline-none focus:border-[#5856D6]'
+            )}
           />
         </div>
 
-        {/* Description */}
+        {/* Description - Figma: height 128px */}
         <div className="space-y-2">
-          <Label htmlFor="description">
-            {t.wizard.steps.context.description}
-            <span className="text-destructive ml-1">*</span>
-          </Label>
-          <Textarea
-            id="description"
+          <label className="text-xs font-semibold text-black">
+            Breve descrição:
+          </label>
+          <textarea
             value={context.description}
             onChange={(e) => onChange({ description: e.target.value })}
-            placeholder="Briefly describe what your product/service does..."
-            rows={3}
+            placeholder="Lorem ipsum dolor sit amet"
+            className={cn(
+              'w-full h-[128px] px-4 py-4 rounded-lg border border-border bg-background resize-none',
+              'text-base font-medium placeholder:text-[#888888]',
+              'focus:outline-none focus:border-[#5856D6]'
+            )}
           />
         </div>
 
         {/* Target Audience */}
         <div className="space-y-2">
-          <Label htmlFor="targetAudience">
-            {t.wizard.steps.context.targetAudience}
-          </Label>
-          <Input
-            id="targetAudience"
+          <label className="text-xs font-semibold text-black">
+            Público Alvo:
+          </label>
+          <input
+            type="text"
             value={context.targetAudience || ''}
             onChange={(e) => onChange({ targetAudience: e.target.value })}
-            placeholder="e.g., Marketing teams at mid-size companies"
+            placeholder="ex: Empresários"
+            className={cn(
+              'w-full h-[62px] px-4 rounded-lg border border-border bg-background',
+              'text-base font-medium placeholder:text-[#888888]',
+              'focus:outline-none focus:border-[#5856D6]'
+            )}
           />
         </div>
 
         {/* Key Features */}
         <div className="space-y-2">
-          <Label>{t.wizard.steps.context.keyFeatures}</Label>
+          <label className="text-xs font-semibold text-black">
+            Caracteristicas e Benefícios Chave
+          </label>
           <div className="flex gap-2">
-            <Input
+            <input
+              type="text"
               value={newFeature}
               onChange={(e) => setNewFeature(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Add a feature or benefit..."
-              className="flex-1"
+              placeholder="ex: Empresários"
+              className={cn(
+                'flex-1 h-[62px] px-4 rounded-lg border border-border bg-background',
+                'text-base font-medium placeholder:text-[#888888]',
+                'focus:outline-none focus:border-[#5856D6]'
+              )}
             />
-            <Button
+            <button
               type="button"
-              variant="outline"
-              size="icon"
               onClick={handleAddFeature}
               disabled={!newFeature.trim()}
-              aria-label="Add feature"
+              className={cn(
+                'h-[62px] w-[62px] rounded-lg border border-border bg-background shrink-0',
+                'flex items-center justify-center',
+                'hover:border-[#5856D6] disabled:opacity-50'
+              )}
             >
-              <Icon name="plus" size="size-4" />
-            </Button>
+              <Icon name="plus" className="w-5 h-5 text-[#888888]" />
+            </button>
           </div>
 
           {context.keyFeatures.length > 0 && (
@@ -129,15 +152,16 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
                 <Badge
                   key={feature}
                   variant="secondary"
-                  className="pl-3 pr-1 py-1 gap-1"
+                  className="pl-3 pr-1.5 py-1.5 gap-1.5 text-sm bg-[#F8F8F8] text-black border-0"
                 >
                   {feature}
                   <button
                     type="button"
                     onClick={() => handleRemoveFeature(feature)}
-                    className="ml-1 rounded-full p-0.5 hover:bg-background/50"
+                    className="rounded-full p-0.5 hover:bg-[#E8E8E8] transition-colors"
+                    aria-label={`Remove ${feature}`}
                   >
-                    <Icon name="cross-small" size="size-3" />
+                    <Icon name="cross-small" className="w-3 h-3" />
                   </button>
                 </Badge>
               ))}

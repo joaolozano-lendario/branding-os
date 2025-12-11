@@ -2,6 +2,7 @@
  * Asset Library Page
  * BRAND-017: Route placeholder for asset library
  * Shows uploaded brand examples and generated assets
+ * FIGMA SPECS: #5856D6 primary, #F8F8F8 inactive, #E8E8E8 border
  */
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,24 +18,28 @@ export function AssetLibrary() {
   const { addExample, removeExample } = useBrandStore()
 
   return (
-    <div className="p-8">
+    // Figma: bg #FFFFFF
+    <div className="p-8 bg-background min-h-screen">
       <div className="mx-auto max-w-6xl space-y-8">
         <div>
-          <h1 className="font-sans text-3xl font-bold tracking-tight">
+          {/* Figma: Inter SemiBold 32px */}
+          <h1 className="text-[32px] font-semibold text-foreground">
             {t.brand.examples.title}
           </h1>
-          <p className="font-serif text-muted-foreground mt-2">
+          {/* Figma: Inter Medium 16px, #888888 */}
+          <p className="text-base font-medium text-muted-foreground mt-2">
             {t.brand.examples.subtitle}
           </p>
         </div>
 
-        <Card>
+        {/* Figma: Card with border #E8E8E8, radius 8px */}
+        <Card className="border-border">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Icon name="upload" size="size-5" />
+            <CardTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
+              <Icon name="upload" className="w-[18px] h-[18px] text-brand-indigo" />
               {t.brand.examples.uploadExamples}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs font-medium text-muted-foreground">
               {t.brand.examples.dragDropFiles}
             </CardDescription>
           </CardHeader>

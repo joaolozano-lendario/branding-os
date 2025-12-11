@@ -188,37 +188,37 @@ export function GenerateWizard() {
   const hasError = pipeline.status === 'error'
 
   return (
-    <div className="p-8">
-      <div className="mx-auto max-w-5xl space-y-8">
+    <div className="p-4 sm:p-6 md:p-8">
+      <div className="mx-auto max-w-5xl space-y-4 sm:space-y-6 md:space-y-8">
         <div className="text-center">
-          <h1 className="font-sans text-3xl font-bold tracking-tight">{t.wizard.title}</h1>
+          <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight">{t.wizard.title}</h1>
         </div>
 
-        <div className="px-4">
+        <div className="px-0 sm:px-4">
           <WizardStepIndicator currentStep={currentStep} completedSteps={completedSteps} onStepClick={handleStepClick} />
         </div>
 
         <Card>
-          <CardContent className="p-8">{renderStepContent()}</CardContent>
+          <CardContent className="p-4 sm:p-6 md:p-8">{renderStepContent()}</CardContent>
         </Card>
 
         {!isLastStep && (
-          <div className="flex items-center justify-between">
-            <Button variant="outline" onClick={handleBack} disabled={isFirstStep || isGenerating}>
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-4 sm:gap-0">
+            <Button variant="outline" onClick={handleBack} disabled={isFirstStep || isGenerating} className="w-full sm:w-auto">
               <Icon name="arrow-left" size="size-4" className="mr-2" />
               {t.common.back}
             </Button>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
               {hasError && (
-                <Button variant="outline" onClick={handleNext}>
+                <Button variant="outline" onClick={handleNext} className="w-full sm:w-auto">
                   <Icon name="refresh" size="size-4" className="mr-2" />
                   {t.common.regenerate}
                 </Button>
               )}
 
               {!isGenerating && !hasError && currentStep !== 'generation' && (
-                <Button onClick={handleNext}>
+                <Button onClick={handleNext} className="w-full sm:w-auto">
                   {currentStep === 'content' ? (
                     <>
                       <Icon name="magic-wand" size="size-4" className="mr-2" />
@@ -234,7 +234,7 @@ export function GenerateWizard() {
               )}
 
               {isGenerating && (
-                <Button variant="destructive" onClick={handleBack}>
+                <Button variant="destructive" onClick={handleBack} className="w-full sm:w-auto">
                   <Icon name="cross" size="size-4" className="mr-2" />
                   {t.agents.pipeline.stopGeneration}
                 </Button>

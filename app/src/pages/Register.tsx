@@ -2,17 +2,13 @@
  * Register Page
  * BRAND-019: Register Flow
  * BRAND-029/030: Enhanced with proper components and error handling
+ * FIGMA SPECS: #5856D6 primary, #F8F8F8 inactive, #E8E8E8 border
  */
 
 import * as React from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Icon } from "@/components/ui/icon"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useTranslation } from "@/store/i18nStore"
 import { useAuthStore } from "@/store/authStore"
 
@@ -61,106 +57,131 @@ export function RegisterPage() {
   const displayError = localError || storeError
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Icon name="building" size="size-6" />
+    // Figma: bg #FFFFFF
+    <div className="flex min-h-screen items-center justify-center px-6 py-12 bg-background">
+      {/* Figma: Card with border #E8E8E8, radius 8px */}
+      <div className="w-full max-w-md rounded-lg border border-border bg-background p-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          {/* Figma: 42x42 icon container, radius full */}
+          <div className="mx-auto mb-4 flex h-[42px] w-[42px] items-center justify-center rounded-full bg-brand-indigo">
+            <Icon name="building" className="w-[18px] h-[18px] text-white" />
           </div>
-          <CardTitle className="text-2xl">{t.auth.register}</CardTitle>
-          <CardDescription>
+          {/* Figma: Inter SemiBold 32px */}
+          <h1 className="text-[32px] font-semibold text-foreground">{t.auth.register}</h1>
+          {/* Figma: Inter Medium 16px, #888888 */}
+          <p className="text-base font-medium text-muted-foreground mt-2">
             {t.auth.createAccount}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {displayError && (
-              <Alert variant="destructive">
-                <AlertDescription>{displayError}</AlertDescription>
-              </Alert>
-            )}
+          </p>
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="name">{t.auth.name}</Label>
-              <Input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                disabled={isLoading}
-                aria-invalid={!!displayError}
-              />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Error Alert */}
+          {displayError && (
+            <div className="flex items-center gap-2 p-4 rounded-lg bg-red-50 border border-red-200">
+              <Icon name="warning" className="w-[18px] h-[18px] text-red-500" />
+              <p className="text-sm font-medium text-red-600">{displayError}</p>
             </div>
+          )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">{t.auth.email}</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                disabled={isLoading}
-                aria-invalid={!!displayError}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">{t.auth.password}</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="********"
-                disabled={isLoading}
-                aria-invalid={!!displayError}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t.auth.confirmPassword}</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="********"
-                disabled={isLoading}
-                aria-invalid={!!displayError}
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
+          {/* Name Input - Figma: h-[62px], border #E8E8E8, radius 8px */}
+          <div className="space-y-2">
+            <label htmlFor="name" className="text-xs font-semibold text-foreground">
+              {t.auth.name}
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
               disabled={isLoading}
-              aria-label={isLoading ? t.common.loading : t.auth.register}
-            >
-              {isLoading ? (
-                <>
-                  <Spinner size="sm" variant="white" className="mr-2" />
-                  {t.common.loading}
-                </>
-              ) : (
-                t.auth.register
-              )}
-            </Button>
+              aria-invalid={!!displayError}
+              className="w-full h-[62px] px-4 rounded-lg border border-border bg-background text-base font-medium text-foreground placeholder:text-[#C8C8C8] focus:outline-none focus:border-[#5856D6] disabled:opacity-50"
+            />
+          </div>
 
-            <p className="text-center text-sm text-muted-foreground">
-              {t.auth.hasAccount}{" "}
-              <Link
-                to="/login"
-                className="text-primary hover:underline"
-                tabIndex={isLoading ? -1 : 0}
-              >
-                {t.auth.login}
-              </Link>
-            </p>
-          </form>
-        </CardContent>
-      </Card>
+          {/* Email Input */}
+          <div className="space-y-2">
+            <label htmlFor="email" className="text-xs font-semibold text-foreground">
+              {t.auth.email}
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              disabled={isLoading}
+              aria-invalid={!!displayError}
+              className="w-full h-[62px] px-4 rounded-lg border border-border bg-background text-base font-medium text-foreground placeholder:text-[#C8C8C8] focus:outline-none focus:border-[#5856D6] disabled:opacity-50"
+            />
+          </div>
+
+          {/* Password Input */}
+          <div className="space-y-2">
+            <label htmlFor="password" className="text-xs font-semibold text-foreground">
+              {t.auth.password}
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="********"
+              disabled={isLoading}
+              aria-invalid={!!displayError}
+              className="w-full h-[62px] px-4 rounded-lg border border-border bg-background text-base font-medium text-foreground placeholder:text-[#C8C8C8] focus:outline-none focus:border-[#5856D6] disabled:opacity-50"
+            />
+          </div>
+
+          {/* Confirm Password Input */}
+          <div className="space-y-2">
+            <label htmlFor="confirmPassword" className="text-xs font-semibold text-foreground">
+              {t.auth.confirmPassword}
+            </label>
+            <input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="********"
+              disabled={isLoading}
+              aria-invalid={!!displayError}
+              className="w-full h-[62px] px-4 rounded-lg border border-border bg-background text-base font-medium text-foreground placeholder:text-[#C8C8C8] focus:outline-none focus:border-[#5856D6] disabled:opacity-50"
+            />
+          </div>
+
+          {/* Submit Button - Figma: h-[41px], radius full, bg #5856D6 */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            aria-label={isLoading ? t.common.loading : t.auth.register}
+            className="w-full h-[41px] rounded-full bg-brand-indigo text-sm font-semibold text-white hover:bg-brand-indigo/90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <Spinner size="sm" variant="white" />
+                {t.common.loading}
+              </>
+            ) : (
+              t.auth.register
+            )}
+          </button>
+
+          {/* Login Link - Figma: Inter Medium 12px, #888888 */}
+          <p className="text-center text-xs font-medium text-muted-foreground">
+            {t.auth.hasAccount}{" "}
+            <Link
+              to="/login"
+              className="text-brand-indigo hover:underline font-semibold"
+              tabIndex={isLoading ? -1 : 0}
+            >
+              {t.auth.login}
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   )
 }

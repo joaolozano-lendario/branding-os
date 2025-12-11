@@ -83,4 +83,30 @@ const SkeletonTable = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
 )
 SkeletonTable.displayName = "SkeletonTable"
 
-export { Skeleton, SkeletonCard, SkeletonTable }
+// Gallery card skeleton for asset/example galleries
+const SkeletonGalleryCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn("rounded-xl border border-border overflow-hidden", className)}
+        {...props}
+      >
+        {/* Image placeholder */}
+        <Skeleton className="aspect-video w-full" />
+        {/* Content */}
+        <div className="p-4 space-y-2">
+          <Skeleton className="h-4 w-3/4" variant="text" />
+          <Skeleton className="h-4 w-1/2" variant="text" />
+          <div className="flex items-center justify-between pt-2">
+            <Skeleton className="h-4 w-16" variant="text" />
+            <Skeleton className="h-4 w-12" variant="text" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+)
+SkeletonGalleryCard.displayName = "SkeletonGalleryCard"
+
+export { Skeleton, SkeletonCard, SkeletonTable, SkeletonGalleryCard }

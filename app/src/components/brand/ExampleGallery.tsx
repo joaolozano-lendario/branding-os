@@ -123,7 +123,7 @@ export function ExampleGallery({
             key={type.value}
             onClick={() => setFilter(type.value)}
             className={cn(
-              "flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors",
+              "flex items-center gap-2 rounded-lg border px-4 py-2 text-sm transition-colors",
               filter === type.value
                 ? "border-primary bg-primary/10 text-foreground"
                 : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
