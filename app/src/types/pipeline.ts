@@ -357,6 +357,9 @@ export interface PipelineResult {
     qualityScore: number
     mainCTA: string
   }
+
+  // Imagens inseridas pelo usuário (por slide index)
+  slideImages?: Record<number, string>
 }
 
 // ============================================

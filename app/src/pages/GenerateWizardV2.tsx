@@ -279,20 +279,10 @@ export function GenerateWizardV2() {
     [result, addToast]
   )
 
-  const handleSaveToLibrary = React.useCallback(() => {
-    console.log('Save to library', result)
-    addToast('info', 'Save to library coming soon')
-  }, [result, addToast])
-
-  const handleGenerateVariations = React.useCallback(() => {
-    console.log('Generate variations')
-    addToast('info', 'Generate variations coming soon')
-  }, [addToast])
-
-  const handleCreateNew = React.useCallback(() => {
-    reset()
-    resetPipeline()
-  }, [reset, resetPipeline])
+  // Reserved for future features
+  void result // Used in handleExport
+  void reset // Will be used for "Create New" feature
+  void resetPipeline // Will be used for "Create New" feature
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -336,10 +326,8 @@ export function GenerateWizardV2() {
         return (
           <PreviewExportStepV2
             pipelineResult={result}
-            onExport={handleExport}
-            onSaveToLibrary={handleSaveToLibrary}
-            onGenerateVariations={handleGenerateVariations}
-            onCreateNew={handleCreateNew}
+            onNext={() => handleExport('html')}
+            onBack={handleBack}
           />
         )
       default:

@@ -1,0 +1,8 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="diagonal-stripes" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="40" stroke="#1a1a1a" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1080" height="1350" fill="url(#diagonal-stripes)" opacity="0.5"/>
+</svg>

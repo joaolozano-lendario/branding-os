@@ -56,6 +56,12 @@ interface PipelineV2State {
   completePipeline: (result: PipelineResult) => void
   failPipeline: (error: string) => void
   resetPipeline: () => void
+
+  // Slide Editing Actions
+  updateSlideHeadline: (slideIndex: number, headline: string) => void
+  updateSlideBody: (slideIndex: number, body: string) => void
+  updateSlideBullets: (slideIndex: number, bullets: string[]) => void
+  updateSlideImage: (slideIndex: number, imageSrc: string) => void
 }
 
 // ============================================
@@ -88,6 +94,10 @@ export const usePipelineV2Store = create<PipelineV2State>()((set) => ({
 
   // API Configuration (GEMINI)
   setApiKey: (apiKey: string) => {
+    // Clear any cached client
+    import('@/services/gemini').then(m => m.clearGeminiClient())
+
+    console.log('[PipelineV2Store] Setting API key:', apiKey.slice(0, 10) + '...')
     set({
       apiConfig: {
         apiKey,
@@ -199,6 +209,99 @@ export const usePipelineV2Store = create<PipelineV2State>()((set) => ({
       },
       currentInput: null,
       result: null,
+    })
+  },
+
+  // Slide Editing Actions
+  updateSlideHeadline: (slideIndex: number, headline: string) => {
+    set((state) => {
+      if (!state.result?.copy?.slides) return state
+
+      const updatedSlides = [...state.result.copy.slides]
+      updatedSlides[slideIndex] = {
+        ...updatedSlides[slideIndex],
+        headline,
+        charCounts: {
+          ...updatedSlides[slideIndex].charCounts,
+          headline: headline.length,
+        },
+      }
+
+      return {
+        result: {
+          ...state.result,
+          copy: {
+            ...state.result.copy,
+            slides: updatedSlides,
+          },
+        },
+      }
+    })
+  },
+
+  updateSlideBody: (slideIndex: number, body: string) => {
+    set((state) => {
+      if (!state.result?.copy?.slides) return state
+
+      const updatedSlides = [...state.result.copy.slides]
+      updatedSlides[slideIndex] = {
+        ...updatedSlides[slideIndex],
+        body,
+        charCounts: {
+          ...updatedSlides[slideIndex].charCounts,
+          body: body.length,
+        },
+      }
+
+      return {
+        result: {
+          ...state.result,
+          copy: {
+            ...state.result.copy,
+            slides: updatedSlides,
+          },
+        },
+      }
+    })
+  },
+
+  updateSlideBullets: (slideIndex: number, bullets: string[]) => {
+    set((state) => {
+      if (!state.result?.copy?.slides) return state
+
+      const updatedSlides = [...state.result.copy.slides]
+      updatedSlides[slideIndex] = {
+        ...updatedSlides[slideIndex],
+        bullets,
+      }
+
+      return {
+        result: {
+          ...state.result,
+          copy: {
+            ...state.result.copy,
+            slides: updatedSlides,
+          },
+        },
+      }
+    })
+  },
+
+  updateSlideImage: (slideIndex: number, imageSrc: string) => {
+    set((state) => {
+      if (!state.result) return state
+
+      const slideImages = {
+        ...(state.result.slideImages || {}),
+        [slideIndex]: imageSrc,
+      }
+
+      return {
+        result: {
+          ...state.result,
+          slideImages,
+        },
+      }
     })
   },
 }))

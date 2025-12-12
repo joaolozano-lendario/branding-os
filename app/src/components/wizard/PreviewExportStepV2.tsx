@@ -1,331 +1,305 @@
 /**
  * Preview & Export Step V2
  * Branding OS - Academia Lendaria
- * E6: Pipeline V2 - Individual Slide Preview with Quality Report
+ *
+ * IDENTICAL to Figma: Interface-06-Gerar / Interface-06-Gerar-2
  */
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Icon } from '@/components/ui/icon'
-import { Progress } from '@/components/ui/progress'
-import { useTranslation } from '@/store/i18nStore'
-import type { PipelineResult } from '@/types/pipeline'
+import { usePipelineV2Store } from '@/store/pipelineV2Store'
+import { CarouselSlide } from '@/components/carousel/CarouselSlide'
+import { ImageInsertButton } from './ImageInsertButton'
+import type { PipelineResult, SlideCopy } from '@/types/pipeline'
 
 interface PreviewExportStepV2Props {
   pipelineResult: PipelineResult | null
-  onExport: (format: 'png' | 'pdf' | 'html') => void
-  onSaveToLibrary: () => void
-  onGenerateVariations: () => void
-  onCreateNew: () => void
+  onNext?: () => void
+  onBack?: () => void
 }
-
-// Canvas dimensions (fixed for Instagram carousel)
-const CANVAS_WIDTH = 1080
-const CANVAS_HEIGHT = 1080
-
 
 export function PreviewExportStepV2({
   pipelineResult,
-  onExport,
-  onSaveToLibrary,
-  onGenerateVariations,
-  onCreateNew,
+  onNext,
+  onBack,
 }: PreviewExportStepV2Props) {
-  const { t } = useTranslation()
   const [currentSlideIndex, setCurrentSlideIndex] = React.useState(0)
+  const [activeTab, setActiveTab] = React.useState<'description' | 'bullets'>('description')
 
-  if (!pipelineResult?.render) {
+  // Store actions for editing
+  const updateSlideHeadline = usePipelineV2Store((s) => s.updateSlideHeadline)
+  const updateSlideBody = usePipelineV2Store((s) => s.updateSlideBody)
+  const updateSlideBullets = usePipelineV2Store((s) => s.updateSlideBullets)
+
+  // Get slides data
+  const copySlides = pipelineResult?.copy?.slides || []
+  const slideImages = pipelineResult?.slideImages || {}
+  const totalSlides = copySlides.length
+
+  // Current slide data
+  const currentSlide: SlideCopy | undefined = copySlides[currentSlideIndex]
+  const currentImage = slideImages[currentSlideIndex]
+
+  // Navigation
+  const goToSlide = (index: number) => {
+    if (index >= 0 && index < totalSlides) {
+      setCurrentSlideIndex(index)
+    }
+  }
+
+  // Convert description to bullets
+  const convertToBullets = () => {
+    if (currentSlide?.body && !currentSlide?.bullets?.length) {
+      // Split body into sentences/lines
+      const lines = currentSlide.body
+        .split(/[.\n]/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0)
+      updateSlideBullets(currentSlideIndex, lines)
+    }
+    setActiveTab('bullets')
+  }
+
+  // Convert bullets to description
+  const convertToDescription = () => {
+    if (currentSlide?.bullets?.length && !currentSlide?.body) {
+      const text = currentSlide.bullets.join('. ')
+      updateSlideBody(currentSlideIndex, text)
+    }
+    setActiveTab('description')
+  }
+
+  // Empty state
+  if (!pipelineResult?.copy) {
     return (
-      <div className="text-center py-12">
-        <Icon name="picture" size="size-12" className="mx-auto text-muted-foreground mb-4" />
-        <p className="text-muted-foreground">No asset generated yet</p>
+      <div className="flex items-center justify-center h-[400px]">
+        <p className="text-[#888888]">Nenhum conteúdo gerado ainda</p>
       </div>
     )
   }
 
-  const { render, quality, summary } = pipelineResult
-  void pipelineResult.visual // Used for future features
-  const slides = render.slides
-  const currentSlide = slides[currentSlideIndex]
-
-  const _getCategoryColor = (score: number): string => {
-    if (score >= 80) return 'text-green-600 dark:text-green-400'
-    if (score >= 60) return 'text-yellow-600 dark:text-yellow-400'
-    return 'text-destructive'
-  }
-  void _getCategoryColor // Reserved for future category display
-
   return (
     <div className="space-y-8">
-      <div className="text-center">
-        <h2 className="font-sans text-2xl font-bold tracking-tight">
-          {t.wizard.steps.preview.title}
+      {/* Header - Figma: Frame 78 */}
+      <div>
+        <h2 className="text-[24px] font-semibold leading-[1.3] text-black">
+          Revise o conteúdo<br />e insira as imagens
         </h2>
-        <p className="mt-2 font-serif text-muted-foreground">
-          {summary.slideCount} slides generated using "{summary.template}" template
+        <p className="mt-2 text-[14px] text-[#888888]">
+          Você pode editar, inserir e mudar o que preferir.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Slide Preview */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Icon name="eye" size="size-5" />
-                  Slide {currentSlideIndex + 1} of {slides.length}
-                </CardTitle>
-                <Badge variant="secondary">slide</Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {/* Slide Navigation */}
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentSlideIndex((i) => Math.max(0, i - 1))}
-                  disabled={currentSlideIndex === 0}
-                >
-                  <Icon name="arrow-left" size="size-4" />
-                </Button>
-                <div className="flex gap-1">
-                  {slides.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentSlideIndex(index)}
-                      className={cn(
-                        'w-2 h-2 rounded-full transition-all',
-                        index === currentSlideIndex
-                          ? 'bg-primary w-4'
-                          : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
-                      )}
-                    />
-                  ))}
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentSlideIndex((i) => Math.min(slides.length - 1, i + 1))}
-                  disabled={currentSlideIndex === slides.length - 1}
-                >
-                  <Icon name="arrow-right" size="size-4" />
-                </Button>
-              </div>
+      {/* Main Content - Two Columns */}
+      <div className="flex gap-8">
+        {/* LEFT COLUMN - Editor */}
+        <div className="w-[385px] space-y-4 shrink-0">
+          {/* Tabs - Figma: Frame 85 */}
+          <div
+            className="inline-flex h-[36px] p-1 rounded-full gap-1"
+            style={{ backgroundColor: '#F8F8F8' }}
+          >
+            <button
+              onClick={convertToDescription}
+              className={cn(
+                'h-[28px] px-4 rounded-full text-[12px] font-semibold transition-all',
+                activeTab === 'description'
+                  ? 'bg-[#5856D6] text-white'
+                  : 'bg-[#EEEEEE] text-[#888888]'
+              )}
+            >
+              Descrição
+            </button>
+            <button
+              onClick={convertToBullets}
+              className={cn(
+                'h-[28px] px-4 rounded-full text-[12px] font-semibold transition-all',
+                activeTab === 'bullets'
+                  ? 'bg-[#5856D6] text-white'
+                  : 'bg-[#EEEEEE] text-[#888888]'
+              )}
+            >
+              Bullet Point
+            </button>
+          </div>
 
-              {/* Slide Preview */}
-              <div className="rounded-lg border bg-background overflow-hidden">
-                <div
-                  className="w-full flex items-center justify-center p-4"
-                  style={{ minHeight: '500px', background: '#0a0a0a' }}
-                >
-                  <div
-                    dangerouslySetInnerHTML={{ __html: currentSlide.html }}
-                    style={{
-                      width: CANVAS_WIDTH,
-                      height: CANVAS_HEIGHT,
-                      maxWidth: '100%',
-                      transform: 'scale(0.45)',
-                      transformOrigin: 'center',
-                    }}
-                  />
-                </div>
-              </div>
+          {/* Title Field - Figma: Frame 82 */}
+          <div className="space-y-2">
+            <label className="text-[12px] font-semibold text-black">
+              Título
+            </label>
+            <input
+              type="text"
+              value={currentSlide?.headline || ''}
+              onChange={(e) => updateSlideHeadline(currentSlideIndex, e.target.value)}
+              placeholder="Digite o título do slide"
+              className="w-full h-[62px] px-4 rounded-[16px] border border-[#E8E8E8] bg-white text-[14px] text-black placeholder:text-[#888888] focus:outline-none focus:border-[#5856D6]"
+            />
+          </div>
 
-              {/* Slide Thumbnails */}
-              <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-                {slides.map((_slide, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlideIndex(index)}
-                    className={cn(
-                      'shrink-0 w-16 h-16 rounded-lg border-2 overflow-hidden transition-all',
-                      index === currentSlideIndex
-                        ? 'border-primary ring-2 ring-primary/20'
-                        : 'border-border hover:border-primary/50'
-                    )}
-                  >
-                    <div
-                      className="w-full h-full flex items-center justify-center text-xs bg-muted"
-                      style={{ fontSize: '10px' }}
-                    >
-                      {index + 1}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quality Report & Actions */}
-        <div className="space-y-6">
-          {/* Quality Score */}
-          {quality && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    <Icon name="shield-check" size="size-5" />
-                    Quality Report
-                  </span>
-                  <Badge variant={quality.passed ? 'default' : 'destructive'}>
-                    {quality.passed ? 'Passed' : 'Needs Review'}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Overall Score */}
-                <div className="text-center">
-                  <div
-                    className={cn(
-                      'text-4xl font-bold',
-                      quality.score >= 80
-                        ? 'text-green-600 dark:text-green-400'
-                        : quality.score >= 60
-                        ? 'text-yellow-600 dark:text-yellow-400'
-                        : 'text-destructive'
-                    )}
-                  >
-                    {quality.score}%
-                  </div>
-                  <p className="text-sm text-muted-foreground">Overall Score</p>
-                </div>
-
-                {/* Category Breakdown */}
-                <div className="space-y-3">
-                  {quality.checks.map((check) => (
-                    <div key={check.rule} className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="flex items-center gap-2">
-                          <Icon
-                            name={check.passed ? 'check-circle' : 'cross-circle'}
-                            size="size-4"
-                            className={check.passed ? 'text-green-500' : 'text-destructive'}
-                          />
-                          {check.rule}
-                        </span>
-                        <span className={cn('font-medium', check.passed ? 'text-green-600' : 'text-destructive')}>
-                          {check.passed ? 100 : 0}%
-                        </span>
-                      </div>
-                      <Progress value={check.passed ? 100 : 0} className="h-1.5" />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Issues */}
-                {quality.checks.filter(c => !c.passed).length > 0 && (
-                  <div className="pt-3 border-t">
-                    <p className="text-sm font-medium mb-2">Issues Found:</p>
-                    <div className="space-y-2">
-                      {quality.checks.filter(c => !c.passed).slice(0, 3).map((issue, i) => (
-                        <div key={i} className="flex items-start gap-2 text-sm">
-                          <Badge
-                            variant={
-                              issue.severity === 'critical'
-                                ? 'destructive'
-                                : issue.severity === 'warning'
-                                ? 'default'
-                                : 'secondary'
-                            }
-                            className="shrink-0 text-xs"
-                          >
-                            {issue.severity}
-                          </Badge>
-                          <span className="text-muted-foreground">{issue.details}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+          {/* Content - Description Mode */}
+          {activeTab === 'description' && (
+            <div className="space-y-2">
+              <textarea
+                value={currentSlide?.body || ''}
+                onChange={(e) => updateSlideBody(currentSlideIndex, e.target.value)}
+                placeholder="Digite a descrição do slide"
+                className="w-full h-[144px] px-4 py-4 rounded-[16px] border border-[#E8E8E8] bg-white text-[14px] text-black placeholder:text-[#888888] resize-none focus:outline-none focus:border-[#5856D6]"
+              />
+            </div>
           )}
 
-          {/* Export Options */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Icon name="download" size="size-5" />
-                {t.wizard.steps.preview.exportOptions}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="outline" className="w-full justify-start" onClick={() => onExport('html')}>
-                <Icon name="code" size="size-4" className="mr-2" />
-                Export as HTML
-              </Button>
-              <Button variant="outline" className="w-full justify-start" onClick={() => onExport('png')} disabled>
-                <Icon name="picture" size="size-4" className="mr-2" />
-                Export as PNG (coming soon)
-              </Button>
-              <Button variant="outline" className="w-full justify-start" onClick={() => onExport('pdf')} disabled>
-                <Icon name="document" size="size-4" className="mr-2" />
-                Export as PDF (coming soon)
-              </Button>
-            </CardContent>
-          </Card>
+          {/* Content - Bullets Mode - Figma: Frame 83, Frame 170 (campos separados) */}
+          {activeTab === 'bullets' && (
+            <div className="space-y-3">
+              {(currentSlide?.bullets || []).map((bullet, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={bullet}
+                    onChange={(e) => {
+                      const newBullets = [...(currentSlide?.bullets || [])]
+                      newBullets[index] = e.target.value
+                      updateSlideBullets(currentSlideIndex, newBullets)
+                    }}
+                    placeholder={`Bullet ${index + 1}`}
+                    className="flex-1 h-[48px] px-4 rounded-[16px] border border-[#E8E8E8] bg-white text-[14px] text-black placeholder:text-[#888888] focus:outline-none focus:border-[#5856D6]"
+                  />
+                  <button
+                    onClick={() => {
+                      const newBullets = (currentSlide?.bullets || []).filter((_, i) => i !== index)
+                      updateSlideBullets(currentSlideIndex, newBullets)
+                    }}
+                    className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-red-500 transition-colors"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                  </button>
+                </div>
+              ))}
 
-          {/* Actions */}
-          <div className="space-y-3">
-            <Button className="w-full" onClick={onSaveToLibrary}>
-              <Icon name="folder-add" size="size-4" className="mr-2" />
-              {t.wizard.steps.preview.saveToLibrary}
-            </Button>
+              {/* Add Bullet Button - Figma: Frame 171 */}
+              <button
+                onClick={() => {
+                  const newBullets = [...(currentSlide?.bullets || []), '']
+                  updateSlideBullets(currentSlideIndex, newBullets)
+                }}
+                className="w-[36px] h-[36px] rounded-full flex items-center justify-center transition-colors"
+                style={{ backgroundColor: '#5856D6' }}
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M6 1V11M1 6H11" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+          )}
 
-            <Button variant="outline" className="w-full" onClick={onGenerateVariations}>
-              <Icon name="magic-wand" size="size-4" className="mr-2" />
-              {t.wizard.steps.preview.generateVariations}
-            </Button>
+          {/* Insert Image - Figma: Frame 169 */}
+          <div className="pt-4">
+            <ImageInsertButton
+              slideIndex={currentSlideIndex}
+              slideTitle={currentSlide?.headline || `Slide ${currentSlideIndex + 1}`}
+              currentImage={currentImage}
+            />
+          </div>
+        </div>
 
-            <Button variant="ghost" className="w-full" onClick={onCreateNew}>
-              <Icon name="plus" size="size-4" className="mr-2" />
-              {t.wizard.steps.preview.createNew}
-            </Button>
+        {/* RIGHT COLUMN - Preview (Figma: Frame 167) */}
+        <div
+          className="flex-1 rounded-[8px] p-8 flex items-center justify-center"
+          style={{ backgroundColor: '#F8F8F8', minHeight: '460px' }}
+        >
+          {/* Preview Container - Figma: Frame 168 */}
+          <div
+            className="rounded-[8px] overflow-hidden"
+            style={{
+              width: '256px',
+              height: '320px',
+              backgroundColor: '#000000'
+            }}
+          >
+            <div
+              style={{
+                transform: 'scale(0.237)',
+                transformOrigin: 'top left',
+                width: '1080px',
+                height: '1350px',
+              }}
+            >
+              <CarouselSlide
+                pageNumber={currentSlideIndex + 1}
+                totalPages={totalSlides}
+                title={currentSlide?.headline || `Slide ${currentSlideIndex + 1}`}
+                content={
+                  activeTab === 'bullets' && currentSlide?.bullets?.length
+                    ? { type: 'bullets', data: currentSlide.bullets }
+                    : currentSlide?.body
+                    ? { type: 'text', data: currentSlide.body }
+                    : undefined
+                }
+                imageSrc={currentImage}
+                variant={currentSlideIndex === 0 ? 'capa' : 'corpo'}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* All Slides Grid */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Slides</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {slides.map((slide, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlideIndex(index)}
-                className={cn(
-                  'aspect-square rounded-lg border-2 overflow-hidden transition-all hover:shadow-lg',
-                  index === currentSlideIndex
-                    ? 'border-primary ring-2 ring-primary/20'
-                    : 'border-border hover:border-primary/50'
-                )}
-              >
-                <div
-                  className="w-full h-full bg-[#0a0a0a] p-2 flex items-center justify-center"
-                  style={{ fontSize: '6px' }}
-                >
-                  <div
-                    dangerouslySetInnerHTML={{ __html: slide.html }}
-                    style={{
-                      transform: 'scale(0.15)',
-                      transformOrigin: 'center',
-                    }}
-                  />
-                </div>
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Footer Navigation - Figma: Frame 166 */}
+      <div className="flex items-center justify-between">
+        {/* Back Button */}
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1 h-[41px] pl-[18px] pr-[24px] rounded-full"
+          style={{ backgroundColor: '#F8F8F8' }}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M9 11L5 7L9 3" stroke="#C8C8C8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="text-[14px] font-semibold" style={{ color: '#C8C8C8' }}>
+            Voltar
+          </span>
+        </button>
+
+        {/* Slide Pagination - Figma: Frame 159 */}
+        <div className="flex items-center gap-4">
+          {copySlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className="transition-all hover:scale-110"
+            >
+              {index === currentSlideIndex ? (
+                <span className="text-[12px] font-semibold" style={{ color: '#5856D6' }}>
+                  {index + 1}
+                </span>
+              ) : (
+                <span
+                  className="block w-[4px] h-[4px] rounded-full"
+                  style={{ backgroundColor: '#D8D8D8' }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Next Button */}
+        <button
+          onClick={onNext}
+          className="flex items-center gap-1 h-[41px] pl-[24px] pr-[18px] rounded-full"
+          style={{ backgroundColor: '#5856D6' }}
+        >
+          <span className="text-[14px] font-semibold text-white">
+            Próximo
+          </span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M5 3L9 7L5 11" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      </div>
     </div>
   )
 }
+
+export default PreviewExportStepV2
