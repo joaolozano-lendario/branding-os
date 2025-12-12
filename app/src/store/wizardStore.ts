@@ -82,8 +82,8 @@ const initialProductContext: ProductContext = {
 }
 
 const initialGoal: GenerationGoal = {
-  type: 'awareness',
-  angle: 'benefit-focused',
+  type: undefined as any,
+  angle: undefined as any,
   instructions: '',
 }
 

@@ -6,7 +6,6 @@
 
 import * as React from 'react'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Icon } from '@/components/ui/icon'
 import { cn } from '@/lib/utils'
 import { useTranslation } from '@/store/i18nStore'
@@ -82,48 +81,49 @@ export function ContentInputStep({ content, onChange, errors }: ContentInputStep
   }
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="font-sans text-2xl font-bold tracking-tight">
+    <div className="space-y-8">
+      {/* Header with split layout */}
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <h2 className="font-sans text-[40px] font-semibold leading-tight text-black">
           {t.wizard.steps.content.title}
         </h2>
-        <p className="mt-2 font-serif text-muted-foreground">
+        <p className="text-base font-medium text-[#888888] md:max-w-[278px]">
           {t.wizard.steps.content.subtitle}
         </p>
       </div>
 
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="space-y-6">
         {/* Text Content */}
         <div className="space-y-2">
-          <Label htmlFor="content" className="text-base font-semibold">
+          <Label htmlFor="content" className="text-xs font-semibold text-black">
             {t.wizard.steps.content.inputContent}
             <span className="text-destructive ml-1">*</span>
           </Label>
-          <Textarea
+          <textarea
             id="content"
             value={content.text}
             onChange={(e) => onChange({ text: e.target.value })}
-            placeholder="Paste your content, key points, or raw material here..."
+            placeholder="Cole seu conteúdo, pontos-chave ou material aqui..."
             rows={8}
-            className="resize-none"
+            className="w-full px-6 py-4 rounded-lg border border-[#E8E8E8] bg-[#f8f8f8] resize-none transition-all duration-[800ms] text-base font-medium placeholder:text-[#888888] focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
           />
-          <p className="text-xs text-muted-foreground text-right">
-            {content.text.length} characters
+          <p className="text-xs text-[#888888] text-right">
+            {content.text.length} caracteres
           </p>
         </div>
 
         {/* File Upload */}
         <div className="space-y-2">
-          <Label className="text-base font-semibold">
+          <Label className="text-xs font-semibold text-black">
             {t.wizard.steps.content.uploadFiles}
           </Label>
 
           <div
             className={cn(
-              'relative rounded-xl border-2 border-dashed p-8 transition-colors',
+              'relative rounded-lg border-2 border-dashed p-12 transition-all duration-[800ms]',
               isDragging
-                ? 'border-primary bg-primary/5'
-                : 'border-border hover:border-primary/50'
+                ? 'border-[#5856D6] bg-[#5856D6]/5'
+                : 'border-[#E8E8E8] hover:!border-[#5856D6] focus-within:!border-[#5856D6]'
             )}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -139,8 +139,8 @@ export function ContentInputStep({ content, onChange, errors }: ContentInputStep
             />
 
             <div className="flex flex-col items-center gap-3 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Icon name="cloud-upload" size="size-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#5856D6]/16">
+                <Icon name="cloud-upload" className="flex items-center justify-center text-[24px] w-6 h-6 text-[#5856D6] leading-none" />
               </div>
               <div>
                 <p className="font-medium">{t.brand.examples.dragDropFiles}</p>

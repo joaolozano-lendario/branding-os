@@ -255,6 +255,8 @@ export interface TranslationKeys {
       goal: {
         title: string
         subtitle: string
+        goalLabel: string
+        angleLabel: string
         awareness: string
         consideration: string
         conversion: string

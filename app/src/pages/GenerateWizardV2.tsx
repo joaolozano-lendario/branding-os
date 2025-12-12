@@ -30,6 +30,42 @@ import {
   PreviewExportStepV2,
 } from '@/components/wizard'
 
+// Add button pulse animations
+const buttonAnimations = `
+  @keyframes borderPulse {
+    0% {
+      box-shadow: inset 0px 0px 0px 5px rgba(88, 86, 214, 0.1), 0px 0px 0px 0px rgba(88, 86, 214, 0.8);
+    }
+    100% {
+      box-shadow: inset 0px 0px 0px 3px rgba(88, 86, 214, 0.1), 0px 0px 0px 10px rgba(88, 86, 214, 0);
+    }
+  }
+  
+  @keyframes hoverShine {
+    0% {
+      background-image: linear-gradient(135deg, rgba(88, 86, 214, 0.8) 0%, rgba(88, 86, 214, 0) 50%, rgba(88, 86, 214, 0) 100%);
+    }
+    50% {
+      background-image: linear-gradient(135deg, rgba(88, 86, 214, 0) 0%, rgba(88, 86, 214, 0.8) 50%, rgba(88, 86, 214, 0) 100%);
+    }
+    100% {
+      background-image: linear-gradient(135deg, rgba(88, 86, 214, 0) 0%, rgba(88, 86, 214, 0) 50%, rgba(88, 86, 214, 0.8) 100%);
+    }
+  }
+`
+
+// Inject animations
+if (typeof document !== 'undefined') {
+  const styleElement = document.getElementById('button-pulse-animations')
+  if (!styleElement) {
+    const style = document.createElement('style')
+    style.id = 'button-pulse-animations'
+    style.textContent = buttonAnimations
+    document.head.appendChild(style)
+  }
+}
+
+
 // Map PipelineAgentId to AgentIdV2 for the store
 function mapAgentId(pipelineAgentId: PipelineAgentId): AgentIdV2 {
   switch (pipelineAgentId) {
@@ -331,76 +367,83 @@ export function GenerateWizardV2() {
         />
 
         {/* Content Area - no card wrapper in Figma */}
-        <div className="py-4">{renderStepContent()}</div>
+        <div className="py-4 pb-32">{renderStepContent()}</div>
 
         {/* Figma: Navigation - Voltar left, dots center, Próximo right */}
         {!isLastStep && (
-          <div className="flex items-center justify-between">
-            {/* Figma: Voltar button - 105x41, bg #F8F8F8, border #E8E8E8, radius 200px */}
-            <button
-              onClick={handleBack}
-              disabled={isFirstStep || isGenerating}
-              className="flex items-center gap-2 h-[41px] px-[18px] rounded-full bg-secondary border border-border disabled:opacity-50"
-            >
-              <Icon name="angle-left" className="w-[14px] h-[14px] text-muted-foreground/50" />
-              {/* Figma: Inter SemiBold 14px, #C8C8C8 */}
-              <span className="text-sm font-semibold text-muted-foreground/50">Voltar</span>
-            </button>
-
-            {/* Figma: Pagination dots - gap 16px, current = #5856D6, others = dots */}
-            <div className="flex items-center gap-4">
-              {WIZARD_STEPS.map((step, index) => (
-                <span
-                  key={step}
-                  className={
-                    index === currentStepIndex
-                      ? 'text-[10px] font-semibold text-brand-indigo'
-                      : 'w-1.5 h-1.5 rounded-full bg-border'
-                  }
-                >
-                  {index === currentStepIndex ? index + 1 : ''}
-                </span>
-              ))}
-            </div>
-
-            {/* Figma: Próximo button - 122x41, bg #5856D6, radius 200px */}
-            <div className="flex items-center gap-3">
-              {hasError && (
-                <button
-                  onClick={handleNext}
-                  className="flex items-center gap-2 h-[41px] px-[18px] rounded-full bg-secondary border border-border"
-                >
-                  <Icon name="refresh" className="w-[14px] h-[14px] text-muted-foreground" />
-                  <span className="text-sm font-semibold text-muted-foreground">Tentar novamente</span>
-                </button>
-              )}
-
-              {!isGenerating && !hasError && currentStep !== 'generation' && (
-                <button
-                  onClick={handleNext}
-                  className="flex items-center gap-2 h-[41px] px-[18px] rounded-full bg-brand-indigo"
-                >
-                  {/* Figma: Inter SemiBold 14px, white */}
-                  <span className="text-sm font-semibold text-white">
-                    {currentStep === 'content' ? 'Gerar' : 'Próximo'}
-                  </span>
-                  <Icon name="angle-right" className="w-[14px] h-[14px] text-white" />
-                </button>
-              )}
-
-              {isGenerating && (
+          <div className="sticky bottom-0 z-10 -mx-6 md:-mx-10 bg-gradient-to-t from-white via-white to-transparent pt-12 pb-6">
+            <div className="px-6 md:px-10">
+              <div className="flex items-center justify-between">
+                {/* Figma: Voltar button - 105x41, bg #F8F8F8, border #E8E8E8, radius 200px */}
                 <button
                   onClick={handleBack}
-                  className="flex items-center gap-2 h-[41px] px-[18px] rounded-full bg-red-500"
+                  disabled={isFirstStep || isGenerating}
+                  className="flex items-center gap-[2px] h-[41px] pl-[18px] pr-[24px] rounded-full bg-secondary border border-border disabled:opacity-50"
                 >
-                  <Icon name="cross" className="w-[14px] h-[14px] text-white" />
-                  <span className="text-sm font-semibold text-white">Cancelar</span>
+                  <Icon name="angle-small-left" className="w-[14px] h-[14px] inline-flex text-muted-foreground/50" />
+                  {/* Figma: Inter SemiBold 14px, #C8C8C8 */}
+                  <span className="text-sm font-semibold text-muted-foreground/50">Voltar</span>
                 </button>
-              )}
+
+                {/* Figma: Pagination dots - gap 16px, current = number 12px, others = 4px circles */}
+                <div className="flex items-center gap-4">
+                  {WIZARD_STEPS.map((step, index) => (
+                    <span
+                      key={step}
+                      className={
+                        index === currentStepIndex
+                          ? 'text-xs font-semibold text-brand-indigo'
+                          : 'w-1 h-1 rounded-full bg-[#E8E8E8]'
+                      }
+                    >
+                      {index === currentStepIndex ? index + 1 : ''}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Figma: Próximo button - 122x41, bg #5856D6, radius 200px */}
+                <div className="flex items-center gap-3">
+                  {hasError && (
+                    <button
+                      onClick={handleNext}
+                      className="flex items-center gap-2 h-[41px] px-[18px] rounded-full bg-secondary border border-border"
+                    >
+                      <Icon name="refresh" className="w-[14px] h-[14px] text-muted-foreground" />
+                      <span className="text-sm font-semibold text-muted-foreground">Tentar novamente</span>
+                    </button>
+                  )}
+
+                  {!isGenerating && !hasError && currentStep !== 'generation' && (
+                    <button
+                      onClick={handleNext}
+                      style={assetType ? {
+                        animation: 'borderPulse 1500ms infinite ease-out'
+                      } : undefined}
+                      className="flex items-center gap-[2px] h-[41px] pl-[24px] pr-[18px] rounded-full bg-brand-indigo"
+                    >
+                      {/* Figma: Inter SemiBold 14px, white */}
+                      <span className="text-sm font-semibold text-white">
+                        {currentStep === 'content' ? 'Gerar' : 'Próximo'}
+                      </span>
+                      <Icon name="angle-small-right" className="w-[14px] h-[14px] inline-flex text-white" />
+                    </button>
+                  )}
+
+                  {isGenerating && (
+                    <button
+                      onClick={handleBack}
+                      className="flex items-center gap-2 h-[41px] px-[18px] rounded-full bg-red-500"
+                    >
+                      <Icon name="cross" className="w-[14px] h-[14px] text-white" />
+                      <span className="text-sm font-semibold text-white">Cancelar</span>
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}
       </div>
-    </div>
+    </div >
   )
 }

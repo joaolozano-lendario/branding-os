@@ -246,6 +246,8 @@ export const en: Translation = {
       goal: {
         title: 'Goal & Angle',
         subtitle: 'Define your communication goals',
+        goalLabel: 'Goal',
+        angleLabel: 'Messaging Angle',
         awareness: 'Brand Awareness',
         consideration: 'Consideration',
         conversion: 'Conversion',

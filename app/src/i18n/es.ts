@@ -246,6 +246,8 @@ export const es: Translation = {
       goal: {
         title: 'Objetivo y Angulo',
         subtitle: 'Defina sus objetivos de comunicacion',
+        goalLabel: 'Objetivo',
+        angleLabel: 'Angulo del Mensaje',
         awareness: 'Reconocimiento de Marca',
         consideration: 'Consideracion',
         conversion: 'Conversion',
