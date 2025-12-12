@@ -290,8 +290,8 @@ export const ptBr: Translation = {
     },
     api: {
       title: 'Configuracao de API',
-      claudeApiKey: 'Chave API do Claude',
-      claudeApiKeyDesc: 'Digite sua chave API da Anthropic para geracao IA',
+      geminiApiKey: 'Chave API do Gemini',
+      geminiApiKeyDesc: 'Digite sua chave API do Google AI para geracao de conteudo',
       testConnection: 'Testar Conexao',
       connectionSuccess: 'Conexao bem-sucedida',
       connectionError: 'Conexao falhou',

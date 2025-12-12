@@ -290,8 +290,8 @@ export const en: Translation = {
     },
     api: {
       title: 'API Configuration',
-      claudeApiKey: 'Claude API Key',
-      claudeApiKeyDesc: 'Enter your Anthropic API key for AI generation',
+      geminiApiKey: 'Gemini API Key',
+      geminiApiKeyDesc: 'Enter your Google AI API key for content generation',
       testConnection: 'Test Connection',
       connectionSuccess: 'Connection successful',
       connectionError: 'Connection failed',

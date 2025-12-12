@@ -16,9 +16,7 @@ import type {
   CopyOutput,
   VisualSpecification,
   SlideVisualSpec,
-  VisualElement,
 } from '@/types/pipeline'
-import { getTemplateById } from '@/templates'
 import { BaseAgent } from '../agents/base'
 
 interface VisualCompositorInput {

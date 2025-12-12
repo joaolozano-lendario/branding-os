@@ -300,8 +300,8 @@ export interface TranslationKeys {
     }
     api: {
       title: string
-      claudeApiKey: string
-      claudeApiKeyDesc: string
+      geminiApiKey: string
+      geminiApiKeyDesc: string
       testConnection: string
       connectionSuccess: string
       connectionError: string

@@ -13,8 +13,6 @@ import type {
   PipelineInput,
   StrategyBlueprint,
   StoryStructure,
-  StorySlide,
-  CarouselTemplate,
 } from '@/types/pipeline'
 import { getTemplateById } from '@/templates'
 import { BaseAgent } from '../agents/base'

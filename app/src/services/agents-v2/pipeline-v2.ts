@@ -48,7 +48,6 @@ export interface PipelineV2Callbacks {
 // ============================================
 
 export class PipelineOrchestratorV2 {
-  private config: GeminiAPIConfig
   private callbacks: PipelineV2Callbacks
   private aborted: boolean = false
 
@@ -61,7 +60,6 @@ export class PipelineOrchestratorV2 {
   private renderer: RenderEngine
 
   constructor(config: GeminiAPIConfig, callbacks: PipelineV2Callbacks) {
-    this.config = config
     this.callbacks = callbacks
 
     // Initialize agents

@@ -46,15 +46,17 @@ export function PreviewExportStepV2({
     )
   }
 
-  const { render, quality, summary, visual } = pipelineResult
+  const { render, quality, summary } = pipelineResult
+  void pipelineResult.visual // Used for future features
   const slides = render.slides
   const currentSlide = slides[currentSlideIndex]
 
-  const getCategoryColor = (score: number): string => {
+  const _getCategoryColor = (score: number): string => {
     if (score >= 80) return 'text-green-600 dark:text-green-400'
     if (score >= 60) return 'text-yellow-600 dark:text-yellow-400'
     return 'text-destructive'
   }
+  void _getCategoryColor // Reserved for future category display
 
   return (
     <div className="space-y-8">
@@ -136,7 +138,7 @@ export function PreviewExportStepV2({
 
               {/* Slide Thumbnails */}
               <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-                {slides.map((slide, index) => (
+                {slides.map((_slide, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentSlideIndex(index)}

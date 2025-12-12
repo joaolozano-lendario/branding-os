@@ -15,7 +15,6 @@ import type {
   StoryStructure,
   CopyOutput,
   SlideCopy,
-  CarouselTemplate,
 } from '@/types/pipeline'
 import { getTemplateById } from '@/templates'
 import { BaseAgent } from '../agents/base'

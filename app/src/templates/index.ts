@@ -6,7 +6,7 @@
  * Cada template define EXATAMENTE a estrutura do carousel.
  */
 
-import type { CarouselTemplate, SlideType, SlideLayout, EmotionalBeat } from '@/types/pipeline'
+import type { CarouselTemplate } from '@/types/pipeline'
 
 // ============================================
 // TEMPLATE 1: PRODUCT LAUNCH

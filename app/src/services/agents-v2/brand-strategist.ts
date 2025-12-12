@@ -12,11 +12,8 @@ import type { GeminiAPIConfig } from '@/types/agent'
 import type {
   PipelineInput,
   StrategyBlueprint,
-  NarrativeAngle,
-  EmotionalBeat,
-  CarouselTemplate,
 } from '@/types/pipeline'
-import { TEMPLATES, selectBestTemplate, TEMPLATE_LIST } from '@/templates'
+import { TEMPLATES, TEMPLATE_LIST } from '@/templates'
 import { BaseAgent } from '../agents/base'
 
 interface BrandStrategistInput {
