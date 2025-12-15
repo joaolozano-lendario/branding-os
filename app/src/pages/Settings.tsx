@@ -56,7 +56,7 @@ export function SettingsPage() {
     try {
       const client = new GeminiAPIClient({
         apiKey: apiKeyInput.trim(),
-        model: "models/gemini-3-pro-preview",
+        model: "models/gemini-2.5-pro",
         temperature: 0.7,
         maxOutputTokens: 4096,
       })
@@ -210,7 +210,7 @@ export function SettingsPage() {
             {/* Models Info */}
             <div className="p-3 rounded-lg bg-muted/50 text-xs space-y-1">
               <p className="font-semibold text-foreground">Modelos utilizados:</p>
-              <p className="text-muted-foreground font-mono">• gemini-3-pro-preview (texto)</p>
+              <p className="text-muted-foreground font-mono">• gemini-2.5-pro (texto)</p>
               <p className="text-muted-foreground font-mono">• gemini-3-pro-image-preview (imagens)</p>
             </div>
           </CardContent>

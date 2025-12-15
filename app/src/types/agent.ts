@@ -331,19 +331,19 @@ export interface GenerationHistoryItem {
 
 /**
  * IMPORTANTE: Este projeto usa GEMINI (Google AI) para todas as operações de IA
- * - Texto: models/gemini-3-pro-preview
+ * - Texto: models/gemini-2.5-pro
  * - Imagens: models/gemini-3-pro-image-preview
  */
 
 export interface GeminiAPIConfig {
   apiKey: string
-  model: 'models/gemini-3-pro-preview' | 'models/gemini-3-pro-image-preview'
+  model: 'models/gemini-2.5-pro' | 'models/gemini-3-pro-image-preview'
   maxOutputTokens: number
   temperature: number
 }
 
 export const DEFAULT_GEMINI_CONFIG: Omit<GeminiAPIConfig, 'apiKey'> = {
-  model: 'models/gemini-3-pro-preview',
+  model: 'models/gemini-2.5-pro',
   maxOutputTokens: 8192,
   temperature: 0.7,
 }

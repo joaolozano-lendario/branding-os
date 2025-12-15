@@ -114,6 +114,10 @@ export const useAgentStore = create<AgentStoreState>()(
 
       // API Configuration (GEMINI)
       setApiKey: (apiKey: string) => {
+        // Clear any cached client
+        import('@/services/gemini').then(m => m.clearGeminiClient())
+
+        console.log('[AgentStore] Setting API key:', apiKey.slice(0, 10) + '...')
         set({
           apiConfig: {
             apiKey,

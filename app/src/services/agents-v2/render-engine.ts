@@ -26,24 +26,30 @@ export class RenderEngine {
    * Convert a single element to HTML
    */
   private renderElement(element: VisualElement): string {
-    const { type, role, content, style, position } = element
+    if (!element) return ''
+
+    const type = element.type || 'text'
+    const role = element.role || 'body'
+    const content = element.content || ''
+    const style = element.style || {}
+    const position = element.position || { x: 80, y: 400, width: 920 }
 
     // Build inline styles
     const styles: string[] = [
       `position: absolute`,
-      `left: ${position.x}px`,
-      `top: ${position.y}px`,
-      `width: ${position.width}px`,
-      position.height !== 'auto' ? `height: ${position.height}px` : '',
+      `left: ${position.x || 80}px`,
+      `top: ${position.y || 400}px`,
+      `width: ${position.width || 920}px`,
+      position.height && position.height !== 'auto' ? `height: ${position.height}px` : '',
     ].filter(Boolean)
 
     if (type === 'text') {
       styles.push(
-        `font-family: '${style.fontFamily}', sans-serif`,
-        `font-size: ${style.fontSize}`,
-        `font-weight: ${style.fontWeight}`,
-        `color: ${style.color}`,
-        `text-align: ${style.textAlign}`,
+        `font-family: '${style.fontFamily || 'Inter'}', sans-serif`,
+        `font-size: ${style.fontSize || '24px'}`,
+        `font-weight: ${style.fontWeight || 400}`,
+        `color: ${style.color || '#FFFFFF'}`,
+        `text-align: ${style.textAlign || 'center'}`,
         style.lineHeight ? `line-height: ${style.lineHeight}` : '',
         style.letterSpacing ? `letter-spacing: ${style.letterSpacing}` : '',
         style.textTransform ? `text-transform: ${style.textTransform}` : '',
@@ -82,7 +88,10 @@ export class RenderEngine {
    * Render a single slide to HTML
    */
   private renderSlide(slide: SlideVisualSpec): RenderedSlide {
-    const { index, canvas, background, elements } = slide
+    const index = slide.index || 1
+    const canvas = slide.canvas || { width: 1080, height: 1080 }
+    const background = slide.background || { type: 'solid', value: '#1A1A1A' }
+    const elements = slide.elements || []
 
     // Build background style
     let backgroundStyle = ''
@@ -135,25 +144,29 @@ export class RenderEngine {
    * Generate global CSS for all slides
    */
   private generateGlobalCSS(tokens: VisualSpecification['tokens']): string {
+    const colors = tokens?.colors || {}
+    const fonts = tokens?.fonts || {}
+    const spacing = tokens?.spacing || {}
+
     return `
 /* Branding OS Generated Styles */
 /* Generated at: ${new Date().toISOString()} */
 
 :root {
   /* Brand Colors */
-  ${Object.entries(tokens.colors).map(([name, value]) =>
+  ${Object.entries(colors).map(([name, value]) =>
     `--color-${name}: ${value};`
-  ).join('\n  ')}
+  ).join('\n  ') || '--color-primary: #5856D6;'}
 
   /* Brand Fonts */
-  ${Object.entries(tokens.fonts).map(([role, family]) =>
+  ${Object.entries(fonts).map(([role, family]) =>
     `--font-${role}: '${family}', sans-serif;`
-  ).join('\n  ')}
+  ).join('\n  ') || "--font-heading: 'Inter', sans-serif;"}
 
   /* Spacing */
-  ${Object.entries(tokens.spacing).map(([name, value]) =>
+  ${Object.entries(spacing).map(([name, value]) =>
     `--spacing-${name}: ${value}px;`
-  ).join('\n  ')}
+  ).join('\n  ') || '--spacing-margin: 80px;'}
 }
 
 /* Base Reset */
@@ -228,7 +241,7 @@ export class RenderEngine {
    * Extract fonts to load
    */
   private extractFonts(tokens: VisualSpecification['tokens']): string[] {
-    const fonts = Object.values(tokens.fonts)
+    const fonts = Object.values(tokens?.fonts || { heading: 'Inter', body: 'Source Serif 4' })
     return [...new Set(fonts)]
   }
 
@@ -236,14 +249,22 @@ export class RenderEngine {
    * Main render function
    */
   render(visual: VisualSpecification): RenderOutput {
+    // Ensure visual has required structure
+    const slides = visual?.slides || []
+    const tokens = visual?.tokens || {
+      colors: { background: '#1A1A1A', text: '#FFFFFF', accent: '#C9B298' },
+      fonts: { heading: 'Inter', body: 'Source Serif 4' },
+      spacing: { margin: 80, 'gap-large': 48, 'gap-medium': 24, 'gap-small': 16 }
+    }
+
     // Render each slide
-    const renderedSlides = visual.slides.map(slide => this.renderSlide(slide))
+    const renderedSlides = slides.map(slide => this.renderSlide(slide))
 
     // Generate global CSS
-    const globalCSS = this.generateGlobalCSS(visual.tokens)
+    const globalCSS = this.generateGlobalCSS(tokens)
 
     // Extract fonts
-    const fontsToLoad = this.extractFonts(visual.tokens)
+    const fontsToLoad = this.extractFonts(tokens)
 
     return {
       slides: renderedSlides,

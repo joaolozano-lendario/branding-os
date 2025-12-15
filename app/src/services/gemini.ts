@@ -64,7 +64,7 @@ interface GeminiResponse {
 // ============================================
 
 export const GEMINI_MODELS = {
-  text: 'models/gemini-3-pro-preview',
+  text: 'models/gemini-2.5-pro',
   image: 'models/gemini-3-pro-image-preview',
 } as const
 
@@ -77,11 +77,21 @@ export class GeminiAPIClient {
   private baseUrl = 'https://generativelanguage.googleapis.com/v1beta'
 
   constructor(config: GeminiAPIConfig) {
+    // Validate API key format
+    if (!config.apiKey || config.apiKey.startsWith('models/')) {
+      console.error('[GeminiAPI] Invalid API key detected:', config.apiKey?.slice(0, 20))
+      throw new Error('Invalid API key. Please check your Settings.')
+    }
     this.config = config
+    console.log('[GeminiAPI] Client initialized with key:', config.apiKey.slice(0, 10) + '...')
   }
 
   private getEndpoint(model: string): string {
     return `${this.baseUrl}/${model}:generateContent?key=${this.config.apiKey}`
+  }
+
+  private async delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   async complete(
@@ -94,48 +104,74 @@ export class GeminiAPIClient {
     }
   ): Promise<string> {
     const model = GEMINI_MODELS[options?.model ?? 'text']
+    const maxRetries = 3
+    let lastError: Error | null = null
 
-    const request: GeminiRequest = {
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: userPrompt }],
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      if (attempt > 0) {
+        // Exponential backoff: 2s, 4s, 8s
+        const waitTime = Math.pow(2, attempt) * 1000
+        console.log(`[GeminiAPI] Rate limited. Waiting ${waitTime}ms before retry ${attempt + 1}/${maxRetries}...`)
+        await this.delay(waitTime)
+      }
+
+      const request: GeminiRequest = {
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: userPrompt }],
+          },
+        ],
+        systemInstruction: {
+          parts: [{ text: systemPrompt }],
         },
-      ],
-      systemInstruction: {
-        parts: [{ text: systemPrompt }],
-      },
-      generationConfig: {
-        temperature: options?.temperature ?? this.config.temperature,
-        maxOutputTokens: options?.maxTokens ?? this.config.maxOutputTokens,
-        topP: 0.95,
-        topK: 40,
-      },
-    }
+        generationConfig: {
+          temperature: options?.temperature ?? this.config.temperature,
+          maxOutputTokens: options?.maxTokens ?? this.config.maxOutputTokens,
+          topP: 0.95,
+          topK: 40,
+        },
+      }
 
-    const response = await fetch(this.getEndpoint(model), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(request),
-    })
+      try {
+        const response = await fetch(this.getEndpoint(model), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(request),
+        })
 
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error?.message || 'API request failed')
-    }
+        if (response.status === 429) {
+          // Rate limited - will retry
+          lastError = new Error('Rate limited (429). Retrying...')
+          continue
+        }
 
-    const data: GeminiResponse = await response.json()
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.error?.message || 'API request failed')
+        }
 
-    if (data.candidates && data.candidates.length > 0) {
-      const content = data.candidates[0].content
-      if (content.parts && content.parts.length > 0 && content.parts[0].text) {
-        return content.parts[0].text
+        const data: GeminiResponse = await response.json()
+
+        if (data.candidates && data.candidates.length > 0) {
+          const content = data.candidates[0].content
+          if (content.parts && content.parts.length > 0 && content.parts[0].text) {
+            return content.parts[0].text
+          }
+        }
+
+        throw new Error('No content in response')
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error))
+        if (attempt === maxRetries - 1) {
+          throw lastError
+        }
       }
     }
 
-    throw new Error('No content in response')
+    throw lastError || new Error('Max retries exceeded')
   }
 
   async completeJSON<T>(
@@ -148,9 +184,18 @@ export class GeminiAPIClient {
   ): Promise<T> {
     const enhancedSystemPrompt = `${systemPrompt}
 
-IMPORTANT: Your response MUST be valid JSON only. Do not include any explanatory text, markdown code blocks, or anything before or after the JSON. The response should start with { and end with }.`
+CRITICAL JSON RULES:
+1. Response MUST be valid JSON only - no markdown, no explanations
+2. Start with { and end with }
+3. Use double quotes for all strings
+4. No trailing commas
+5. Escape special characters in strings: \\n \\t \\" \\\\
+6. Keep response concise to avoid truncation`
 
-    const response = await this.complete(enhancedSystemPrompt, userPrompt, options)
+    const response = await this.complete(enhancedSystemPrompt, userPrompt, {
+      ...options,
+      maxTokens: options?.maxTokens || 8192, // Ensure large enough for complex JSON
+    })
 
     // Extract JSON from response (in case there's extra text or markdown)
     let jsonString = response.trim()
@@ -172,10 +217,53 @@ IMPORTANT: Your response MUST be valid JSON only. Do not include any explanatory
       throw new Error('No valid JSON found in response')
     }
 
+    let extracted = jsonMatch[0]
+
+    // Try to repair common JSON issues
     try {
-      return JSON.parse(jsonMatch[0]) as T
-    } catch (e) {
-      throw new Error(`Failed to parse JSON response: ${e}`)
+      return JSON.parse(extracted) as T
+    } catch (firstError) {
+      console.warn('[GeminiAPI] First parse failed, attempting repair...', firstError)
+
+      // Attempt repairs
+      let repaired = extracted
+
+      // Fix trailing commas before } or ]
+      repaired = repaired.replace(/,(\s*[}\]])/g, '$1')
+
+      // Remove incomplete last element (truncated JSON)
+      // Find last complete object/array and remove anything after
+      repaired = repaired.replace(/,\s*"[^"]*"?\s*:?\s*[^,}\]]*$/g, '')
+      repaired = repaired.replace(/,\s*{\s*"[^}]*$/g, '')
+      repaired = repaired.replace(/,\s*\[\s*[^\]]*$/g, '')
+
+      // Fix unescaped newlines in strings
+      repaired = repaired.replace(/([^\\])\\n/g, '$1\\\\n')
+
+      // Try to close unclosed structures
+      const openBraces = (repaired.match(/{/g) || []).length
+      const closeBraces = (repaired.match(/}/g) || []).length
+      const openBrackets = (repaired.match(/\[/g) || []).length
+      const closeBrackets = (repaired.match(/]/g) || []).length
+
+      // Add missing closing brackets/braces
+      for (let i = 0; i < openBrackets - closeBrackets; i++) {
+        repaired += ']'
+      }
+      for (let i = 0; i < openBraces - closeBraces; i++) {
+        repaired += '}'
+      }
+
+      try {
+        const result = JSON.parse(repaired) as T
+        console.log('[GeminiAPI] JSON repair successful')
+        return result
+      } catch (secondError) {
+        // Last resort: try to extract a minimal valid structure
+        console.error('[GeminiAPI] JSON repair failed:', secondError)
+        console.error('[GeminiAPI] Raw response (first 500 chars):', extracted.slice(0, 500))
+        throw new Error(`Failed to parse JSON response: ${firstError}`)
+      }
     }
   }
 

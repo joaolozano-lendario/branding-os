@@ -327,8 +327,8 @@ ${slide.caption ? `**Caption:** "${slide.caption}"` : ''}
 `).join('\n---\n')}
 
 **Microcopy:**
-- CTA Button: "${copy.microcopy.ctaButton}"
-- Swipe Hint: "${copy.microcopy.swipeHint}"
+- CTA Button: "${copy.microcopy?.ctaButton || 'Saiba Mais'}"
+- Swipe Hint: "${copy.microcopy?.swipeHint || 'Arrasta →'}"
 
 ---
 

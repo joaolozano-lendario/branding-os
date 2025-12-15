@@ -220,7 +220,7 @@ export class PipelineOrchestratorV2 {
           template: strategy.templateName,
           slideCount: copy.slides.length,
           qualityScore: quality.score,
-          mainCTA: copy.microcopy.ctaButton
+          mainCTA: copy.microcopy?.ctaButton || 'Saiba Mais'
         }
       }
 
@@ -263,7 +263,7 @@ export class PipelineOrchestratorV2 {
           template: strategy?.templateName || 'unknown',
           slideCount: copy?.slides.length || 0,
           qualityScore: quality?.score || 0,
-          mainCTA: copy?.microcopy.ctaButton || ''
+          mainCTA: copy?.microcopy?.ctaButton || ''
         }
       }
     }

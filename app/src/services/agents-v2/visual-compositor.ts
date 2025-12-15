@@ -35,330 +35,129 @@ export class VisualCompositorAgent extends BaseAgent<VisualCompositorInput, Visu
     return `You are the VISUAL COMPOSITOR for Branding OS.
 
 ## YOUR ROLE
-You are the FOURTH agent in a 6-agent pipeline. The Copywriter has written all the copy.
+Create visual specifications for carousel slides. Canvas: 1080x1080px. Margins: 80px.
 
-Your job is to define EXACT VISUAL SPECIFICATIONS for each slide:
-- Element positions (x, y, width, height in pixels)
-- Typography (font family, size, weight, color)
-- Backgrounds (colors, gradients)
-- Spacing and alignment
-
-You do NOT write copy (already done).
-You do NOT validate quality (next agent does that).
-You CREATE pixel-perfect specifications that can be rendered.
-
-## CANVAS SPECIFICATIONS
-- Width: 1080px
-- Height: 1080px (Instagram carousel format)
-- Safe margins: 80px from edges
-- Grid: 8px increments for all spacing
-
-## OUTPUT FORMAT
-You MUST respond with a valid JSON object matching this EXACT structure:
+## OUTPUT FORMAT (STRICT JSON)
 {
   "slides": [
     {
       "index": 1,
-      "canvas": { "width": 1080, "height": 1080 },
-      "background": {
-        "type": "solid",
-        "value": "#1A1A1A",
-        "opacity": 1
-      },
+      "background": { "type": "solid", "value": "#1A1A1A" },
       "elements": [
         {
           "type": "text",
           "role": "headline",
-          "content": "Você sabia que perde 2h por dia?",
-          "style": {
-            "fontFamily": "Inter",
-            "fontSize": "48px",
-            "fontWeight": 700,
-            "color": "#FFFFFF",
-            "textAlign": "center",
-            "lineHeight": 1.2
-          },
-          "position": {
-            "x": 80,
-            "y": 440,
-            "width": 920,
-            "height": "auto"
-          }
-        },
-        {
-          "type": "text",
-          "role": "caption",
-          "content": "Arrasta pra descobrir →",
-          "style": {
-            "fontFamily": "Source Serif 4",
-            "fontSize": "18px",
-            "fontWeight": 400,
-            "color": "#C9B298",
-            "textAlign": "center",
-            "lineHeight": 1.4
-          },
-          "position": {
-            "x": 80,
-            "y": 920,
-            "width": 920,
-            "height": "auto"
-          }
+          "content": "Your headline here",
+          "style": { "fontFamily": "Inter", "fontSize": "48px", "fontWeight": 700, "color": "#FFFFFF", "textAlign": "center" },
+          "position": { "x": 80, "y": 440, "width": 920 }
         }
       ]
     }
   ],
   "tokens": {
-    "colors": {
-      "background": "#1A1A1A",
-      "text-primary": "#FFFFFF",
-      "text-secondary": "#C9B298",
-      "accent": "#C9B298"
-    },
-    "fonts": {
-      "heading": "Inter",
-      "body": "Source Serif 4"
-    },
-    "spacing": {
-      "margin": 80,
-      "gap-large": 48,
-      "gap-medium": 24,
-      "gap-small": 16
-    }
+    "colors": { "background": "#1A1A1A", "text": "#FFFFFF", "accent": "#C9B298" },
+    "fonts": { "heading": "Inter", "body": "Source Serif 4" }
   }
 }
 
-## LAYOUT PATTERNS
+## ELEMENT ROLES & POSITIONS
+- headline: y=320-480, fontSize=40-56px, fontWeight=700
+- subheadline: y=400-520, fontSize=24-32px, fontWeight=500
+- body: y=480-600, fontSize=18-22px, fontWeight=400
+- stat: y=350-450, fontSize=72-96px, fontWeight=700 (for numbers)
+- caption: y=900-950, fontSize=16-18px, fontWeight=400
+- cta: y=700-800, fontSize=20-24px, fontWeight=600
 
-### centered-headline
-- Headline centered vertically and horizontally
-- Caption at bottom (y: 920)
-- Large font (40-56px)
-
-### headline-subheadline
-- Headline at upper-third (y: 320)
-- Subheadline below (y: 420)
-- Body below subheadline if present (y: 520)
-
-### stat-highlight
-- Stat number LARGE and centered (72-96px)
-- Context text below, smaller
-- Supporting body below context
-
-### bullet-points
-- Headline at top (y: 200)
-- 3 bullet items vertically stacked
-- Each bullet: icon + text row
-- Gap between bullets: 32px
-
-### icon-grid
-- Headline at top (y: 160)
-- 3 items in column or 2x2 grid
-- Each item: icon above, text below
-- Gap: 48px between items
-
-### testimonial
-- Quote marks visual element
-- Quote text centered (y: 300-500)
-- Attribution at bottom (y: 800)
-- Italic body font for quote
-
-### offer-box
-- Centered box (border or background)
-- Headline inside box (y: 300)
-- Price/details (y: 450)
-- Urgency text (y: 600)
-
-### cta-focused
-- Headline at upper-third (y: 280)
-- CTA button centered (y: 520)
-- Caption below CTA (y: 720)
-
-## TYPOGRAPHY HIERARCHY
-
-### Headlines
-- Font: Brand heading font
-- Size: 40-56px (depending on length)
-- Weight: 700 (bold)
-- Color: High contrast (white on dark, dark on light)
-
-### Subheadlines
-- Font: Brand heading font
-- Size: 24-32px
-- Weight: 500-600
-- Color: Primary or secondary
-
-### Body Text
-- Font: Brand body font
-- Size: 18-22px
-- Weight: 400
-- Color: Secondary text color
-- Line height: 1.4-1.6
-
-### Stats/Numbers
-- Font: Brand heading font
-- Size: 72-96px
-- Weight: 700
-- Color: Accent or primary
-
-### CTAs
-- Font: Brand heading font
-- Size: 20-24px
-- Weight: 600
-- Color: High contrast
-- Background: Accent color (if button)
-
-### Captions
-- Font: Brand body font
-- Size: 16-18px
-- Weight: 400
-- Color: Accent or muted
-
-## COLOR RULES
-1. ONLY use colors from the brand palette provided
-2. Maintain WCAG AA contrast (4.5:1 minimum for text)
-3. Dark backgrounds: use light text
-4. Light backgrounds: use dark text
-5. Accent color: use sparingly (<10% of area)
-
-## SPACING RULES
-1. ALL values must be multiples of 8px
-2. Safe margin from edges: 80px
-3. Gap between major sections: 48px
-4. Gap between related elements: 24px
-5. Tight gap (within groups): 16px
-
-## POSITION CALCULATION
-- x: horizontal position (0 = left edge)
-- y: vertical position (0 = top edge)
-- width: element width
-- height: "auto" for text (calculated), fixed for shapes/images
-
-For centered elements:
-- x = (1080 - width) / 2
-- For full-width text: x = 80, width = 920
-
-## IMPORTANT RULES
-1. ONLY use fonts from brandConfig.typography
-2. ONLY use colors from brandConfig.colors
-3. ALL spacing in multiples of 8px
-4. Safe margins of 80px from edges
-5. Ensure readable contrast
-6. Match visual energy from strategy (calm/moderate/dynamic/intense)`
+## RULES
+1. Use ONLY provided brand colors (exact HEX)
+2. Use ONLY provided brand fonts
+3. All positions in multiples of 8px
+4. Keep margins of 80px from edges
+5. Full-width text: x=80, width=920
+6. Centered: x=(1080-width)/2
+7. MAX 2-3 elements per slide - KEEP IT MINIMAL
+8. CRITICAL: Keep response SHORT. Only essential elements.`
   }
 
   buildUserPrompt(input: VisualCompositorInput): string {
-    const { pipelineInput, strategy, story, copy } = input
+    const { pipelineInput, strategy, copy } = input
+    void input.story // Used in extended version
     const { brandConfig } = pipelineInput
 
     const colors = brandConfig.visualIdentity.colors
     const fonts = brandConfig.visualIdentity.typography
 
-    return `## BRAND VISUAL IDENTITY (USE ONLY THESE)
+    // Build concise slide content
+    const slidesContent = copy.slides.map(slide => {
+      const parts = []
+      if (slide.headline) parts.push(`H:"${slide.headline}"`)
+      if (slide.subheadline) parts.push(`SH:"${slide.subheadline}"`)
+      if (slide.body) parts.push(`B:"${slide.body.slice(0, 100)}"`)
+      if (slide.stat) parts.push(`STAT:"${slide.stat}"`)
+      if (slide.cta) parts.push(`CTA:"${slide.cta}"`)
+      if (slide.caption) parts.push(`CAP:"${slide.caption}"`)
+      return `S${slide.index}: ${parts.join(' | ')}`
+    }).join('\n')
 
-### Colors (HEX values - use EXACTLY these)
-- Primary: ${colors.primary.hex} (${colors.primary.name})
-- Secondary: ${colors.secondary.hex} (${colors.secondary.name})
-- Accent: ${colors.accent.hex} (${colors.accent.name})
-- Background: ${colors.background?.hex || '#1A1A1A'} (${colors.background?.name || 'Background'})
-- Text: ${colors.text?.hex || '#FFFFFF'} (${colors.text?.name || 'Text'})
+    return `## BRAND COLORS (use exact HEX)
+Primary: ${colors.primary.hex}
+Secondary: ${colors.secondary.hex}
+Accent: ${colors.accent.hex}
+Background: ${colors.background?.hex || '#1A1A1A'}
+Text: ${colors.text?.hex || '#FFFFFF'}
 
-### Fonts (use ONLY these families)
-- Heading: ${fonts.heading.family} (weights: ${fonts.heading.weights.join(', ')})
-- Body: ${fonts.body.family} (weights: ${fonts.body.weights.join(', ')})
+## BRAND FONTS
+Heading: ${fonts.heading.family}
+Body: ${fonts.body.family}
 
-### Logo
-${brandConfig.visualIdentity.logo.url ? 'Logo available at: ' + brandConfig.visualIdentity.logo.url : 'No logo uploaded'}
+## VISUAL ENERGY: ${strategy.constraints.visualEnergy}
 
----
+## SLIDES TO DESIGN (${copy.slides.length} total)
+${slidesContent}
 
-## STRATEGIC CONTEXT
-
-**Visual Energy:** ${strategy.constraints.visualEnergy}
-- calm: Lots of whitespace, subtle colors, minimal elements
-- moderate: Balanced, professional look
-- dynamic: Bold colors, strong contrast, energetic
-- intense: High impact, urgent feel, maximum contrast
-
-**Narrative Angle:** ${strategy.narrativeAngle}
-
----
-
-## COPY TO VISUALIZE (from Copywriter)
-
-${copy.slides.map(slide => {
-  const storySlide = story.slides.find(s => s.index === slide.index)
-
-  return `
-### SLIDE ${slide.index}
-**Type:** ${storySlide?.type || 'content'}
-**Layout:** ${storySlide?.layout || 'headline-subheadline'}
-**Visual Direction:** ${storySlide?.visualDirection || 'Standard'}
-
-**Content:**
-${slide.headline ? `- Headline: "${slide.headline}" (${slide.charCounts.headline || slide.headline.length} chars)` : ''}
-${slide.subheadline ? `- Subheadline: "${slide.subheadline}"` : ''}
-${slide.body ? `- Body: "${slide.body}"` : ''}
-${slide.stat ? `- Stat: "${slide.stat}" + Context: "${slide.statContext}"` : ''}
-${slide.bullets ? `- Bullets: ${slide.bullets.map(b => `"${b}"`).join(', ')}` : ''}
-${slide.quote ? `- Quote: "${slide.quote}" - ${slide.attribution}` : ''}
-${slide.cta ? `- CTA: "${slide.cta}"` : ''}
-${slide.caption ? `- Caption: "${slide.caption}"` : ''}
-`
-}).join('\n---\n')}
-
----
-
-## MICROCOPY
-
-- CTA Button Text: "${copy.microcopy.ctaButton}"
-- Swipe Hint: "${copy.microcopy.swipeHint}"
-
----
-
-Now create the visual specification for each slide.
-
-REMEMBER:
-1. Use ONLY the brand colors (exact HEX values)
-2. Use ONLY the brand fonts
-3. ALL spacing in multiples of 8px
-4. Keep 80px safe margins from edges
-5. Match the visual energy: ${strategy.constraints.visualEnergy}
-6. Use the layout pattern for each slide type
-7. Calculate positions precisely
-
-For each slide, specify:
-- Background (color or gradient)
-- Every text element with exact position and styling
-- Design tokens used across all slides`
+## TASK
+Create visual spec JSON for each slide. Keep it simple:
+- 2-4 elements per slide max
+- Use brand colors exactly
+- Positions in 8px multiples
+- 80px margins from edges`
   }
 
   parseOutput(response: string): VisualSpecification {
     const parsed = JSON.parse(response)
 
-    // Validate structure
+    // Ensure slides array exists
     if (!parsed.slides || !Array.isArray(parsed.slides)) {
-      throw new Error('Missing slides array in visual specification')
+      parsed.slides = []
     }
 
-    // Validate each slide has required properties
-    parsed.slides.forEach((slide: SlideVisualSpec, index: number) => {
-      if (!slide.canvas) {
-        slide.canvas = { width: 1080, height: 1080 }
-      }
-      if (!slide.background) {
-        slide.background = { type: 'solid', value: '#1A1A1A' }
-      }
-      if (!slide.elements || !Array.isArray(slide.elements)) {
-        throw new Error(`Slide ${index + 1} missing elements array`)
-      }
-    })
+    // Fill in defaults for each slide
+    parsed.slides = parsed.slides.map((slide: Partial<SlideVisualSpec>, index: number) => ({
+      index: slide.index || index + 1,
+      canvas: slide.canvas || { width: 1080, height: 1080 },
+      background: slide.background || { type: 'solid', value: '#1A1A1A' },
+      elements: Array.isArray(slide.elements) ? slide.elements : []
+    }))
 
-    // Ensure tokens exist
-    if (!parsed.tokens) {
-      parsed.tokens = {
-        colors: {},
-        fonts: {},
-        spacing: { margin: 80, 'gap-large': 48, 'gap-medium': 24, 'gap-small': 16 }
+    // Ensure tokens exist with defaults
+    parsed.tokens = {
+      colors: {
+        background: '#1A1A1A',
+        text: '#FFFFFF',
+        accent: '#C9B298',
+        ...(parsed.tokens?.colors || {})
+      },
+      fonts: {
+        heading: 'Inter',
+        body: 'Source Serif 4',
+        ...(parsed.tokens?.fonts || {})
+      },
+      spacing: {
+        margin: 80,
+        'gap-large': 48,
+        'gap-medium': 24,
+        'gap-small': 16,
+        ...(parsed.tokens?.spacing || {})
       }
     }
 

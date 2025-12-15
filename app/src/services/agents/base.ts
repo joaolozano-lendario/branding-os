@@ -33,7 +33,7 @@ export abstract class BaseAgent<TInput, TOutput> {
         userPrompt,
         {
           temperature: 0.7,
-          maxTokens: 4096,
+          maxTokens: 16384, // Increased to avoid truncation
         }
       )
 
