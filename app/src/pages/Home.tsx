@@ -7,6 +7,7 @@
 
 import { Link } from "react-router-dom"
 import { Icon } from "@/components/ui/icon"
+import { InfinitoSeparator } from "@/components/ui/logo-academia"
 import { useTranslation } from "@/store/i18nStore"
 import { useBrandStore } from "@/store/brandStore"
 
@@ -89,11 +90,11 @@ export function HomePage() {
                 className="flex flex-col items-center gap-3 rounded-lg border border-border p-4 text-center transition-colors hover:border-brand-indigo/50 hover:bg-secondary"
               >
                 <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-brand-indigo/10">
-                  <Icon name="lightning" className="w-[18px] h-[18px] text-brand-indigo" />
+                  <Icon name="bolt" className="w-[18px] h-[18px] text-brand-indigo" />
                 </div>
                 <h4 className="text-sm font-semibold text-foreground">{t.nav.generate}</h4>
                 <p className="text-xs font-medium text-muted-foreground">
-                  AI-powered content
+                  {t.dashboard.aiPowered}
                 </p>
               </Link>
 
@@ -128,33 +129,36 @@ export function HomePage() {
           </div>
         </div>
 
+        {/* Separador decorativo */}
+        <InfinitoSeparator className="my-8 max-w-md mx-auto" />
+
         {/* Getting Started Tips */}
         <div className="mt-6 rounded-lg border border-border bg-card p-6">
-          <h3 className="text-base font-semibold text-foreground mb-4">Getting Started</h3>
+          <h3 className="text-base font-semibold text-foreground mb-4">{t.dashboard.gettingStarted}</h3>
           <div className="space-y-3">
             <div className="flex items-center gap-3 text-sm">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-indigo/10">
                 <span className="text-xs font-semibold text-brand-indigo">1</span>
               </div>
-              <span className="text-muted-foreground">Configure your visual identity (logo, colors, typography)</span>
+              <span className="text-muted-foreground">{t.dashboard.steps.step1}</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-indigo/10">
                 <span className="text-xs font-semibold text-brand-indigo">2</span>
               </div>
-              <span className="text-muted-foreground">Define your brand voice and tone guidelines</span>
+              <span className="text-muted-foreground">{t.dashboard.steps.step2}</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-indigo/10">
                 <span className="text-xs font-semibold text-brand-indigo">3</span>
               </div>
-              <span className="text-muted-foreground">Upload examples to train the AI on your style</span>
+              <span className="text-muted-foreground">{t.dashboard.steps.step3}</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-indigo/10">
                 <span className="text-xs font-semibold text-brand-indigo">4</span>
               </div>
-              <span className="text-muted-foreground">Start generating on-brand content</span>
+              <span className="text-muted-foreground">{t.dashboard.steps.step4}</span>
             </div>
           </div>
         </div>

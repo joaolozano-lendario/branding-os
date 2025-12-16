@@ -333,6 +333,17 @@ export const ptBr: Translation = {
     },
   },
 
+  dashboard: {
+    gettingStarted: 'Primeiros Passos',
+    steps: {
+      step1: 'Configure sua identidade visual (logo, cores, tipografia)',
+      step2: 'Defina a voz e tom da sua marca',
+      step3: 'Envie exemplos para treinar a IA no seu estilo',
+      step4: 'Comece a gerar conteudo alinhado com sua marca',
+    },
+    aiPowered: 'Conteudo com IA',
+  },
+
   errors: {
     generic: 'Algo deu errado. Por favor, tente novamente.',
     network: 'Erro de rede. Por favor, verifique sua conexao.',

@@ -344,6 +344,18 @@ export interface TranslationKeys {
     }
   }
 
+  // Dashboard
+  dashboard: {
+    gettingStarted: string
+    steps: {
+      step1: string
+      step2: string
+      step3: string
+      step4: string
+    }
+    aiPowered: string
+  }
+
   // Errors
   errors: {
     generic: string

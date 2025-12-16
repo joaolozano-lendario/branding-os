@@ -2,6 +2,7 @@
  * Product Context Step
  * Branding OS - Academia Lendaria
  * Pixel-perfect from Figma specs
+ * Updated with predefined products and ICP personas
  */
 
 import * as React from 'react'
@@ -15,8 +16,114 @@ interface ProductContextStepProps {
   errors: string[]
 }
 
+// Predefined products from Academia Lendaria ecosystem
+const PREDEFINED_PRODUCTS = [
+  { value: 'comunidade-lendaria', label: 'Comunidade Lendária', description: 'R$ 1.488 - Produto principal' },
+  { value: 'formacao-lendaria', label: 'Formação Lendária', description: 'R$ 12.888 - Programa completo 6 meses' },
+  { value: 'academia-lendaria', label: 'Academia Lendária', description: 'Ecossistema completo (Comunidade + Formação + outros)' },
+  { value: 'gestor-ia', label: 'Gestor IA', description: 'R$ 6.888 - Programa premium' },
+  { value: 'dominando-obsidian', label: 'Dominando O Obsidian', description: 'R$ 288 - Segundo Cérebro com IA' },
+  { value: 'outro', label: 'Outro produto...', description: 'Digite manualmente' },
+] as const
+
+// ICP Personas from research (150+ member presentations)
+const ICP_PERSONAS = [
+  {
+    value: 'empreendedor-travado',
+    label: 'Empreendedor Digital Travado (~30%)',
+    description: 'Múltiplos projetos, zero foco. Sabe muito, executa pouco.'
+  },
+  {
+    value: 'executivo-exausto',
+    label: 'Executivo Exausto (~25%)',
+    description: 'CLT bem-sucedido mas esgotado. Quer transição para autonomia.'
+  },
+  {
+    value: 'tecnico-visionario',
+    label: 'Técnico Visionário (~20%)',
+    description: 'Domina a parte técnica, não sabe vender/comunicar valor.'
+  },
+  {
+    value: 'veterano-desprezado',
+    label: 'Veterano Desprezado (~15%)',
+    description: '15-20+ anos de experiência. Sente-se ignorado pelo mercado jovem.'
+  },
+  {
+    value: 'multipotencial-ansioso',
+    label: 'Multipotencial Ansioso (~10%)',
+    description: 'Energia caótica, muitos interesses. Começa muito, termina pouco.'
+  },
+  {
+    value: 'outro',
+    label: 'Outro público...',
+    description: 'Digite manualmente'
+  },
+] as const
+
 export function ProductContextStep({ context, onChange, errors }: ProductContextStepProps) {
   const [newFeature, setNewFeature] = React.useState('')
+  const [selectedProduct, setSelectedProduct] = React.useState<string>('')
+  const [selectedPersona, setSelectedPersona] = React.useState<string>('')
+  const [showCustomProduct, setShowCustomProduct] = React.useState(false)
+  const [showCustomPersona, setShowCustomPersona] = React.useState(false)
+
+  // Initialize selections based on existing context
+  React.useEffect(() => {
+    if (context.name) {
+      const matchedProduct = PREDEFINED_PRODUCTS.find(p =>
+        p.label.toLowerCase() === context.name.toLowerCase() ||
+        context.name.toLowerCase().includes(p.label.toLowerCase().split(' ')[0])
+      )
+      if (matchedProduct && matchedProduct.value !== 'outro') {
+        setSelectedProduct(matchedProduct.value)
+      } else if (context.name) {
+        setSelectedProduct('outro')
+        setShowCustomProduct(true)
+      }
+    }
+
+    if (context.targetAudience) {
+      const matchedPersona = ICP_PERSONAS.find(p =>
+        context.targetAudience?.toLowerCase().includes(p.label.split(' ')[0].toLowerCase())
+      )
+      if (matchedPersona && matchedPersona.value !== 'outro') {
+        setSelectedPersona(matchedPersona.value)
+      } else if (context.targetAudience) {
+        setSelectedPersona('outro')
+        setShowCustomPersona(true)
+      }
+    }
+  }, [])
+
+  const handleProductSelect = (value: string) => {
+    setSelectedProduct(value)
+    if (value === 'outro') {
+      setShowCustomProduct(true)
+      onChange({ name: '' })
+    } else {
+      setShowCustomProduct(false)
+      const product = PREDEFINED_PRODUCTS.find(p => p.value === value)
+      if (product) {
+        onChange({ name: product.label })
+      }
+    }
+  }
+
+  const handlePersonaSelect = (value: string) => {
+    setSelectedPersona(value)
+    if (value === 'outro') {
+      setShowCustomPersona(true)
+      onChange({ targetAudience: '' })
+    } else {
+      setShowCustomPersona(false)
+      const persona = ICP_PERSONAS.find(p => p.value === value)
+      if (persona) {
+        // Use just the persona name without the percentage
+        const personaName = persona.label.split(' (~')[0]
+        onChange({ targetAudience: personaName })
+      }
+    }
+  }
 
   const handleAddFeature = () => {
     if (newFeature.trim() && !context.keyFeatures.includes(newFeature.trim())) {
@@ -60,20 +167,42 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
       <div className="space-y-6">
         {/* Row 1: Product Name + Description */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Product Name - Figma: gap 8px label-input, input height 62px */}
+          {/* Product Name - With Dropdown */}
           <div className="space-y-2">
             {/* Figma: Inter SemiBold 12px, black */}
             <label className="text-xs font-semibold text-foreground">
               Nome do Produto / Serviço:
             </label>
-            {/* Figma: height 62px, border #E8E8E8, radius 8px */}
-            <input
-              type="text"
-              value={context.name}
-              onChange={(e) => onChange({ name: e.target.value })}
-              placeholder="ex: CreatorOs"
-              className="w-full h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
-            />
+            {/* Dropdown Select */}
+            <select
+              value={selectedProduct}
+              onChange={(e) => handleProductSelect(e.target.value)}
+              className="w-full h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6] cursor-pointer appearance-none"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 16px center',
+                backgroundSize: '20px',
+              }}
+            >
+              <option value="" disabled>Selecione um produto...</option>
+              {PREDEFINED_PRODUCTS.map((product) => (
+                <option key={product.value} value={product.value}>
+                  {product.label}
+                </option>
+              ))}
+            </select>
+
+            {/* Custom input when "Outro" is selected */}
+            {showCustomProduct && (
+              <input
+                type="text"
+                value={context.name}
+                onChange={(e) => onChange({ name: e.target.value })}
+                placeholder="Digite o nome do produto..."
+                className="w-full h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
+              />
+            )}
           </div>
 
           {/* Description - Same height as name */}
@@ -91,26 +220,56 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
           </div>
         </div>
 
-        {/* Row 2: Target Audience + Key Features */}
+        {/* Row 2: Target Audience/ICP + Key Features */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Target Audience */}
+          {/* Target Audience / ICP - With Dropdown */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-foreground">
-              Público Alvo:
+              Público Alvo / ICP:
             </label>
-            <input
-              type="text"
-              value={context.targetAudience || ''}
-              onChange={(e) => onChange({ targetAudience: e.target.value })}
-              placeholder="ex: Empresários"
-              className="w-full h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
-            />
+            {/* Dropdown Select */}
+            <select
+              value={selectedPersona}
+              onChange={(e) => handlePersonaSelect(e.target.value)}
+              className="w-full h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6] cursor-pointer appearance-none"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 16px center',
+                backgroundSize: '20px',
+              }}
+            >
+              <option value="" disabled>Selecione uma persona...</option>
+              {ICP_PERSONAS.map((persona) => (
+                <option key={persona.value} value={persona.value}>
+                  {persona.label}
+                </option>
+              ))}
+            </select>
+
+            {/* Show persona description */}
+            {selectedPersona && selectedPersona !== 'outro' && (
+              <p className="text-xs text-muted-foreground mt-1 px-1">
+                {ICP_PERSONAS.find(p => p.value === selectedPersona)?.description}
+              </p>
+            )}
+
+            {/* Custom input when "Outro" is selected */}
+            {showCustomPersona && (
+              <input
+                type="text"
+                value={context.targetAudience || ''}
+                onChange={(e) => onChange({ targetAudience: e.target.value })}
+                placeholder="Descreva seu público alvo..."
+                className="w-full h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
+              />
+            )}
           </div>
 
           {/* Key Features */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-foreground">
-              Caracteristicas e Benefícios Chave
+              Características e Benefícios Chave
             </label>
             <div className="flex gap-2">
               <input
@@ -118,7 +277,7 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
                 value={newFeature}
                 onChange={(e) => setNewFeature(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="ex: Empresários"
+                placeholder="ex: Automação com IA"
                 className="flex-1 h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
               />
               <button

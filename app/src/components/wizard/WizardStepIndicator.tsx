@@ -50,7 +50,7 @@ export function WizardStepIndicator({
                   // Base background
                   'bg-secondary',
                   // Active state
-                  isCurrent && 'bg-primary/15 border border-primary/20 shadow-sm',
+                  isCurrent && 'bg-primary/15 border border-primary/20',
                   // Hover state
                   isClickable && !isCurrent && 'hover:bg-primary/5 hover:border-primary/20',
                   // Completed state (if not current) could have specific style if needed

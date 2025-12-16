@@ -2,13 +2,15 @@
  * Router Configuration
  * BRAND-017: Setup React Router
  * Defines all application routes with lazy loading for performance optimization
+ * PRESENTATION MODE: Auth disabled, redirects to generate wizard
  */
 
 import { lazy, Suspense } from "react"
 import { createBrowserRouter, Navigate } from "react-router-dom"
 import { AppLayout } from "@/layouts/AppLayout"
 import { PublicLayout } from "@/layouts/PublicLayout"
-import { AuthGuard } from "@/components/auth/AuthGuard"
+// AuthGuard disabled for presentation
+// import { AuthGuard } from "@/components/auth/AuthGuard"
 
 // Loading component for Suspense fallback
 const PageLoader = () => (
@@ -31,13 +33,18 @@ const AssetLibrary = lazy(() => import("@/pages/AssetLibrary").then((m) => ({ de
 const SettingsPage = lazy(() => import("@/pages/Settings").then((m) => ({ default: m.SettingsPage })))
 
 export const router = createBrowserRouter([
-  // Public routes
+  // Root redirect to app (presentation mode)
   {
     path: "/",
+    element: <Navigate to="/app/generate-v2" replace />,
+  },
+  // Public routes (kept for reference, but login/register redirect to app)
+  {
+    path: "/public",
     element: <PublicLayout />,
     children: [
       {
-        index: true,
+        path: "landing",
         element: (
           <Suspense fallback={<PageLoader />}>
             <LandingPage />
@@ -62,18 +69,14 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // Protected app routes
+  // App routes - NO AUTH REQUIRED (presentation mode)
   {
     path: "/app",
-    element: (
-      <AuthGuard>
-        <AppLayout />
-      </AuthGuard>
-    ),
+    element: <AppLayout />,
     children: [
       {
         index: true,
-        element: <Navigate to="/app/dashboard" replace />,
+        element: <Navigate to="/app/generate-v2" replace />,
       },
       {
         path: "dashboard",
@@ -125,9 +128,9 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // Catch-all redirect
+  // Catch-all redirect to app
   {
     path: "*",
-    element: <Navigate to="/" replace />,
+    element: <Navigate to="/app/generate-v2" replace />,
   },
 ])

@@ -333,6 +333,17 @@ export const en: Translation = {
     },
   },
 
+  dashboard: {
+    gettingStarted: 'Getting Started',
+    steps: {
+      step1: 'Configure your visual identity (logo, colors, typography)',
+      step2: 'Define your brand voice and tone guidelines',
+      step3: 'Upload examples to train the AI on your style',
+      step4: 'Start generating on-brand content',
+    },
+    aiPowered: 'AI-powered content',
+  },
+
   errors: {
     generic: 'Something went wrong. Please try again.',
     network: 'Network error. Please check your connection.',

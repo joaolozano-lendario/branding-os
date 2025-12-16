@@ -6,6 +6,7 @@
 
 import * as React from 'react'
 import { Icon } from '@/components/ui/icon'
+import { LogoInfinito } from '@/components/ui/logo-academia'
 import { useToast } from '@/components/ui/toast'
 import { useTranslation } from '@/store/i18nStore'
 import { useWizardStore, WIZARD_STEPS, type WizardStep } from '@/store/wizardStore'
@@ -349,6 +350,8 @@ export function GenerateWizardV2() {
                       )}
                     </div>
                   ))}
+                  {/* Infinito sutil como assinatura */}
+                  <LogoInfinito size={10} className="text-muted-foreground/20 ml-2" />
                 </div>
 
                 {/* Figma: Próximo button - 122x41, bg #5856D6, radius 200px */}

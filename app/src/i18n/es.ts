@@ -333,6 +333,17 @@ export const es: Translation = {
     },
   },
 
+  dashboard: {
+    gettingStarted: 'Primeros Pasos',
+    steps: {
+      step1: 'Configure su identidad visual (logo, colores, tipografia)',
+      step2: 'Defina la voz y tono de su marca',
+      step3: 'Suba ejemplos para entrenar la IA en su estilo',
+      step4: 'Comience a generar contenido alineado con su marca',
+    },
+    aiPowered: 'Contenido con IA',
+  },
+
   errors: {
     generic: 'Algo salio mal. Por favor, intente de nuevo.',
     network: 'Error de red. Por favor, verifique su conexion.',

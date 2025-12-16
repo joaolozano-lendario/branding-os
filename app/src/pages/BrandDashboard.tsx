@@ -9,6 +9,7 @@
 import * as React from "react"
 
 import { Icon } from "@/components/ui/icon"
+import { LogoInfinito } from "@/components/ui/logo-academia"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
@@ -108,9 +109,12 @@ export function BrandDashboard() {
                 </div>
               )}
               <div>
-                <h1 className="text-base font-semibold text-foreground truncate max-w-[200px]" title={config.name}>
-                  {config.name}
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-base font-semibold text-foreground truncate max-w-[200px]" title={config.name}>
+                    {config.name}
+                  </h1>
+                  <LogoInfinito size={10} className="text-muted-foreground/30" />
+                </div>
                 <p className="text-xs font-medium text-muted-foreground">
                   {t.nav.brandConfig}
                 </p>

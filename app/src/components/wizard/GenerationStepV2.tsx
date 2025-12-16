@@ -113,7 +113,7 @@ export function GenerationStepV2({
               key={agentId}
               className={cn(
                 'flex items-center gap-4 p-4 rounded-xl border transition-all',
-                isActive && 'border-primary bg-primary/5 shadow-md',
+                isActive && 'border-primary bg-primary/5',
                 status === 'complete' && 'border-green-500/50 bg-green-500/5',
                 status === 'error' && 'border-destructive/50 bg-destructive/5',
                 status === 'idle' && 'border-border opacity-50'
