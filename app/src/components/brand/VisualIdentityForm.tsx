@@ -3,6 +3,7 @@
  * BRAND-001: Configure Visual Identity
  * Main form for configuring brand visual identity (logo, colors, fonts)
  * Academia Lendária Design System
+ * i18n: Full translation support
  */
 
 import { cn } from "@/lib/utils"
@@ -16,6 +17,7 @@ import { LogoUploader } from "./LogoUploader"
 import { ColorPicker, ColorPalettePreview } from "./ColorPicker"
 import { FontSelector } from "./FontSelector"
 import { useBrandStore, selectVisualIdentity, selectHasUnsavedChanges } from "@/store/brandStore"
+import { useTranslation } from "@/store/i18nStore"
 import type { BrandColor } from "@/types/brand"
 
 interface VisualIdentityFormProps {
@@ -23,6 +25,7 @@ interface VisualIdentityFormProps {
 }
 
 export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
+  const { t } = useTranslation()
   const visualIdentity = useBrandStore(selectVisualIdentity)
   const hasUnsavedChanges = useBrandStore(selectHasUnsavedChanges)
   const {
@@ -68,28 +71,28 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-sans text-2xl font-bold tracking-tight">
-            Visual Identity
+            {t.brand.visual.title}
           </h2>
           <p className="font-serif text-muted-foreground mt-1">
-            Configure your brand's logo, colors, and typography
+            {t.brand.visual.subtitle}
           </p>
         </div>
         <div className="flex items-center gap-3">
           {hasUnsavedChanges && (
             <Badge variant="warning" size="sm">
-              Unsaved changes
+              {t.brand.visual.unsavedChanges}
             </Badge>
           )}
           <Button onClick={handleSave} disabled={isSaving || !hasUnsavedChanges}>
             {isSaving ? (
               <>
                 <Icon name="spinner" size="size-4" className="mr-2 animate-spin" />
-                Saving...
+                {t.brand.visual.saving}
               </>
             ) : (
               <>
                 <Icon name="check" size="size-4" className="mr-2" />
-                Save Changes
+                {t.brand.visual.saveChanges}
               </>
             )}
           </Button>
@@ -104,9 +107,9 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
               <Icon name="picture" size="size-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">Logo</CardTitle>
+              <CardTitle className="text-lg">{t.brand.visual.logo}</CardTitle>
               <CardDescription>
-                Upload your brand logo in PNG or SVG format
+                {t.brand.visual.logoFormats}
               </CardDescription>
             </div>
           </div>
@@ -136,9 +139,9 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
               <Icon name="palette" size="size-5" />
             </div>
             <div className="flex-1">
-              <CardTitle className="text-lg">Color Palette</CardTitle>
+              <CardTitle className="text-lg">{t.brand.visual.colorPalette}</CardTitle>
               <CardDescription>
-                Define your brand colors with WCAG contrast validation
+                {t.brand.visual.colorPaletteDesc}
               </CardDescription>
             </div>
           </div>
@@ -146,7 +149,7 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
         <CardContent className="space-y-6">
           {/* Palette Preview */}
           <div className="space-y-2">
-            <Label className="text-xs text-muted-foreground">Preview</Label>
+            <Label className="text-xs text-muted-foreground">{t.brand.visual.preview}</Label>
             <ColorPalettePreview colors={allColors} className="h-12" />
           </div>
 
@@ -154,7 +157,7 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
 
           {/* Primary Colors */}
           <div className="space-y-4">
-            <Label>Brand Colors</Label>
+            <Label>{t.brand.visual.brandColors}</Label>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <ColorPicker
                 color={visualIdentity.colors.primary}
@@ -180,7 +183,7 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
           {/* Custom Colors */}
           {visualIdentity.colors.custom.length > 0 && (
             <div className="space-y-4">
-              <Label>Custom Colors</Label>
+              <Label>{t.brand.visual.customColors}</Label>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {visualIdentity.colors.custom.map((color) => (
                   <ColorPicker
@@ -203,9 +206,9 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
             disabled={visualIdentity.colors.custom.length >= 5}
           >
             <Icon name="plus" size="size-4" className="mr-2" />
-            Add Custom Color
+            {t.brand.visual.addColor}
             {visualIdentity.colors.custom.length >= 5 && (
-              <span className="ml-2 text-muted-foreground">(max 5)</span>
+              <span className="ml-2 text-muted-foreground">{t.brand.visual.maxColors}</span>
             )}
           </Button>
         </CardContent>
@@ -219,9 +222,9 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
               <Icon name="font" size="size-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">Typography</CardTitle>
+              <CardTitle className="text-lg">{t.brand.visual.typography}</CardTitle>
               <CardDescription>
-                Select font families for headings and body text
+                {t.brand.visual.typographyDesc}
               </CardDescription>
             </div>
           </div>
@@ -251,7 +254,7 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
           {/* Typography Preview */}
           <div className="rounded-lg border border-border bg-muted/30 p-6 space-y-4">
             <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
-              Typography Preview
+              {t.brand.visual.typographyPreview}
             </p>
             <h3
               className="text-3xl font-bold tracking-tight"
@@ -276,7 +279,7 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
         <p className="text-sm text-muted-foreground mr-auto">
           {visualIdentity.updatedAt && (
             <>
-              Last saved:{" "}
+              {t.brand.visual.lastSaved}{" "}
               {new Date(visualIdentity.updatedAt).toLocaleString()}
             </>
           )}
@@ -285,10 +288,10 @@ export function VisualIdentityForm({ className }: VisualIdentityFormProps) {
           variant="outline"
           onClick={() => window.history.back()}
         >
-          Cancel
+          {t.common.cancel}
         </Button>
         <Button onClick={handleSave} disabled={isSaving || !hasUnsavedChanges}>
-          {isSaving ? "Saving..." : "Save Visual Identity"}
+          {isSaving ? t.brand.visual.saving : t.brand.visual.saveVisualIdentity}
         </Button>
       </div>
     </div>

@@ -2,6 +2,7 @@
  * LogoUploader Component
  * BRAND-001: Configure Visual Identity
  * Academia Lendária Design System
+ * i18n: Full translation support
  */
 
 import * as React from "react"
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icon"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useTranslation } from "@/store/i18nStore"
 import type { BrandLogo } from "@/types/brand"
 
 interface LogoUploaderProps {
@@ -30,6 +32,7 @@ export function LogoUploader({
   disabled = false,
   className,
 }: LogoUploaderProps) {
+  const { t } = useTranslation()
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
@@ -40,13 +43,13 @@ export function LogoUploader({
 
       // Validate file type
       if (!ACCEPTED_TYPES.includes(file.type)) {
-        setError("Please upload a PNG or SVG file")
+        setError(t.brand.visual.logoError)
         return
       }
 
       // Validate file size
       if (file.size > MAX_FILE_SIZE) {
-        setError("File size must be less than 5MB")
+        setError(t.brand.visual.logoSizeError)
         return
       }
 
@@ -62,7 +65,7 @@ export function LogoUploader({
         uploadedAt: new Date(),
       })
     },
-    [onUpload]
+    [onUpload, t]
   )
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,7 +135,7 @@ export function LogoUploader({
                 disabled={disabled}
               >
                 <Icon name="refresh" size="size-4" className="mr-2" />
-                Replace
+                {t.brand.visual.logoReplace}
               </Button>
               <Button
                 variant="ghost"
@@ -165,11 +168,11 @@ export function LogoUploader({
           </div>
 
           <h4 className="font-sans font-semibold text-foreground mb-1">
-            Upload your logo
+            {t.brand.visual.logoUpload}
           </h4>
 
           <p className="text-sm text-muted-foreground text-center mb-4">
-            Drag and drop or click to browse
+            {t.brand.visual.logoDragDrop}
           </p>
 
           <div className="flex items-center gap-2 text-xs text-muted-foreground">

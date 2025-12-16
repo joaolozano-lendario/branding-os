@@ -2,6 +2,7 @@
  * FontSelector Component
  * BRAND-001: Configure Visual Identity
  * Academia Lendária Design System
+ * i18n: Full translation support
  */
 
 import * as React from "react"
@@ -10,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icon"
 import { Badge } from "@/components/ui/badge"
+import { useTranslation } from "@/store/i18nStore"
 import type { BrandFont } from "@/types/brand"
 
 // Popular Google Fonts for brand typography
@@ -46,6 +48,7 @@ export function FontSelector({
   disabled = false,
   className,
 }: FontSelectorProps) {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = React.useState(false)
   const [search, setSearch] = React.useState("")
 
@@ -66,15 +69,21 @@ export function FontSelector({
   }
 
   const roleLabels = {
-    heading: "Heading Font",
-    body: "Body Font",
-    accent: "Accent Font",
+    heading: t.brand.visual.headingFont,
+    body: t.brand.visual.bodyFont,
+    accent: t.brand.visual.accentFont,
   }
 
   const roleDescriptions = {
-    heading: "Used for titles and headings (H1-H6)",
-    body: "Used for paragraphs and body text",
-    accent: "Used for callouts and special emphasis",
+    heading: t.brand.visual.headingFontDesc,
+    body: t.brand.visual.bodyFontDesc,
+    accent: t.brand.visual.accentFontDesc,
+  }
+
+  const roleBadges = {
+    heading: "Sans",
+    body: "Serif",
+    accent: "Optional",
   }
 
   return (
@@ -82,7 +91,7 @@ export function FontSelector({
       <Label className="flex items-center gap-2">
         {roleLabels[role]}
         <Badge variant="outline" size="sm">
-          {role === "heading" ? "Sans" : role === "body" ? "Serif" : "Optional"}
+          {roleBadges[role]}
         </Badge>
       </Label>
 
@@ -107,7 +116,7 @@ export function FontSelector({
             <div className="text-left">
               <div className="font-semibold">{font.family}</div>
               <div className="text-xs text-muted-foreground">
-                {selectedFontInfo?.category || "custom"} · {font.weights.length} weights
+                {selectedFontInfo?.category || "custom"} · {font.weights.length} {t.brand.visual.weights}
               </div>
             </div>
           </div>
@@ -133,7 +142,7 @@ export function FontSelector({
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search fonts..."
+                  placeholder={t.brand.visual.searchFonts}
                   className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring"
                   autoFocus
                 />
@@ -144,7 +153,7 @@ export function FontSelector({
             <div className="max-h-64 overflow-y-auto p-1">
               {filteredFonts.length === 0 ? (
                 <div className="p-4 text-center text-sm text-muted-foreground">
-                  No fonts found
+                  {t.brand.visual.noFontsFound}
                 </div>
               ) : (
                 filteredFonts.map((f) => (

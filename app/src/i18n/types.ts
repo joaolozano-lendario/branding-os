@@ -94,19 +94,41 @@ export interface TranslationKeys {
       logoUpload: string
       logoDragDrop: string
       logoFormats: string
+      logoReplace: string
+      logoError: string
+      logoSizeError: string
       colors: string
       colorPrimary: string
       colorSecondary: string
       colorAccent: string
       colorNeutral: string
       addColor: string
+      colorPalette: string
+      colorPaletteDesc: string
+      brandColors: string
+      customColors: string
+      preview: string
+      maxColors: string
       typography: string
+      typographyDesc: string
+      typographyPreview: string
       headingFont: string
+      headingFontDesc: string
       bodyFont: string
+      bodyFontDesc: string
       accentFont: string
+      accentFontDesc: string
       selectFont: string
+      searchFonts: string
+      noFontsFound: string
+      weights: string
       wcagCompliance: string
       contrastRatio: string
+      unsavedChanges: string
+      saving: string
+      saveChanges: string
+      saveVisualIdentity: string
+      lastSaved: string
     }
 
     // Voice
@@ -132,19 +154,27 @@ export interface TranslationKeys {
       title: string
       subtitle: string
       uploadExamples: string
+      uploadBrandExample: string
       dragDropFiles: string
       supportedFormats: string
       type: string
+      exampleType: string
       annotation: string
+      annotationOptional: string
+      annotationPlaceholder: string
       whatMakesItOnBrand: string
+      whatMakesItOnBrandPlaceholder: string
       filterByType: string
       noExamples: string
+      addExample: string
       carousel: string
       ad: string
       slide: string
       post: string
       other: string
       contentPlaceholder: string
+      fileError: string
+      fileSizeError: string
     }
   }
 

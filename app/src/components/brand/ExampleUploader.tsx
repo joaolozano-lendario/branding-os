@@ -3,6 +3,7 @@
  * BRAND-003: Configure Brand Examples
  * Upload and manage brand example files
  * Academia Lendária Design System
+ * i18n: Full translation support
  */
 
 import * as React from "react"
@@ -14,6 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useTranslation } from "@/store/i18nStore"
 import type { BrandExample, ExampleType } from "@/types/brand"
 
 const ACCEPTED_TYPES = [
@@ -26,14 +28,6 @@ const ACCEPTED_TYPES = [
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
-const EXAMPLE_TYPES: { value: ExampleType; label: string; icon: string; color: string }[] = [
-  { value: "carousel", label: "Carousel", icon: "grid", color: "#5856D6" },
-  { value: "ad", label: "Ad", icon: "megaphone", color: "#FF2D55" },
-  { value: "slide", label: "Slide", icon: "presentation", color: "#007AFF" },
-  { value: "post", label: "Post", icon: "share", color: "#34C759" },
-  { value: "other", label: "Other", icon: "file", color: "#737373" },
-]
-
 interface ExampleUploaderProps {
   onUpload: (example: Omit<BrandExample, "id" | "uploadedAt">) => void
   disabled?: boolean
@@ -45,6 +39,7 @@ export function ExampleUploader({
   disabled = false,
   className,
 }: ExampleUploaderProps) {
+  const { t } = useTranslation()
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
@@ -55,6 +50,14 @@ export function ExampleUploader({
   const [exampleType, setExampleType] = React.useState<ExampleType>("carousel")
   const [annotation, setAnnotation] = React.useState("")
   const [whatMakesItOnBrand, setWhatMakesItOnBrand] = React.useState("")
+
+  const EXAMPLE_TYPES: { value: ExampleType; label: string; icon: string; color: string }[] = [
+    { value: "carousel", label: t.brand.examples.carousel, icon: "grid", color: "#5856D6" },
+    { value: "ad", label: t.brand.examples.ad, icon: "megaphone", color: "#FF2D55" },
+    { value: "slide", label: t.brand.examples.slide, icon: "presentation", color: "#007AFF" },
+    { value: "post", label: t.brand.examples.post, icon: "share", color: "#34C759" },
+    { value: "other", label: t.brand.examples.other, icon: "file", color: "#737373" },
+  ]
 
   const resetForm = () => {
     setSelectedFile(null)
@@ -73,13 +76,13 @@ export function ExampleUploader({
 
     // Validate file type
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setError("Please upload a PNG, JPG, PDF, or TXT file")
+      setError(t.brand.examples.fileError)
       return
     }
 
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
-      setError("File size must be less than 10MB")
+      setError(t.brand.examples.fileSizeError)
       return
     }
 
@@ -92,7 +95,7 @@ export function ExampleUploader({
     }
 
     setSelectedFile(file)
-  }, [])
+  }, [t])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -180,7 +183,7 @@ export function ExampleUploader({
 
           {/* Example Type Selection */}
           <div className="space-y-2">
-            <Label>Example Type</Label>
+            <Label>{t.brand.examples.exampleType}</Label>
             <div className="flex flex-wrap gap-2">
               {EXAMPLE_TYPES.map((type) => (
                 <button
@@ -202,25 +205,25 @@ export function ExampleUploader({
 
           {/* Annotation */}
           <div className="space-y-2">
-            <Label htmlFor="annotation">Annotation (Optional)</Label>
+            <Label htmlFor="annotation">{t.brand.examples.annotationOptional}</Label>
             <Input
               id="annotation"
               value={annotation}
               onChange={(e) => setAnnotation(e.target.value)}
-              placeholder="Brief description of this example..."
+              placeholder={t.brand.examples.annotationPlaceholder}
             />
           </div>
 
           {/* What Makes It On Brand */}
           <div className="space-y-2">
             <Label htmlFor="onbrand" required>
-              What makes this on-brand?
+              {t.brand.examples.whatMakesItOnBrand}
             </Label>
             <Textarea
               id="onbrand"
               value={whatMakesItOnBrand}
               onChange={(e) => setWhatMakesItOnBrand(e.target.value)}
-              placeholder="Explain why this example represents your brand well. This helps the AI understand your brand standards."
+              placeholder={t.brand.examples.whatMakesItOnBrandPlaceholder}
               className="min-h-[100px]"
             />
           </div>
@@ -228,14 +231,14 @@ export function ExampleUploader({
           {/* Actions */}
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={resetForm}>
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={!whatMakesItOnBrand.trim()}
             >
               <Icon name="plus" size="size-4" className="mr-2" />
-              Add Example
+              {t.brand.examples.addExample}
             </Button>
           </div>
         </div>
@@ -259,11 +262,11 @@ export function ExampleUploader({
           </div>
 
           <h4 className="font-sans font-semibold text-foreground mb-1">
-            Upload brand example
+            {t.brand.examples.uploadBrandExample}
           </h4>
 
           <p className="text-sm text-muted-foreground text-center mb-4">
-            Drag and drop or click to browse
+            {t.brand.examples.dragDropFiles}
           </p>
 
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
