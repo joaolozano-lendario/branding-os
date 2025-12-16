@@ -2,6 +2,7 @@
  * ToneGuidelinesEditor Component
  * BRAND-002: Configure Brand Voice
  * Academia Lendária Design System
+ * i18n: Full translation support
  */
 
 import * as React from "react"
@@ -10,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icon"
+import { useTranslation } from "@/store/i18nStore"
 import type { ToneGuideline } from "@/types/brand"
 
 interface ToneGuidelinesEditorProps {
@@ -22,14 +24,6 @@ interface ToneGuidelinesEditorProps {
   className?: string
 }
 
-const PLACEHOLDER_EXAMPLES = [
-  "We speak with confidence but never arrogance. Our tone is assured without being condescending.",
-  "We use clear, simple language. If a 12-year-old can't understand it, we rewrite it.",
-  "We celebrate our customers' wins. Every success story is a chance to show genuine enthusiasm.",
-  "We acknowledge challenges honestly. When something is hard, we say so - then help solve it.",
-  "We avoid jargon unless it adds value. Industry terms are fine when our audience expects them.",
-]
-
 export function ToneGuidelinesEditor({
   guidelines,
   onAdd,
@@ -39,9 +33,19 @@ export function ToneGuidelinesEditor({
   disabled = false,
   className,
 }: ToneGuidelinesEditorProps) {
+  const { t } = useTranslation()
   const [newGuideline, setNewGuideline] = React.useState("")
   const [editingId, setEditingId] = React.useState<string | null>(null)
   const [editText, setEditText] = React.useState("")
+
+  // Example guidelines that don't need translation (they're examples of English copy style)
+  const PLACEHOLDER_EXAMPLES = [
+    "We speak with confidence but never arrogance. Our tone is assured without being condescending.",
+    "We use clear, simple language. If a 12-year-old can't understand it, we rewrite it.",
+    "We celebrate our customers' wins. Every success story is a chance to show genuine enthusiasm.",
+    "We acknowledge challenges honestly. When something is hard, we say so - then help solve it.",
+    "We avoid jargon unless it adds value. Industry terms are fine when our audience expects them.",
+  ]
 
   const canAddMore = guidelines.length < maxGuidelines
   const unusedExamples = PLACEHOLDER_EXAMPLES.filter(
@@ -80,15 +84,14 @@ export function ToneGuidelinesEditor({
   return (
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between">
-        <Label>Tone Guidelines</Label>
+        <Label>{t.brand.voice.toneGuidelines}</Label>
         <span className="text-sm text-muted-foreground">
-          {guidelines.length}/{maxGuidelines} guidelines
+          {guidelines.length}/{maxGuidelines}
         </span>
       </div>
 
       <p className="text-sm text-muted-foreground font-serif">
-        Describe how your brand should sound. These guidelines help the AI match your
-        tone when writing copy.
+        {t.brand.voice.guidelinesHelp}
       </p>
 
       {/* Existing Guidelines */}
@@ -109,10 +112,10 @@ export function ToneGuidelinesEditor({
                 />
                 <div className="flex justify-end gap-2">
                   <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
-                    Cancel
+                    {t.common.cancel}
                   </Button>
                   <Button size="sm" onClick={handleSaveEdit}>
-                    Save
+                    {t.common.save}
                   </Button>
                 </div>
               </div>
@@ -160,7 +163,7 @@ export function ToneGuidelinesEditor({
             <Textarea
               value={newGuideline}
               onChange={(e) => setNewGuideline(e.target.value)}
-              placeholder="Write a tone guideline... e.g., 'We use humor sparingly but effectively. A well-placed joke can make complex topics feel approachable.'"
+              placeholder={t.brand.voice.guidelinePlaceholder}
               className="min-h-[80px] border-0 p-0 focus-visible:ring-0 resize-none"
               disabled={disabled}
             />
@@ -171,7 +174,7 @@ export function ToneGuidelinesEditor({
                 size="sm"
               >
                 <Icon name="plus" size="size-4" className="mr-2" />
-                Add Guideline
+                {t.brand.voice.addGuideline}
               </Button>
             </div>
           </div>
@@ -180,7 +183,7 @@ export function ToneGuidelinesEditor({
           {unusedExamples.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
-                Example Guidelines
+                {t.brand.voice.exampleGuidelines}
               </p>
               <div className="flex flex-wrap gap-2">
                 {unusedExamples.slice(0, 3).map((example, i) => (
@@ -203,7 +206,7 @@ export function ToneGuidelinesEditor({
       {/* Max Reached Message */}
       {!canAddMore && (
         <p className="text-sm text-muted-foreground text-center py-2">
-          Maximum guidelines reached. Remove one to add another.
+          {t.brand.voice.maxGuidelinesReached}
         </p>
       )}
     </div>

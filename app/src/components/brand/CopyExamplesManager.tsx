@@ -2,6 +2,7 @@
  * CopyExamplesManager Component
  * BRAND-002: Configure Brand Voice
  * Academia Lendária Design System
+ * i18n: Full translation support
  */
 
 import * as React from "react"
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icon"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+import { useTranslation } from "@/store/i18nStore"
 import type { CopyExample } from "@/types/brand"
 
 interface CopyExamplesManagerProps {
@@ -32,6 +34,7 @@ export function CopyExamplesManager({
   disabled = false,
   className,
 }: CopyExamplesManagerProps) {
+  const { t } = useTranslation()
   const [isAdding, setIsAdding] = React.useState(false)
   const [newExample, setNewExample] = React.useState({
     text: "",
@@ -65,26 +68,25 @@ export function CopyExamplesManager({
   return (
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between">
-        <Label>Copy Examples</Label>
+        <Label>{t.brand.voice.copyExamples}</Label>
         <span className="text-sm text-muted-foreground">
-          {examples.length}/{maxExamples} examples
+          {examples.length}/{maxExamples}
         </span>
       </div>
 
       <p className="text-sm text-muted-foreground font-serif">
-        Add examples of brand-aligned copy. Include both good examples (to emulate)
-        and bad examples (to avoid) for better AI training.
+        {t.brand.voice.copyExamplesHelp}
       </p>
 
       {/* Stats */}
       <div className="flex items-center gap-4">
         <Badge variant="success" className="gap-1">
           <Icon name="check" size="size-3" />
-          {goodExamples.length} good
+          {goodExamples.length} {t.brand.voice.good}
         </Badge>
         <Badge variant="destructive" className="gap-1">
           <Icon name="cross" size="size-3" />
-          {badExamples.length} avoid
+          {badExamples.length} {t.brand.voice.avoid}
         </Badge>
       </div>
 
@@ -125,7 +127,7 @@ export function CopyExamplesManager({
 
                   {example.context && (
                     <p className="text-xs text-muted-foreground">
-                      <span className="font-semibold">Context:</span> {example.context}
+                      <span className="font-semibold">{t.brand.voice.context}:</span> {example.context}
                     </p>
                   )}
 
@@ -159,7 +161,7 @@ export function CopyExamplesManager({
           <CardContent className="p-4 space-y-4">
             {/* Good/Bad Toggle */}
             <div className="flex items-center gap-4">
-              <Label className="text-sm">Example Type:</Label>
+              <Label className="text-sm">{t.brand.voice.exampleType}</Label>
               <div className="flex items-center gap-2">
                 <Button
                   variant={newExample.isGood ? "default" : "outline"}
@@ -167,7 +169,7 @@ export function CopyExamplesManager({
                   onClick={() => setNewExample({ ...newExample, isGood: true })}
                 >
                   <Icon name="check" size="size-4" className="mr-1" />
-                  Good Example
+                  {t.brand.voice.goodExample}
                 </Button>
                 <Button
                   variant={!newExample.isGood ? "destructive" : "outline"}
@@ -175,14 +177,14 @@ export function CopyExamplesManager({
                   onClick={() => setNewExample({ ...newExample, isGood: false })}
                 >
                   <Icon name="cross" size="size-4" className="mr-1" />
-                  Bad Example
+                  {t.brand.voice.badExample}
                 </Button>
               </div>
             </div>
 
             {/* Copy Text */}
             <div className="space-y-2">
-              <Label required>Copy Text</Label>
+              <Label required>{t.brand.voice.copyText}</Label>
               <Textarea
                 value={newExample.text}
                 onChange={(e) =>
@@ -199,19 +201,19 @@ export function CopyExamplesManager({
 
             {/* Context */}
             <div className="space-y-2">
-              <Label>Context (Optional)</Label>
+              <Label>{t.brand.voice.contextOptional}</Label>
               <Input
                 value={newExample.context}
                 onChange={(e) =>
                   setNewExample({ ...newExample, context: e.target.value })
                 }
-                placeholder="e.g., Homepage hero headline, Email subject line, CTA button"
+                placeholder={t.brand.voice.contextPlaceholder}
               />
             </div>
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label>Notes (Optional)</Label>
+              <Label>{t.brand.voice.notesOptional}</Label>
               <Input
                 value={newExample.notes}
                 onChange={(e) =>
@@ -219,8 +221,8 @@ export function CopyExamplesManager({
                 }
                 placeholder={
                   newExample.isGood
-                    ? "Why this is on-brand..."
-                    : "Why this should be avoided..."
+                    ? t.brand.voice.notesPlaceholderGood
+                    : t.brand.voice.notesPlaceholderBad
                 }
               />
             </div>
@@ -228,14 +230,14 @@ export function CopyExamplesManager({
             {/* Actions */}
             <div className="flex justify-end gap-2">
               <Button variant="ghost" onClick={handleCancel}>
-                Cancel
+                {t.common.cancel}
               </Button>
               <Button
                 onClick={handleAdd}
                 disabled={!newExample.text.trim()}
               >
                 <Icon name="plus" size="size-4" className="mr-2" />
-                Add Example
+                {t.brand.voice.addExample}
               </Button>
             </div>
           </CardContent>
@@ -249,14 +251,14 @@ export function CopyExamplesManager({
             disabled={disabled}
           >
             <Icon name="plus" size="size-4" className="mr-2" />
-            Add Copy Example
+            {t.brand.voice.addCopyExample}
           </Button>
         )
       )}
 
       {!canAddMore && !isAdding && (
         <p className="text-sm text-muted-foreground text-center py-2">
-          Maximum examples reached. Remove one to add another.
+          {t.brand.voice.maxExamplesReached}
         </p>
       )}
     </div>

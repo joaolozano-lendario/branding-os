@@ -138,15 +138,55 @@ export interface TranslationKeys {
       attributes: string
       attributesHelp: string
       selectUpTo: string
+      selected: string
+      yourVoiceIs: string
+      // Voice attributes
+      professional: string
+      professionalDesc: string
+      playful: string
+      playfulDesc: string
+      authoritative: string
+      authoritativeDesc: string
+      friendly: string
+      friendlyDesc: string
+      sophisticated: string
+      sophisticatedDesc: string
+      casual: string
+      casualDesc: string
+      inspiring: string
+      inspiringDesc: string
+      educational: string
+      educationalDesc: string
+      bold: string
+      boldDesc: string
+      empathetic: string
+      empatheticDesc: string
+      // Tone guidelines
       toneGuidelines: string
       guidelinesHelp: string
       addGuideline: string
+      guidelinePlaceholder: string
+      exampleGuidelines: string
+      maxGuidelinesReached: string
+      // Copy examples
       copyExamples: string
+      copyExamplesHelp: string
       goodExample: string
       badExample: string
       addExample: string
+      addCopyExample: string
+      exampleType: string
+      copyText: string
       context: string
+      contextOptional: string
+      contextPlaceholder: string
       notes: string
+      notesOptional: string
+      notesPlaceholderGood: string
+      notesPlaceholderBad: string
+      good: string
+      avoid: string
+      maxExamplesReached: string
     }
 
     // Examples
