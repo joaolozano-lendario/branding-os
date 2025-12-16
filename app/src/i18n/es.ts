@@ -211,6 +211,23 @@ export const es: Translation = {
     },
   },
 
+  pipeline: {
+    analyzingBrief: 'Analizando brief y seleccionando estrategia...',
+    strategySelected: 'Estrategia: {template} con angulo {angle}',
+    buildingNarrative: 'Construyendo estructura narrativa...',
+    structurePlanned: 'Estructura: {count} slides planificados',
+    writingCopy: 'Escribiendo copy para cada slide...',
+    copyWritten: 'Copy: {count} slides escritos',
+    creatingVisual: 'Creando especificaciones visuales...',
+    visualDesigned: 'Visual: {count} slides disenados',
+    generatingImages: 'Generando imagenes con IA para los slides...',
+    imagesGenerated: 'Imagenes: Assets generados con IA',
+    validatingQuality: 'Validando conformidad con la marca...',
+    qualityScore: 'Calidad: {score}/100',
+    renderingAssets: 'Renderizando assets finales...',
+    generationComplete: 'Generacion completa!',
+  },
+
   agents: {
     title: 'Pipeline de Agentes',
     subtitle: 'Generacion de activos de marca potenciada por IA',

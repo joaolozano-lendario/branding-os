@@ -211,6 +211,23 @@ export const ptBr: Translation = {
     },
   },
 
+  pipeline: {
+    analyzingBrief: 'Analisando briefing e selecionando estrategia...',
+    strategySelected: 'Estrategia: {template} com angulo {angle}',
+    buildingNarrative: 'Construindo estrutura narrativa...',
+    structurePlanned: 'Estrutura: {count} slides planejados',
+    writingCopy: 'Escrevendo copy para cada slide...',
+    copyWritten: 'Copy: {count} slides escritos',
+    creatingVisual: 'Criando especificacoes visuais...',
+    visualDesigned: 'Visual: {count} slides projetados',
+    generatingImages: 'Gerando imagens com IA para os slides...',
+    imagesGenerated: 'Imagens: Assets gerados com IA',
+    validatingQuality: 'Validando conformidade com a marca...',
+    qualityScore: 'Qualidade: {score}/100',
+    renderingAssets: 'Renderizando assets finais...',
+    generationComplete: 'Geracao completa!',
+  },
+
   agents: {
     title: 'Pipeline de Agentes',
     subtitle: 'Geracao de ativos de marca potencializada por IA',

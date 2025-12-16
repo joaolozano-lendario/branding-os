@@ -218,6 +218,24 @@ export interface TranslationKeys {
     }
   }
 
+  // Pipeline messages
+  pipeline: {
+    analyzingBrief: string
+    strategySelected: string
+    buildingNarrative: string
+    structurePlanned: string
+    writingCopy: string
+    copyWritten: string
+    creatingVisual: string
+    visualDesigned: string
+    generatingImages: string
+    imagesGenerated: string
+    validatingQuality: string
+    qualityScore: string
+    renderingAssets: string
+    generationComplete: string
+  }
+
   // Agents
   agents: {
     title: string

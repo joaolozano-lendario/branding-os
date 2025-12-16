@@ -42,6 +42,79 @@ export function GenerationStepV2({
 }: GenerationStepV2Props) {
   const { t } = useTranslation()
 
+  // Translate pipeline progress messages dynamically
+  const translateProgressMessage = (message: string): string => {
+    if (!message) return ''
+
+    // Match patterns and translate
+    if (message.includes('Analyzing brief')) {
+      return t.pipeline.analyzingBrief
+    }
+    if (message.startsWith('Strategy:')) {
+      const match = message.match(/Strategy: (.+) with (.+) angle/)
+      if (match) {
+        return t.pipeline.strategySelected
+          .replace('{template}', match[1])
+          .replace('{angle}', match[2])
+      }
+      return message
+    }
+    if (message.includes('Building narrative')) {
+      return t.pipeline.buildingNarrative
+    }
+    if (message.startsWith('Structure:')) {
+      const match = message.match(/Structure: (\d+) slides/)
+      if (match) {
+        return t.pipeline.structurePlanned.replace('{count}', match[1])
+      }
+      return message
+    }
+    if (message.includes('Writing copy')) {
+      return t.pipeline.writingCopy
+    }
+    if (message.startsWith('Copy:')) {
+      const match = message.match(/Copy: (\d+) slides/)
+      if (match) {
+        return t.pipeline.copyWritten.replace('{count}', match[1])
+      }
+      return message
+    }
+    if (message.includes('Creating visual')) {
+      return t.pipeline.creatingVisual
+    }
+    if (message.startsWith('Visual:')) {
+      const match = message.match(/Visual: (\d+) slides/)
+      if (match) {
+        return t.pipeline.visualDesigned.replace('{count}', match[1])
+      }
+      return message
+    }
+    if (message.includes('Generating AI images')) {
+      return t.pipeline.generatingImages
+    }
+    if (message.includes('Images:')) {
+      return t.pipeline.imagesGenerated
+    }
+    if (message.includes('Validating brand')) {
+      return t.pipeline.validatingQuality
+    }
+    if (message.startsWith('Quality:')) {
+      const match = message.match(/Quality: (\d+)\/100/)
+      if (match) {
+        return t.pipeline.qualityScore.replace('{score}', match[1])
+      }
+      return message
+    }
+    if (message.includes('Rendering final')) {
+      return t.pipeline.renderingAssets
+    }
+    if (message.includes('Generation complete')) {
+      return t.pipeline.generationComplete
+    }
+
+    return message
+  }
+
   const getAgentName = (agentId: AgentIdV2): string => {
     const key = AGENT_TRANSLATION_KEY[agentId]
     return t.agents.v2[key]?.name || AGENT_METADATA_V2[agentId].name
@@ -89,7 +162,7 @@ export function GenerationStepV2({
           {t.wizard.steps.content.generating}
         </h2>
         <p className="mt-2 font-serif text-muted-foreground">
-          {progressMessage || t.wizard.steps.content.estimatedTime}
+          {translateProgressMessage(progressMessage) || t.wizard.steps.content.estimatedTime}
         </p>
       </div>
 

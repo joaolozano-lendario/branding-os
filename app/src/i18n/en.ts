@@ -211,6 +211,23 @@ export const en: Translation = {
     },
   },
 
+  pipeline: {
+    analyzingBrief: 'Analyzing brief and selecting strategy...',
+    strategySelected: 'Strategy: {template} with {angle} angle',
+    buildingNarrative: 'Building narrative structure...',
+    structurePlanned: 'Structure: {count} slides planned',
+    writingCopy: 'Writing copy for each slide...',
+    copyWritten: 'Copy: {count} slides written',
+    creatingVisual: 'Creating visual specifications...',
+    visualDesigned: 'Visual: {count} slides designed',
+    generatingImages: 'Generating AI images for slides...',
+    imagesGenerated: 'Images: AI assets generated',
+    validatingQuality: 'Validating brand compliance...',
+    qualityScore: 'Quality: {score}/100',
+    renderingAssets: 'Rendering final assets...',
+    generationComplete: 'Generation complete!',
+  },
+
   agents: {
     title: 'Agent Pipeline',
     subtitle: 'AI-powered brand asset generation',

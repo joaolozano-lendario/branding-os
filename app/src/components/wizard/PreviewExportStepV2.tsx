@@ -335,10 +335,10 @@ export function PreviewExportStepV2({
         </p>
       </div>
 
-      {/* Main Content - Two Columns */}
+      {/* Main Content - Two Columns 50%/50% */}
       <div className="flex gap-6">
-        {/* LEFT COLUMN - Editor */}
-        <div className="w-[385px] space-y-4 shrink-0">
+        {/* LEFT COLUMN - Editor (50%) */}
+        <div className="w-1/2 space-y-4">
           {/* Signature Field */}
           <div className="space-y-2">
             <label className="text-[12px] font-semibold text-foreground">
@@ -527,23 +527,20 @@ export function PreviewExportStepV2({
           </div>
         </div>
 
-        {/* RIGHT COLUMN - Preview (Figma: Frame 167) - LARGER */}
-        <div
-          className="flex-1 rounded-[16px] flex items-center justify-center bg-secondary"
-          style={{ minHeight: '520px' }}
-        >
-          {/* Preview Container - Larger than Figma for better visibility */}
+        {/* RIGHT COLUMN - Preview (50%) */}
+        <div className="w-1/2 rounded-[16px] flex items-center justify-center bg-secondary p-4">
+          {/* Preview Container - Larger for better visibility */}
           <div
-            className="rounded-[8px] overflow-hidden shadow-2xl"
+            className="rounded-[8px] overflow-hidden shadow-lg"
             style={{
-              width: '324px',
-              height: '405px',
+              width: '400px',
+              height: '500px',
               backgroundColor: '#000000'
             }}
           >
             <div
               style={{
-                transform: 'scale(0.3)', // 324 / 1080 = 0.3
+                transform: 'scale(0.37)', // 400 / 1080 ≈ 0.37
                 transformOrigin: 'top left',
                 width: '1080px',
                 height: '1350px',
