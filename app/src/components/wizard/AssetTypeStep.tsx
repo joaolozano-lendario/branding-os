@@ -77,7 +77,7 @@ export function AssetTypeStep({ selectedType, onSelect, errors }: AssetTypeStepP
       {/* Figma: Title left, subtitle right, gap 288px */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
         {/* Figma: Inter SemiBold 40px, black */}
-        <h2 className="font-sans text-[40px] font-semibold leading-tight text-black">
+        <h2 className="font-sans text-[40px] font-semibold leading-tight text-foreground">
           O que deseja
           <br />
           criar Lendário?
@@ -110,22 +110,22 @@ export function AssetTypeStep({ selectedType, onSelect, errors }: AssetTypeStepP
                 // Selected = transparent border to maintain size
                 isSelected && 'border-transparent',
                 // Inactive = gray background
-                isInactive && 'bg-[#f8f8f8] border-transparent',
+                isInactive && 'bg-secondary border-transparent',
                 // Figma: Unselected = border #E8E8E8
-                !isSelected && !isInactive && 'border-[#E8E8E8] hover:border-[#5856D6]/50'
+                !isSelected && !isInactive && 'border-border hover:border-[#5856D6]/50'
               )}
             >
               {/* Figma: Icon container 50x50, radius 200 (circle) */}
               <div
                 className={cn(
                   'flex h-[50px] w-[50px] items-center justify-center rounded-full',
-                  isSelected ? 'bg-white/16' : isInactive ? 'bg-[#e8e8e8]' : 'bg-[#5856D6]'
+                  isSelected ? 'bg-white/16' : isInactive ? 'bg-muted' : 'bg-[#5856D6]'
                 )}
               >
                 {/* Figma: Icon 18x18 */}
                 <Icon name={icon} className={cn(
                   'w-[18px] h-[18px] inline-flex items-center justify-center',
-                  isInactive ? 'text-[#c8c8c8]' : 'text-white'
+                  isInactive ? 'text-muted-foreground' : 'text-white'
                 )} />
               </div>
 
@@ -138,8 +138,8 @@ export function AssetTypeStep({ selectedType, onSelect, errors }: AssetTypeStepP
                 <h3
                   className={cn(
                     'font-semibold text-2xl',
-                    // Selected text = white, Inactive = #c8c8c8, Unselected = black
-                    isSelected ? 'text-white' : isInactive ? 'text-[#c8c8c8]' : 'text-black'
+                    // Selected text = white, Inactive = muted, Unselected = foreground
+                    isSelected ? 'text-white' : isInactive ? 'text-muted-foreground' : 'text-foreground'
                   )}
                 >
                   {label}
@@ -148,8 +148,8 @@ export function AssetTypeStep({ selectedType, onSelect, errors }: AssetTypeStepP
                 <p
                   className={cn(
                     'text-sm font-medium leading-[1.4]',
-                    // Selected = white, Inactive = #c8c8c8, Unselected = #888888
-                    isSelected ? 'text-white' : isInactive ? 'text-[#c8c8c8]' : 'text-[#888888]'
+                    // Selected = white, Inactive = muted, Unselected = muted-foreground
+                    isSelected ? 'text-white' : isInactive ? 'text-muted-foreground' : 'text-muted-foreground'
                   )}
                 >
                   {description}

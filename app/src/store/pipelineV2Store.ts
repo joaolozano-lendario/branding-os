@@ -20,6 +20,15 @@ import type { PipelineResult, PipelineInput } from '@/types/pipeline'
 // STORE STATE
 // ============================================
 
+// Image Crop Settings
+export interface CropSettings {
+  positionX: number // -50 to 50 (percentage offset for crop)
+  positionY: number // -50 to 50 (percentage offset for crop)
+  zoom: number // 1.0 to 2.0
+  containerOffsetY: number // -200 to 200 (pixels to move container up/down)
+  aspectRatio: '16:9' | '4:3' | '1:1' | '3:4' // Width proportion
+}
+
 interface PipelineV2State {
   // API Configuration (GEMINI - Google AI)
   apiConfig: GeminiAPIConfig | null
@@ -43,6 +52,12 @@ interface PipelineV2State {
   currentInput: PipelineInput | null
   result: PipelineResult | null
 
+  // Branding Settings
+  signature: string
+
+  // Image Crop Settings per slide
+  cropSettings: Record<number, CropSettings>
+
   // Actions
   setApiKey: (apiKey: string) => void
   clearApiKey: () => void
@@ -62,13 +77,23 @@ interface PipelineV2State {
   updateSlideBody: (slideIndex: number, body: string) => void
   updateSlideBullets: (slideIndex: number, bullets: string[]) => void
   updateSlideImage: (slideIndex: number, imageSrc: string) => void
+
+  // Branding Actions
+  setSignature: (signature: string) => void
+
+  // Image Crop Actions
+  updateCropSettings: (slideIndex: number, settings: Partial<CropSettings>) => void
+  getCropSettings: (slideIndex: number) => CropSettings
+
+  // Sync Actions
+  syncGeneratedImages: () => void
 }
 
 // ============================================
 // STORE
 // ============================================
 
-export const usePipelineV2Store = create<PipelineV2State>()((set) => ({
+export const usePipelineV2Store = create<PipelineV2State>()((set, get) => ({
   // Initial State
   apiConfig: null,
   isApiConfigured: false,
@@ -91,6 +116,8 @@ export const usePipelineV2Store = create<PipelineV2State>()((set) => ({
   },
   currentInput: null,
   result: null,
+  signature: '@oalanicolas',
+  cropSettings: {},
 
   // API Configuration (GEMINI)
   setApiKey: (apiKey: string) => {
@@ -302,6 +329,85 @@ export const usePipelineV2Store = create<PipelineV2State>()((set) => ({
           slideImages,
         },
       }
+    })
+  },
+
+  // Branding Actions
+  setSignature: (signature: string) => {
+    set({ signature })
+  },
+
+  // Image Crop Actions
+  updateCropSettings: (slideIndex: number, settings: Partial<CropSettings>) => {
+    set((state) => {
+      const currentSettings = state.cropSettings[slideIndex] || {
+        positionX: 0,
+        positionY: 0,
+        zoom: 1.0,
+        containerOffsetY: 0,
+        aspectRatio: '16:9' as const
+      }
+
+      return {
+        cropSettings: {
+          ...state.cropSettings,
+          [slideIndex]: {
+            ...currentSettings,
+            ...settings
+          }
+        }
+      }
+    })
+  },
+
+  getCropSettings: (slideIndex: number) => {
+    const state = get()
+    return state.cropSettings[slideIndex] || {
+      positionX: 0,
+      positionY: 0,
+      zoom: 1.0,
+      containerOffsetY: 0,
+      aspectRatio: '16:9' as const
+    }
+  },
+
+  // Sync generated images from visual.slides to slideImages
+  syncGeneratedImages: () => {
+    const result = get().result
+    if (!result?.visual?.slides) return
+
+    const existingSlideImages = result.slideImages || {}
+    const newSlideImages: Record<number, string> = { ...existingSlideImages }
+
+    result.visual.slides.forEach((slide, index) => {
+      // Don't overwrite if user already inserted an image
+      if (newSlideImages[index]) return
+
+      // Check background for image
+      if (slide.background?.type === 'image' && slide.background.value) {
+        const val = slide.background.value
+        if (val.startsWith('http') || val.startsWith('data:')) {
+          newSlideImages[index] = val
+          return
+        }
+      }
+
+      // Check elements for images
+      const imageElement = slide.elements?.find(e =>
+        (e.role === 'background' || e.role === 'image') &&
+        e.content &&
+        (e.content.startsWith('http') || e.content.startsWith('data:'))
+      )
+      if (imageElement?.content) {
+        newSlideImages[index] = imageElement.content
+      }
+    })
+
+    set({
+      result: {
+        ...result,
+        slideImages: newSlideImages,
+      },
     })
   },
 }))

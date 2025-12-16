@@ -98,11 +98,12 @@ You MUST respond with a valid JSON object matching this EXACT structure:
 - NEWS/UPDATE = announcement
 
 ### Slide Count
-- Use the template's default slideCount
-- Only adjust if user explicitly requested different
+- IMPORTANT: If user requested a specific slide count, USE THAT EXACT NUMBER
+- Only use template default if no user preference is specified
+- Valid range: 4-10 slides
 
 ### Emotional Arc
-- Must have same number of beats as slideCount
+- Must have EXACTLY the same number of beats as slideCount
 - Start with curiosity (hook)
 - End with empowerment (CTA)
 - Middle depends on narrative angle

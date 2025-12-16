@@ -1,9 +1,3 @@
-/**
- * Content Input Step
- * Branding OS - Academia Lendaria
- * E4: BRAND-025 - Step 4 of Generation Wizard
- */
-
 import * as React from 'react'
 import { Label } from '@/components/ui/label'
 import { Icon } from '@/components/ui/icon'
@@ -52,7 +46,7 @@ export function ContentInputStep({ content, onChange, errors }: ContentInputStep
   const handleFiles = (files: File[]) => {
     const validFiles = files.filter((file) => {
       const validTypes = ['image/png', 'image/jpeg', 'image/webp', 'application/pdf', 'text/plain']
-      return validTypes.includes(file.type) && file.size <= 10 * 1024 * 1024 // 10MB limit
+      return validTypes.includes(file.type) && file.size <= 10 * 1024 * 1024
     })
 
     if (validFiles.length > 0) {
@@ -82,20 +76,42 @@ export function ContentInputStep({ content, onChange, errors }: ContentInputStep
 
   return (
     <div className="space-y-8">
-      {/* Header with split layout */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-        <h2 className="font-sans text-[40px] font-semibold leading-tight text-black">
+      <div className="space-y-4">
+        <h2 className="font-heading text-3xl font-bold text-foreground">
           {t.wizard.steps.content.title}
         </h2>
-        <p className="text-base font-medium text-[#888888] md:max-w-[278px]">
+        <p className="text-muted-foreground text-lg">
           {t.wizard.steps.content.subtitle}
         </p>
       </div>
 
       <div className="space-y-6">
-        {/* Text Content */}
+        {/* Slide Count Selector */}
         <div className="space-y-2">
-          <Label htmlFor="content" className="text-xs font-semibold text-black">
+          <Label htmlFor="slideCount" className="text-base font-semibold">
+            Quantidade de Slides
+          </Label>
+          <div className="flex items-center gap-3">
+            <select
+              id="slideCount"
+              value={content.slideCount || 8}
+              onChange={(e) => onChange({ slideCount: parseInt(e.target.value) })}
+              className="h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              {[4, 5, 6, 7, 8, 9, 10].map((num) => (
+                <option key={num} value={num}>
+                  {num} slides
+                </option>
+              ))}
+            </select>
+            <span className="text-sm text-muted-foreground">
+              Recomendado: 6-8 slides para melhor engajamento
+            </span>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="content" className="text-base font-semibold">
             {t.wizard.steps.content.inputContent}
             <span className="text-destructive ml-1">*</span>
           </Label>
@@ -103,27 +119,25 @@ export function ContentInputStep({ content, onChange, errors }: ContentInputStep
             id="content"
             value={content.text}
             onChange={(e) => onChange({ text: e.target.value })}
-            placeholder="Cole seu conteúdo, pontos-chave ou material aqui..."
-            rows={8}
-            className="w-full px-6 py-4 rounded-lg border border-[#E8E8E8] bg-[#f8f8f8] resize-none transition-all duration-[800ms] text-base font-medium placeholder:text-[#888888] focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
+            placeholder={t.brand.examples.contentPlaceholder}
+            className="flex min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           />
-          <p className="text-xs text-[#888888] text-right">
+          <p className="text-xs text-muted-foreground text-right">
             {content.text.length} caracteres
           </p>
         </div>
 
-        {/* File Upload */}
         <div className="space-y-2">
-          <Label className="text-xs font-semibold text-black">
+          <Label className="text-base font-semibold">
             {t.wizard.steps.content.uploadFiles}
           </Label>
 
           <div
             className={cn(
-              'relative rounded-lg border-2 border-dashed p-12 transition-all duration-[800ms]',
+              'relative rounded-lg border-2 border-dashed p-12 transition-all duration-200 ease-in-out',
               isDragging
-                ? 'border-[#5856D6] bg-[#5856D6]/5'
-                : 'border-[#E8E8E8] hover:!border-[#5856D6] focus-within:!border-[#5856D6]'
+                ? 'border-primary bg-primary/5'
+                : 'border-muted-foreground/25 hover:border-primary/50'
             )}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -138,9 +152,9 @@ export function ContentInputStep({ content, onChange, errors }: ContentInputStep
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
 
-            <div className="flex flex-col items-center gap-3 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#5856D6]/16">
-                <Icon name="cloud-upload" className="flex items-center justify-center text-[24px] w-6 h-6 text-[#5856D6] leading-none" />
+            <div className="flex flex-col items-center gap-2 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <Icon name="cloud-upload" className="w-6 h-6 text-primary" />
               </div>
               <div>
                 <p className="font-medium">{t.brand.examples.dragDropFiles}</p>
@@ -151,7 +165,6 @@ export function ContentInputStep({ content, onChange, errors }: ContentInputStep
             </div>
           </div>
 
-          {/* Uploaded Files */}
           {content.files && content.files.length > 0 && (
             <div className="space-y-2 mt-4">
               {content.files.map((file, index) => (
@@ -160,7 +173,7 @@ export function ContentInputStep({ content, onChange, errors }: ContentInputStep
                   className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50"
                 >
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-background">
-                    <Icon name={getFileIcon(file)} size="size-4" />
+                    <Icon name={getFileIcon(file)} className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{file.name}</p>
@@ -171,9 +184,9 @@ export function ContentInputStep({ content, onChange, errors }: ContentInputStep
                   <button
                     type="button"
                     onClick={() => handleRemoveFile(index)}
-                    className="p-1 rounded hover:bg-background"
+                    className="p-1 rounded hover:bg-background transition-colors"
                   >
-                    <Icon name="cross-small" size="size-4" />
+                    <Icon name="cross-small" className="w-4 h-4" />
                   </button>
                 </div>
               ))}

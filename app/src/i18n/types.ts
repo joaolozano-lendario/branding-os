@@ -144,6 +144,7 @@ export interface TranslationKeys {
       slide: string
       post: string
       other: string
+      contentPlaceholder: string
     }
   }
 
@@ -223,6 +224,33 @@ export interface TranslationKeys {
       complete: string
       error: string
       failed: string
+    }
+    // V2 Agents
+    v2: {
+      brandStrategist: {
+        name: string
+        description: string
+      }
+      storyArchitect: {
+        name: string
+        description: string
+      }
+      copywriter: {
+        name: string
+        description: string
+      }
+      visualCompositor: {
+        name: string
+        description: string
+      }
+      qualityValidator: {
+        name: string
+        description: string
+      }
+      renderEngine: {
+        name: string
+        description: string
+      }
     }
   }
 

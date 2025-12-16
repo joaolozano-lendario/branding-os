@@ -64,8 +64,8 @@ interface GeminiResponse {
 // ============================================
 
 export const GEMINI_MODELS = {
-  text: 'models/gemini-2.5-pro',
-  image: 'models/gemini-3-pro-image-preview',
+  text: 'models/gemini-flash-latest',
+  image: 'models/gemini-2.5-flash-image',
 } as const
 
 // ============================================
@@ -270,55 +270,65 @@ CRITICAL JSON RULES:
   async generateImage(
     prompt: string,
     options?: {
-      aspectRatio?: '1:1' | '16:9' | '9:16' | '4:3'
+      aspectRatio?: '1:1' | '16:9' | '9:16' | '4:3' | '4:5'
       style?: string
     }
   ): Promise<string> {
     const model = GEMINI_MODELS.image
 
-    const enhancedPrompt = options?.style
-      ? `${prompt}. Style: ${options.style}`
-      : prompt
+    // Construct a more detailed prompt for the model
+    let detailedPrompt = prompt
+    if (options?.aspectRatio) {
+      detailedPrompt += ` Aspect ratio: ${options.aspectRatio}.`
+    }
+    if (options?.style) {
+      detailedPrompt += ` Style: ${options.style}.`
+    }
+
+    console.log('[GeminiAPI] Generating image with model:', model)
+    console.log('[GeminiAPI] Prompt:', detailedPrompt)
 
     const request: GeminiRequest = {
       contents: [
         {
           role: 'user',
-          parts: [{ text: `Generate an image: ${enhancedPrompt}` }],
+          parts: [{ text: detailedPrompt }],
         },
       ],
-      generationConfig: {
-        temperature: 0.4,
-        maxOutputTokens: 8192,
-      },
     }
 
-    const response = await fetch(this.getEndpoint(model), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(request),
-    })
+    try {
+      const response = await fetch(this.getEndpoint(model), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      })
 
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error?.message || 'Image generation failed')
-    }
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: { message: response.statusText } }))
+        console.error('[GeminiAPI] Image generation failed:', error)
+        throw new Error(error.error?.message || `Image generation failed: ${response.status} ${response.statusText}`)
+      }
 
-    const data: GeminiResponse = await response.json()
+      const data: GeminiResponse = await response.json()
 
-    if (data.candidates && data.candidates.length > 0) {
-      const content = data.candidates[0].content
-      if (content.parts && content.parts.length > 0) {
-        const imagePart = content.parts.find(p => p.inlineData)
-        if (imagePart?.inlineData) {
-          return `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`
+      if (data.candidates && data.candidates.length > 0) {
+        const content = data.candidates[0].content
+        if (content.parts && content.parts.length > 0) {
+          const imagePart = content.parts.find(p => p.inlineData)
+          if (imagePart?.inlineData) {
+            return `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`
+          }
         }
       }
-    }
 
-    throw new Error('No image in response')
+      throw new Error('No image found in response candidates')
+    } catch (error) {
+      console.error('[GeminiAPI] Network or parsing error:', error)
+      throw error
+    }
   }
 
   async testConnection(): Promise<boolean> {

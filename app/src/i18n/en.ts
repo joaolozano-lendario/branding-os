@@ -137,6 +137,7 @@ export const en: Translation = {
       slide: 'Slide',
       post: 'Post',
       other: 'Other',
+      contentPlaceholder: 'Paste here the content you want to transform into a carousel...',
     },
   },
 
@@ -215,6 +216,32 @@ export const en: Translation = {
       complete: 'Complete',
       error: 'Error',
       failed: 'Generation Failed',
+    },
+    v2: {
+      brandStrategist: {
+        name: 'Brand Strategist',
+        description: 'Selects template and defines strategy',
+      },
+      storyArchitect: {
+        name: 'Story Architect',
+        description: 'Builds narrative structure slide-by-slide',
+      },
+      copywriter: {
+        name: 'Copywriter',
+        description: 'Writes copy specific to each slide',
+      },
+      visualCompositor: {
+        name: 'Visual Compositor',
+        description: 'Creates pixel-perfect visual specs',
+      },
+      qualityValidator: {
+        name: 'Quality Validator',
+        description: 'Validates brand compliance',
+      },
+      renderEngine: {
+        name: 'Render Engine',
+        description: 'Generates HTML/CSS for each slide',
+      },
     },
   },
 

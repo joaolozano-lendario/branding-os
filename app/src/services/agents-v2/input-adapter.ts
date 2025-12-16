@@ -175,7 +175,7 @@ export function adaptToPipelineInput(agentInput: AgentInput): PipelineInput {
     },
 
     preferences: {
-      slideCount: undefined, // Let the strategist decide
+      slideCount: agentInput.content.slideCount || 8, // User-selected or default 8
       templateId: undefined, // Let the strategist decide
       tone: undefined,       // Use brand voice
     },

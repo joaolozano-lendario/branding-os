@@ -90,6 +90,45 @@ export class QualityValidatorAgent extends BaseAgent<QualityValidatorInput, Qual
   }
 
   /**
+   * Run content validation checks (headlines, body text)
+   */
+  private runContentChecks(input: QualityValidatorInput): QualityCheck[] {
+    const checks: QualityCheck[] = []
+    const { copy } = input
+
+    // CRITICAL: Validate that ALL slides have headlines
+    copy.slides.forEach((slide, index) => {
+      const hasHeadline = Boolean(slide.headline && slide.headline.trim().length > 0)
+      checks.push({
+        rule: `slide-${index + 1}-headline-present`,
+        category: 'content',
+        passed: hasHeadline,
+        details: hasHeadline
+          ? `Slide ${index + 1} has headline: "${slide.headline?.slice(0, 50)}..."`
+          : `CRITICAL: Slide ${index + 1} is MISSING a headline. All slides MUST have headlines.`,
+        severity: hasHeadline ? 'info' : 'critical'
+      })
+
+      // Check headline length (should be between 5 and 100 chars typically)
+      if (hasHeadline) {
+        const headlineLength = slide.headline!.trim().length
+        const isValidLength = headlineLength >= 5 && headlineLength <= 120
+        checks.push({
+          rule: `slide-${index + 1}-headline-length`,
+          category: 'content',
+          passed: isValidLength,
+          details: isValidLength
+            ? `Headline length (${headlineLength} chars) is appropriate`
+            : `Headline length (${headlineLength} chars) may be ${headlineLength < 5 ? 'too short' : 'too long'}`,
+          severity: isValidLength ? 'info' : 'warning'
+        })
+      }
+    })
+
+    return checks
+  }
+
+  /**
    * Run technical validation checks (no AI needed for these)
    */
   private runTechnicalChecks(input: QualityValidatorInput): QualityCheck[] {
@@ -117,8 +156,10 @@ export class QualityValidatorAgent extends BaseAgent<QualityValidatorInput, Qual
 
     // Check each slide
     visual.slides.forEach((slide, slideIndex) => {
+      if (!slide) return
+
       // Check 1: Background color is allowed
-      if (slide.background.type === 'solid') {
+      if (slide.background && slide.background.type === 'solid') {
         const bgColor = normalizeHex(slide.background.value)
         const isAllowed = allowedColors.has(bgColor)
         checks.push({
@@ -133,77 +174,81 @@ export class QualityValidatorAgent extends BaseAgent<QualityValidatorInput, Qual
       }
 
       // Check each element
-      slide.elements.forEach((element, elementIndex) => {
-        // Check 2: Text colors are allowed
-        if (element.type === 'text' && element.style.color) {
-          const textColor = normalizeHex(element.style.color)
-          const isAllowed = allowedColors.has(textColor)
-          checks.push({
-            rule: `slide-${slideIndex + 1}-element-${elementIndex + 1}-color`,
-            category: 'color',
-            passed: isAllowed,
-            details: isAllowed
-              ? `${element.role} color ${element.style.color} is in brand palette`
-              : `${element.role} color ${element.style.color} is NOT in brand palette`,
-            severity: isAllowed ? 'info' : 'error'
-          })
-        }
+      if (slide.elements && Array.isArray(slide.elements)) {
+        slide.elements.forEach((element, elementIndex) => {
+          if (!element) return
 
-        // Check 3: Fonts are allowed
-        if (element.type === 'text' && element.style.fontFamily) {
-          const font = element.style.fontFamily.toLowerCase()
-          const isAllowed = allowedFonts.has(font)
-          checks.push({
-            rule: `slide-${slideIndex + 1}-element-${elementIndex + 1}-font`,
-            category: 'typography',
-            passed: isAllowed,
-            details: isAllowed
-              ? `Font ${element.style.fontFamily} is in brand typography`
-              : `Font ${element.style.fontFamily} is NOT in brand typography`,
-            severity: isAllowed ? 'info' : 'error'
-          })
-        }
+          // Check 2: Text colors are allowed
+          if (element.type === 'text' && element.style && element.style.color) {
+            const textColor = normalizeHex(element.style.color)
+            const isAllowed = allowedColors.has(textColor)
+            checks.push({
+              rule: `slide-${slideIndex + 1}-element-${elementIndex + 1}-color`,
+              category: 'color',
+              passed: isAllowed,
+              details: isAllowed
+                ? `${element.role} color ${element.style.color} is in brand palette`
+                : `${element.role} color ${element.style.color} is NOT in brand palette`,
+              severity: isAllowed ? 'info' : 'error'
+            })
+          }
 
-        // Check 4: Contrast ratio (text on background)
-        if (element.type === 'text' && element.style.color && slide.background.type === 'solid') {
-          const contrast = getContrastRatio(element.style.color, slide.background.value)
-          const passes = contrast >= 4.5 // WCAG AA
-          checks.push({
-            rule: `slide-${slideIndex + 1}-element-${elementIndex + 1}-contrast`,
-            category: 'contrast',
-            passed: passes,
-            details: passes
-              ? `${element.role} contrast ratio ${contrast.toFixed(2)}:1 meets WCAG AA (≥4.5:1)`
-              : `${element.role} contrast ratio ${contrast.toFixed(2)}:1 FAILS WCAG AA (needs ≥4.5:1)`,
-            severity: passes ? 'info' : 'warning'
-          })
-        }
+          // Check 3: Fonts are allowed
+          if (element.type === 'text' && element.style && element.style.fontFamily) {
+            const font = element.style.fontFamily.toLowerCase()
+            const isAllowed = allowedFonts.has(font)
+            checks.push({
+              rule: `slide-${slideIndex + 1}-element-${elementIndex + 1}-font`,
+              category: 'typography',
+              passed: isAllowed,
+              details: isAllowed
+                ? `Font ${element.style.fontFamily} is in brand typography`
+                : `Font ${element.style.fontFamily} is NOT in brand typography`,
+              severity: isAllowed ? 'info' : 'error'
+            })
+          }
 
-        // Check 5: Spacing is 8px grid
-        if (element.position) {
-          const spacingChecks = [
-            { name: 'x', value: element.position.x },
-            { name: 'y', value: element.position.y },
-            { name: 'width', value: element.position.width },
-          ]
+          // Check 4: Contrast ratio (text on background)
+          if (element.type === 'text' && element.style && element.style.color && slide.background && slide.background.type === 'solid') {
+            const contrast = getContrastRatio(element.style.color, slide.background.value)
+            const passes = contrast >= 4.5 // WCAG AA
+            checks.push({
+              rule: `slide-${slideIndex + 1}-element-${elementIndex + 1}-contrast`,
+              category: 'contrast',
+              passed: passes,
+              details: passes
+                ? `${element.role} contrast ratio ${contrast.toFixed(2)}:1 meets WCAG AA (≥4.5:1)`
+                : `${element.role} contrast ratio ${contrast.toFixed(2)}:1 FAILS WCAG AA (needs ≥4.5:1)`,
+              severity: passes ? 'info' : 'warning'
+            })
+          }
 
-          spacingChecks.forEach(({ name, value }) => {
-            if (typeof value === 'number') {
-              const isGrid = isMultipleOf8(value)
-              // Only flag as warning, not error (8px grid is a guideline)
-              if (!isGrid) {
-                checks.push({
-                  rule: `slide-${slideIndex + 1}-element-${elementIndex + 1}-spacing-${name}`,
-                  category: 'spacing',
-                  passed: true, // Don't fail, just warn
-                  details: `${element.role} ${name}=${value}px is not a multiple of 8px (guideline)`,
-                  severity: 'warning'
-                })
+          // Check 5: Spacing is 8px grid
+          if (element.position) {
+            const spacingChecks = [
+              { name: 'x', value: element.position.x },
+              { name: 'y', value: element.position.y },
+              { name: 'width', value: element.position.width },
+            ]
+
+            spacingChecks.forEach(({ name, value }) => {
+              if (typeof value === 'number') {
+                const isGrid = isMultipleOf8(value)
+                // Only flag as warning, not error (8px grid is a guideline)
+                if (!isGrid) {
+                  checks.push({
+                    rule: `slide-${slideIndex + 1}-element-${elementIndex + 1}-spacing-${name}`,
+                    category: 'spacing',
+                    passed: true, // Don't fail, just warn
+                    details: `${element.role} ${name}=${value}px is not a multiple of 8px (guideline)`,
+                    severity: 'warning'
+                  })
+                }
               }
-            }
-          })
-        }
-      })
+            })
+          }
+        })
+      }
     })
 
     return checks
@@ -306,8 +351,8 @@ ${brandConfig.voice.toneGuidelines.map(g => `- ${g}`).join('\n')}
 ${brandConfig.voice.copyExamples.filter(e => !e.isGood).length > 0 ? `
 **Examples of what to AVOID:**
 ${brandConfig.voice.copyExamples.filter(e => !e.isGood).map(e =>
-  `- "${e.text}" (${e.context})`
-).join('\n')}
+      `- "${e.text}" (${e.context})`
+    ).join('\n')}
 ` : ''}
 
 ---
@@ -336,8 +381,8 @@ ${slide.caption ? `**Caption:** "${slide.caption}"` : ''}
 
 ${visual.slides.map((slide, i) => `
 ### Slide ${i + 1}
-- Background: ${slide.background.type} - ${slide.background.value}
-- Elements: ${slide.elements.length} (${slide.elements.map(e => e.role).join(', ')})
+- Background: ${slide.background?.type || 'unknown'} - ${slide.background?.value || 'unknown'}
+- Elements: ${slide.elements?.length || 0} (${slide.elements?.map(e => e.role).join(', ') || 'none'})
 `).join('\n')}
 
 ---
@@ -351,7 +396,34 @@ Provide specific, actionable feedback.`
   }
 
   async execute(input: QualityValidatorInput): Promise<QualityReport> {
-    // Run technical checks first (no AI needed)
+    // Run content validation first (critical - headlines)
+    const contentChecks = this.runContentChecks(input)
+
+    // Check for critical content issues BEFORE proceeding
+    const criticalContentIssues = contentChecks.filter(c => c.severity === 'critical' && !c.passed)
+    if (criticalContentIssues.length > 0) {
+      // Return early with failed report if critical content is missing
+      return {
+        passed: false,
+        score: 0,
+        checks: contentChecks,
+        summary: {
+          totalChecks: contentChecks.length,
+          passedChecks: contentChecks.filter(c => c.passed).length,
+          warnings: contentChecks.filter(c => c.severity === 'warning').length,
+          errors: contentChecks.filter(c => c.severity === 'error').length,
+          criticalIssues: criticalContentIssues.length
+        },
+        requiredFixes: criticalContentIssues.map(c => ({
+          slideIndex: parseInt(c.rule.match(/slide-(\d+)/)?.[1] || '0'),
+          element: c.rule,
+          issue: c.details,
+          suggestion: 'Regenerate copy - all slides MUST have headlines'
+        }))
+      }
+    }
+
+    // Run technical checks (no AI needed)
     const technicalChecks = this.runTechnicalChecks(input)
 
     // Run AI-based qualitative checks
@@ -369,6 +441,7 @@ Provide specific, actionable feedback.`
 
     // Combine all checks
     const allChecks = [
+      ...contentChecks,
       ...technicalChecks,
       ...aiResponse.voiceChecks.map(c => ({ ...c, category: 'voice' as const })),
       ...aiResponse.copyQualityChecks.map(c => ({ ...c, category: 'voice' as const }))
@@ -409,13 +482,13 @@ Provide specific, actionable feedback.`
       },
       requiredFixes: errors > 0 || criticalIssues > 0
         ? allChecks
-            .filter(c => c.severity === 'error' || c.severity === 'critical')
-            .map(c => ({
-              slideIndex: parseInt(c.rule.match(/slide-(\d+)/)?.[1] || '0'),
-              element: c.rule,
-              issue: c.details,
-              suggestion: 'Review and fix the identified issue'
-            }))
+          .filter(c => c.severity === 'error' || c.severity === 'critical')
+          .map(c => ({
+            slideIndex: parseInt(c.rule.match(/slide-(\d+)/)?.[1] || '0'),
+            element: c.rule,
+            issue: c.details,
+            suggestion: 'Review and fix the identified issue'
+          }))
         : undefined
     }
   }

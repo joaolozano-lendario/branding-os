@@ -36,7 +36,7 @@ const Icon = React.forwardRef<HTMLElement, IconProps>(
     return (
       <i
         ref={ref as React.Ref<HTMLElement>}
-        className={cn(iconClass, size, className)}
+        className={cn(iconClass, size, "inline-flex items-center justify-center leading-none", className)}
         aria-hidden="true"
         {...props}
       />

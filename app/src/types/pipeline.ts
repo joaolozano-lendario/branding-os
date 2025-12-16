@@ -210,11 +210,11 @@ export interface CopyOutput {
 // ============================================
 
 export interface ElementStyle {
-  fontFamily: string
-  fontSize: string
-  fontWeight: number
-  color: string
-  textAlign: 'left' | 'center' | 'right'
+  fontFamily?: string
+  fontSize?: string
+  fontWeight?: number
+  color?: string
+  textAlign?: 'left' | 'center' | 'right'
   lineHeight?: number
   letterSpacing?: string
   textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize'
@@ -243,6 +243,7 @@ export interface SlideBackground {
 
 export interface SlideVisualSpec {
   index: number
+  layoutId?: string             // ID do template (opcional)
   canvas: {
     width: number               // 1080
     height: number              // 1080
@@ -268,7 +269,7 @@ export interface VisualSpecification {
 
 export interface QualityCheck {
   rule: string
-  category: 'color' | 'typography' | 'spacing' | 'contrast' | 'voice' | 'structure'
+  category: 'color' | 'typography' | 'spacing' | 'contrast' | 'voice' | 'structure' | 'content'
   passed: boolean
   details: string
   severity: 'info' | 'warning' | 'error' | 'critical'

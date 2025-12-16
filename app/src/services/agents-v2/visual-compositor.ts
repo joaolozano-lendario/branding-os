@@ -35,92 +35,104 @@ export class VisualCompositorAgent extends BaseAgent<VisualCompositorInput, Visu
     return `You are the VISUAL COMPOSITOR for Branding OS.
 
 ## YOUR ROLE
-Create visual specifications for carousel slides. Canvas: 1080x1080px. Margins: 80px.
+Create visual specifications for carousel slides. Canvas: 1080x1350px (Portrait 4:5).
+
+## TEMPLATE SYSTEM (STRICT)
+You MUST use these layout IDs for specific slides:
+1.  **Slide 1 (Cover):** "branding-os-cover-v1"
+2.  **Slides 2-(N-1) (Content):** "branding-os-body-v1"
+3.  **Last Slide:** "branding-os-last-v1"
 
 ## OUTPUT FORMAT (STRICT JSON)
 {
   "slides": [
     {
       "index": 1,
-      "background": { "type": "solid", "value": "#1A1A1A" },
+      "layoutId": "branding-os-cover-v1",
       "elements": [
         {
           "type": "text",
           "role": "headline",
-          "content": "Your headline here",
-          "style": { "fontFamily": "Inter", "fontSize": "48px", "fontWeight": 700, "color": "#FFFFFF", "textAlign": "center" },
-          "position": { "x": 80, "y": 440, "width": 920 }
+          "content": "Killer Headline Here",
+          "style": { "color": "#FFFFFF" }
+        },
+        {
+          "type": "text",
+          "role": "subheadline",
+          "content": "Compelling subtitle goes here.",
+          "style": { "color": "#B8B8B8" }
+        },
+        {
+          "type": "image",
+          "role": "background",
+          "content": "cinematic shot of [subject], dramatic lighting, 8k",
+          "style": { "objectFit": "cover" }
         }
       ]
     }
   ],
-  "tokens": {
-    "colors": { "background": "#1A1A1A", "text": "#FFFFFF", "accent": "#C9B298" },
-    "fonts": { "heading": "Inter", "body": "Source Serif 4" }
-  }
+  "tokens": { ... }
 }
 
-## ELEMENT ROLES & POSITIONS
-- headline: y=320-480, fontSize=40-56px, fontWeight=700
-- subheadline: y=400-520, fontSize=24-32px, fontWeight=500
-- body: y=480-600, fontSize=18-22px, fontWeight=400
-- stat: y=350-450, fontSize=72-96px, fontWeight=700 (for numbers)
-- caption: y=900-950, fontSize=16-18px, fontWeight=400
-- cta: y=700-800, fontSize=20-24px, fontWeight=600
+## ELEMENT MAPPING PER TEMPLATE
 
-## RULES
-1. Use ONLY provided brand colors (exact HEX)
-2. Use ONLY provided brand fonts
-3. All positions in multiples of 8px
-4. Keep margins of 80px from edges
-5. Full-width text: x=80, width=920
-6. Centered: x=(1080-width)/2
-7. MAX 2-3 elements per slide - KEEP IT MINIMAL
-8. CRITICAL: Keep response SHORT. Only essential elements.`
+### branding-os-cover-v1
+- **headline**: Main title. Max 40 chars.
+- **subheadline**: Supporting text. Max 80 chars.
+- **background**: Image prompt for the full background.
+
+### branding-os-body-v1
+- **headline**: Slide title.
+- **body**: Main content text.
+- **image**: (Optional) Visual prompt if slide needs an image.
+- **caption**: (Optional) Small detail text.
+
+### branding-os-last-v1
+- **headline**: "Para quem quer estar na vanguarda..." (or similar)
+- **body**: Call to Action text.
+- **image**: (Optional) Final visual.
+`
   }
 
   buildUserPrompt(input: VisualCompositorInput): string {
-    const { pipelineInput, strategy, copy } = input
-    void input.story // Used in extended version
+    const { pipelineInput, copy } = input
+    void input.story
+    void input.strategy
     const { brandConfig } = pipelineInput
 
     const colors = brandConfig.visualIdentity.colors
     const fonts = brandConfig.visualIdentity.typography
 
     // Build concise slide content
-    const slidesContent = copy.slides.map(slide => {
-      const parts = []
+    const slidesContent = copy.slides.map((slide, i) => {
+      const isLast = i === copy.slides.length - 1
+      const isFirst = i === 0
+
+      let type = "BODY"
+      if (isFirst) type = "COVER"
+      if (isLast) type = "LAST"
+
+      const parts = [`[${type}]`]
       if (slide.headline) parts.push(`H:"${slide.headline}"`)
       if (slide.subheadline) parts.push(`SH:"${slide.subheadline}"`)
-      if (slide.body) parts.push(`B:"${slide.body.slice(0, 100)}"`)
-      if (slide.stat) parts.push(`STAT:"${slide.stat}"`)
-      if (slide.cta) parts.push(`CTA:"${slide.cta}"`)
-      if (slide.caption) parts.push(`CAP:"${slide.caption}"`)
+      if (slide.body) parts.push(`B:"${slide.body.slice(0, 150)}"`)
       return `S${slide.index}: ${parts.join(' | ')}`
     }).join('\n')
 
-    return `## BRAND COLORS (use exact HEX)
+    return `## BRAND CONFIG
 Primary: ${colors.primary.hex}
 Secondary: ${colors.secondary.hex}
-Accent: ${colors.accent.hex}
-Background: ${colors.background?.hex || '#1A1A1A'}
-Text: ${colors.text?.hex || '#FFFFFF'}
+Font Heading: ${fonts.heading.family}
+Font Body: ${fonts.body.family}
 
-## BRAND FONTS
-Heading: ${fonts.heading.family}
-Body: ${fonts.body.family}
-
-## VISUAL ENERGY: ${strategy.constraints.visualEnergy}
-
-## SLIDES TO DESIGN (${copy.slides.length} total)
+## SLIDES CONTENT
 ${slidesContent}
 
-## TASK
-Create visual spec JSON for each slide. Keep it simple:
-- 2-4 elements per slide max
-- Use brand colors exactly
-- Positions in 8px multiples
-- 80px margins from edges`
+## INSTRUCTIONS
+1. Use "branding-os-cover-v1" for Slide 1.
+2. Use "branding-os-last-v1" for the final slide.
+3. Use "branding-os-body-v1" for all others.
+4. **CRITICAL**: Generate an "image" element for EVERY slide with a highly detailed prompt based on the content.`
   }
 
   parseOutput(response: string): VisualSpecification {
@@ -134,9 +146,13 @@ Create visual spec JSON for each slide. Keep it simple:
     // Fill in defaults for each slide
     parsed.slides = parsed.slides.map((slide: Partial<SlideVisualSpec>, index: number) => ({
       index: slide.index || index + 1,
-      canvas: slide.canvas || { width: 1080, height: 1080 },
+      layoutId: slide.layoutId, // Persist layout choice
+      canvas: slide.canvas || { width: 1080, height: 1350 }, // Portrait default
       background: slide.background || { type: 'solid', value: '#1A1A1A' },
-      elements: Array.isArray(slide.elements) ? slide.elements : []
+      elements: Array.isArray(slide.elements) ? slide.elements.map((el: any) => ({
+        ...el,
+        id: el.id || `el-${Math.random().toString(36).substr(2, 9)}`
+      })) : []
     }))
 
     // Ensure tokens exist with defaults
@@ -149,15 +165,8 @@ Create visual spec JSON for each slide. Keep it simple:
       },
       fonts: {
         heading: 'Inter',
-        body: 'Source Serif 4',
+        body: 'Inter',
         ...(parsed.tokens?.fonts || {})
-      },
-      spacing: {
-        margin: 80,
-        'gap-large': 48,
-        'gap-medium': 24,
-        'gap-small': 16,
-        ...(parsed.tokens?.spacing || {})
       }
     }
 

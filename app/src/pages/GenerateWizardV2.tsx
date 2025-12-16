@@ -75,6 +75,8 @@ function mapAgentId(pipelineAgentId: PipelineAgentId): AgentIdV2 {
       return 'copywriter-v2'
     case 'visual-compositor':
       return 'visual-compositor'
+    case 'image-generator':
+      return 'visual-compositor' // Map to visual-compositor for now if image-generator is not in AgentIdV2
     case 'quality-validator':
       return 'quality-validator'
     case 'render-engine':
@@ -128,6 +130,7 @@ export function GenerateWizardV2() {
     completePipeline,
     failPipeline,
     resetPipeline,
+    syncGeneratedImages,
   } = usePipelineV2Store()
 
   // Fallback to old store for API config if V2 not configured
@@ -184,9 +187,17 @@ export function GenerateWizardV2() {
       try {
         const pipelineResult = await orchestratorRef.current.execute(pipelineInput)
 
-        if (pipelineResult.success) {
+        if (pipelineResult.success || pipelineResult.render) {
           completePipeline(pipelineResult)
-          addToast('success', t.common.success)
+          // Sync generated images from visual.slides to slideImages for preview
+          syncGeneratedImages()
+
+          if (pipelineResult.success) {
+            addToast('success', t.common.success)
+          } else {
+            addToast('warning', 'Gerado com avisos de qualidade. Verifique os detalhes.')
+          }
+
           setStep('preview')
         } else {
           addToast('error', pipelineResult.error || t.errors.generationFailed)
@@ -214,6 +225,7 @@ export function GenerateWizardV2() {
     failPipeline,
     setProgress,
     completePipeline,
+    syncGeneratedImages,
     nextStep,
     addToast,
     t,
@@ -235,52 +247,8 @@ export function GenerateWizardV2() {
     [currentStep, goToStep]
   )
 
-  const handleExport = React.useCallback(
-    (format: 'png' | 'pdf' | 'html') => {
-      if (!result?.render) return
-
-      if (format === 'html') {
-        const fullHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Branding OS - Generated Carousel</title>
-  <style>
-    ${result.render.globalCSS}
-    .carousel-container {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 24px;
-      background: #0a0a0a;
-    }
-    .slide-wrapper { flex-shrink: 0; }
-  </style>
-  ${result.render.fontsToLoad.map((font) => `<link href="https://fonts.googleapis.com/css2?family=${font.replace(' ', '+')}&display=swap" rel="stylesheet">`).join('\n')}
-</head>
-<body>
-  <div class="carousel-container">
-    ${result.render.slides.map((slide) => `<div class="slide-wrapper">${slide.html}</div>`).join('\n')}
-  </div>
-</body>
-</html>`
-        const blob = new Blob([fullHtml], { type: 'text/html' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `carousel-${result.summary.template}.html`
-        a.click()
-        URL.revokeObjectURL(url)
-        addToast('success', 'Exported successfully')
-      }
-    },
-    [result, addToast]
-  )
-
   // Reserved for future features
-  void result // Used in handleExport
+  void result
   void reset // Will be used for "Create New" feature
   void resetPipeline // Will be used for "Create New" feature
 
@@ -326,7 +294,6 @@ export function GenerateWizardV2() {
         return (
           <PreviewExportStepV2
             pipelineResult={result}
-            onNext={() => handleExport('html')}
             onBack={handleBack}
           />
         )
@@ -357,33 +324,30 @@ export function GenerateWizardV2() {
 
         {/* Figma: Navigation - Voltar left, dots center, Próximo right */}
         {!isLastStep && (
-          <div className="sticky bottom-0 z-10 -mx-6 md:-mx-10 bg-gradient-to-t from-white via-white to-transparent pt-12 pb-6">
+          <div className="sticky bottom-0 z-10 -mx-6 md:-mx-10 bg-gradient-to-t from-background via-background to-transparent pt-12 pb-6">
             <div className="px-6 md:px-10">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between max-w-[1190px] mx-auto">
                 {/* Figma: Voltar button - 105x41, bg #F8F8F8, border #E8E8E8, radius 200px */}
                 <button
                   onClick={handleBack}
                   disabled={isFirstStep || isGenerating}
-                  className="flex items-center gap-[2px] h-[41px] pl-[18px] pr-[24px] rounded-full bg-secondary border border-border disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 w-[105px] h-[41px] rounded-full bg-secondary border border-border disabled:opacity-50 hover:bg-muted transition-colors"
                 >
-                  <Icon name="angle-small-left" className="w-[14px] h-[14px] inline-flex text-muted-foreground/50" />
+                  <Icon name="angle-small-left" className="w-[14px] h-[14px] shrink-0 text-[#C8C8C8]" />
                   {/* Figma: Inter SemiBold 14px, #C8C8C8 */}
-                  <span className="text-sm font-semibold text-muted-foreground/50">Voltar</span>
+                  <span className="text-sm font-semibold leading-none text-[#C8C8C8]">Voltar</span>
                 </button>
 
                 {/* Figma: Pagination dots - gap 16px, current = number 12px, others = 4px circles */}
                 <div className="flex items-center gap-4">
                   {WIZARD_STEPS.map((step, index) => (
-                    <span
-                      key={step}
-                      className={
-                        index === currentStepIndex
-                          ? 'text-xs font-semibold text-brand-indigo'
-                          : 'w-1 h-1 rounded-full bg-[#E8E8E8]'
-                      }
-                    >
-                      {index === currentStepIndex ? index + 1 : ''}
-                    </span>
+                    <div key={step} className="flex items-center justify-center">
+                      {index === currentStepIndex ? (
+                        <span className="text-xs font-semibold text-[#5856D6]">{index + 1}</span>
+                      ) : (
+                        <div className="w-1 h-1 rounded-full bg-[#E8E8E8]" />
+                      )}
+                    </div>
                   ))}
                 </div>
 
@@ -394,8 +358,8 @@ export function GenerateWizardV2() {
                       onClick={handleNext}
                       className="flex items-center gap-2 h-[41px] px-[18px] rounded-full bg-secondary border border-border"
                     >
-                      <Icon name="refresh" className="w-[14px] h-[14px] text-muted-foreground" />
-                      <span className="text-sm font-semibold text-muted-foreground">Tentar novamente</span>
+                      <Icon name="refresh" className="w-[14px] h-[14px] shrink-0 text-muted-foreground" />
+                      <span className="text-sm font-semibold leading-none text-muted-foreground">Tentar novamente</span>
                     </button>
                   )}
 
@@ -405,13 +369,13 @@ export function GenerateWizardV2() {
                       style={assetType ? {
                         animation: 'borderPulse 1500ms infinite ease-out'
                       } : undefined}
-                      className="flex items-center gap-[2px] h-[41px] pl-[24px] pr-[18px] rounded-full bg-brand-indigo"
+                      className="flex items-center justify-center gap-2 w-[122px] h-[41px] rounded-full bg-[#5856D6] hover:bg-[#4a48b8] transition-colors"
                     >
                       {/* Figma: Inter SemiBold 14px, white */}
-                      <span className="text-sm font-semibold text-white">
+                      <span className="text-sm font-semibold leading-none text-white">
                         {currentStep === 'content' ? 'Gerar' : 'Próximo'}
                       </span>
-                      <Icon name="angle-small-right" className="w-[14px] h-[14px] inline-flex text-white" />
+                      <Icon name="angle-small-right" className="w-[14px] h-[14px] shrink-0 text-white" />
                     </button>
                   )}
 

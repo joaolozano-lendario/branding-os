@@ -122,6 +122,7 @@ export interface GenerationGoal {
 export interface ContentInput {
   text: string
   files?: File[]
+  slideCount?: number // 4-10 slides, default 8
 }
 
 // ============================================

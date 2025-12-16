@@ -80,7 +80,7 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
     <div className="space-y-8">
       {/* Header with split layout */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-        <h2 className="font-sans text-[40px] font-semibold leading-tight text-black">
+        <h2 className="font-sans text-[40px] font-semibold leading-tight text-foreground">
           {t.wizard.steps.goal.title}
         </h2>
         <p className="text-base font-medium text-[#888888] md:max-w-[278px]">
@@ -90,7 +90,7 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
 
       {/* Goal Selection - 4 columns */}
       <div>
-        <Label className="block text-lg font-semibold text-black mb-3">
+        <Label className="block text-lg font-semibold text-foreground mb-3">
           {t.wizard.steps.goal.goalLabel}:
         </Label>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -112,20 +112,20 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
                   'flex flex-col items-start p-6 rounded-lg transition-all duration-[800ms] text-left border',
                   'min-h-[200px]',
                   isSelected && 'border-transparent',
-                  isInactive && 'bg-[#f8f8f8] border-transparent',
-                  !isSelected && !isInactive && 'border-[#E8E8E8] hover:border-[#5856D6]/50'
+                  isInactive && 'bg-secondary border-transparent',
+                  !isSelected && !isInactive && 'border-border hover:border-[#5856D6]/50'
                 )}
               >
                 {/* Icon container 50x50 */}
                 <div
                   className={cn(
                     'flex h-[50px] w-[50px] items-center justify-center rounded-full transition-all duration-[800ms]',
-                    isSelected ? 'bg-white/16' : isInactive ? 'bg-[#e8e8e8]' : 'bg-[#5856D6]'
+                    isSelected ? 'bg-white/16' : isInactive ? 'bg-muted' : 'bg-[#5856D6]'
                   )}
                 >
                   <Icon name={icon} className={cn(
                     'w-[18px] h-[18px] inline-flex items-center justify-center transition-all duration-[800ms]',
-                    isInactive ? 'text-[#c8c8c8]' : 'text-white'
+                    isInactive ? 'text-muted-foreground' : 'text-white'
                   )} />
                 </div>
 
@@ -135,7 +135,7 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
                 {/* Label */}
                 <span className={cn(
                   'text-base font-semibold transition-all duration-[800ms]',
-                  isSelected ? 'text-white' : isInactive ? 'text-[#c8c8c8]' : 'text-black'
+                  isSelected ? 'text-white' : isInactive ? 'text-muted-foreground' : 'text-foreground'
                 )}>
                   {getGoalLabel(type)}
                 </span>
@@ -147,7 +147,7 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
 
       {/* Angle Selection - 4 columns */}
       <div>
-        <Label className="block text-lg font-semibold text-black mb-3">
+        <Label className="block text-lg font-semibold text-foreground mb-3">
           {t.wizard.steps.goal.angleLabel}:
         </Label>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -169,20 +169,20 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
                   'flex flex-col items-start p-6 rounded-lg transition-all duration-[800ms] text-left border',
                   'min-h-[200px]',
                   isSelected && 'border-transparent',
-                  isInactive && 'bg-[#f8f8f8] border-transparent',
-                  !isSelected && !isInactive && 'border-[#E8E8E8] hover:border-[#5856D6]/50'
+                  isInactive && 'bg-secondary border-transparent',
+                  !isSelected && !isInactive && 'border-border hover:border-[#5856D6]/50'
                 )}
               >
                 {/* Icon container 50x50 */}
                 <div
                   className={cn(
                     'flex h-[50px] w-[50px] items-center justify-center rounded-full transition-all duration-[800ms]',
-                    isSelected ? 'bg-white/16' : isInactive ? 'bg-[#e8e8e8]' : 'bg-[#5856D6]'
+                    isSelected ? 'bg-white/16' : isInactive ? 'bg-muted' : 'bg-[#5856D6]'
                   )}
                 >
                   <Icon name={icon} className={cn(
                     'w-[18px] h-[18px] inline-flex items-center justify-center transition-all duration-[800ms]',
-                    isInactive ? 'text-[#c8c8c8]' : 'text-white'
+                    isInactive ? 'text-muted-foreground' : 'text-white'
                   )} />
                 </div>
 
@@ -192,7 +192,7 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
                 {/* Label */}
                 <span className={cn(
                   'text-base font-semibold transition-all duration-[800ms]',
-                  isSelected ? 'text-white' : isInactive ? 'text-[#c8c8c8]' : 'text-black'
+                  isSelected ? 'text-white' : isInactive ? 'text-muted-foreground' : 'text-foreground'
                 )}>
                   {getAngleLabel(type)}
                 </span>
@@ -204,7 +204,7 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
 
       {/* Additional Instructions */}
       <div className="space-y-2">
-        <Label htmlFor="instructions" className="text-xs font-semibold text-black">
+        <Label htmlFor="instructions" className="text-xs font-semibold text-foreground">
           {t.wizard.steps.goal.instructions}:
         </Label>
         <textarea
@@ -213,7 +213,7 @@ export function GoalAngleStep({ goal, onChange, errors }: GoalAngleStepProps) {
           onChange={(e) => onChange({ instructions: e.target.value })}
           placeholder="ex.: Instruções específicas para a IA..."
           rows={3}
-          className="w-full px-6 py-4 rounded-lg border border-[#E8E8E8] bg-[#f8f8f8] resize-none transition-all duration-[800ms] text-base font-medium placeholder:text-[#888888] focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
+          className="w-full px-6 py-4 rounded-lg border border-border bg-secondary text-foreground resize-none transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
         />
       </div>
 

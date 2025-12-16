@@ -45,7 +45,7 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
       {/* Figma: Title left, subtitle right */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
         {/* Figma: Inter SemiBold 40px, black */}
-        <h2 className="font-sans text-[40px] font-semibold leading-tight text-black">
+        <h2 className="font-sans text-[40px] font-semibold leading-tight text-foreground">
           Contextualize
           <br />
           sobre a sua criação
@@ -63,7 +63,7 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
           {/* Product Name - Figma: gap 8px label-input, input height 62px */}
           <div className="space-y-2">
             {/* Figma: Inter SemiBold 12px, black */}
-            <label className="text-xs font-semibold text-black">
+            <label className="text-xs font-semibold text-foreground">
               Nome do Produto / Serviço:
             </label>
             {/* Figma: height 62px, border #E8E8E8, radius 8px */}
@@ -72,13 +72,13 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
               value={context.name}
               onChange={(e) => onChange({ name: e.target.value })}
               placeholder="ex: CreatorOs"
-              className="w-full h-[62px] px-6 rounded-lg border border-[#E8E8E8] bg-[#f8f8f8] transition-all duration-[800ms] text-base font-medium placeholder:text-[#888888] focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
+              className="w-full h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
             />
           </div>
 
           {/* Description - Same height as name */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-black">
+            <label className="text-xs font-semibold text-foreground">
               Breve descrição:
             </label>
             <input
@@ -86,7 +86,7 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
               value={context.description}
               onChange={(e) => onChange({ description: e.target.value })}
               placeholder="ex.: criador de cursos lendários"
-              className="w-full h-[62px] px-6 rounded-lg border border-[#E8E8E8] bg-[#f8f8f8] transition-all duration-[800ms] text-base font-medium placeholder:text-[#888888] focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
+              className="w-full h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
             />
           </div>
         </div>
@@ -95,7 +95,7 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Target Audience */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-black">
+            <label className="text-xs font-semibold text-foreground">
               Público Alvo:
             </label>
             <input
@@ -103,13 +103,13 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
               value={context.targetAudience || ''}
               onChange={(e) => onChange({ targetAudience: e.target.value })}
               placeholder="ex: Empresários"
-              className="w-full h-[62px] px-6 rounded-lg border border-[#E8E8E8] bg-[#f8f8f8] transition-all duration-[800ms] text-base font-medium placeholder:text-[#888888] focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
+              className="w-full h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
             />
           </div>
 
           {/* Key Features */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-black">
+            <label className="text-xs font-semibold text-foreground">
               Caracteristicas e Benefícios Chave
             </label>
             <div className="flex gap-2">
@@ -119,13 +119,13 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
                 onChange={(e) => setNewFeature(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="ex: Empresários"
-                className="flex-1 h-[62px] px-6 rounded-lg border border-[#E8E8E8] bg-[#f8f8f8] transition-all duration-[800ms] text-base font-medium placeholder:text-[#888888] focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
+                className="flex-1 h-[62px] px-6 rounded-lg border border-border bg-secondary text-foreground transition-all duration-[800ms] text-base font-medium placeholder:text-muted-foreground focus:outline-none focus:!border-[#5856D6] hover:!border-[#5856D6]"
               />
               <button
                 type="button"
                 onClick={handleAddFeature}
                 disabled={!newFeature.trim()}
-                className={`h-[62px] w-[62px] rounded-lg border border-[#E8E8E8] shrink-0 transition-all duration-[800ms] flex items-center justify-center hover:!border-[#5856D6] disabled:opacity-50 ${newFeature.trim() ? 'bg-[#5856D6]' : 'bg-[#f8f8f8]'
+                className={`h-[62px] w-[62px] rounded-lg border border-border shrink-0 transition-all duration-[800ms] flex items-center justify-center hover:!border-[#5856D6] disabled:opacity-50 ${newFeature.trim() ? 'bg-[#5856D6]' : 'bg-secondary'
                   }`}
               >
                 <Icon name="plus" className={`w-5 h-5 ${newFeature.trim() ? 'text-white' : 'text-[#888888]'}`} />
@@ -138,7 +138,7 @@ export function ProductContextStep({ context, onChange, errors }: ProductContext
                   <Badge
                     key={feature}
                     variant="secondary"
-                    className="pl-3 pr-1.5 py-1.5 gap-1.5 text-sm bg-[#F8F8F8] text-black border-0"
+                    className="pl-3 pr-1.5 py-1.5 gap-1.5 text-sm bg-secondary text-foreground border-0"
                   >
                     {feature}
                     <button

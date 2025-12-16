@@ -160,7 +160,14 @@ Write in Brazilian Portuguese (PT-BR) unless otherwise specified.
 3. Write for the specified emotional beat
 4. Include ALL required elements for each slide
 5. Leave null for optional elements not needed
-6. Always count characters and include in charCounts`
+6. Always count characters and include in charCounts
+
+## CRITICAL - HEADLINE REQUIREMENT
+EVERY SINGLE SLIDE MUST HAVE A HEADLINE. This is NON-NEGOTIABLE.
+- Cover slide: headline is the main hook
+- Body slides: headline summarizes the key point
+- Last slide: headline is the final call-to-action or closing statement
+DO NOT leave any headline empty or null. If you're unsure what to write, create a compelling benefit-focused headline.`
   }
 
   buildUserPrompt(input: CopywriterInput): string {
@@ -292,6 +299,16 @@ For alternatives, provide 2 headline options and 2 CTA options.`
     // Validate structure
     if (!parsed.slides || !Array.isArray(parsed.slides)) {
       throw new Error('Missing slides array in copy output')
+    }
+
+    // CRITICAL: Validate that ALL slides have headlines
+    const slidesWithoutHeadline = parsed.slides.filter(
+      (slide: SlideCopy) => !slide.headline || slide.headline.trim() === ''
+    )
+
+    if (slidesWithoutHeadline.length > 0) {
+      const missingIndexes = slidesWithoutHeadline.map((s: SlideCopy) => s.index).join(', ')
+      throw new Error(`VALIDATION ERROR: Slides without headline detected: [${missingIndexes}]. All slides MUST have a headline.`)
     }
 
     // Ensure charCounts exist

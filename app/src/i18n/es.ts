@@ -137,6 +137,7 @@ export const es: Translation = {
       slide: 'Diapositiva',
       post: 'Publicacion',
       other: 'Otro',
+      contentPlaceholder: 'Pegue aqui el contenido que desea transformar en carrusel...',
     },
   },
 
@@ -215,6 +216,32 @@ export const es: Translation = {
       complete: 'Completado',
       error: 'Error',
       failed: 'Generacion Fallida',
+    },
+    v2: {
+      brandStrategist: {
+        name: 'Estratega de Marca',
+        description: 'Selecciona plantilla y define estrategia',
+      },
+      storyArchitect: {
+        name: 'Arquitecto de Narrativa',
+        description: 'Construye estructura narrativa diapositiva por diapositiva',
+      },
+      copywriter: {
+        name: 'Redactor',
+        description: 'Escribe copy especifico para cada diapositiva',
+      },
+      visualCompositor: {
+        name: 'Compositor Visual',
+        description: 'Crea especificaciones visuales pixel-perfect',
+      },
+      qualityValidator: {
+        name: 'Validador de Calidad',
+        description: 'Valida conformidad con la marca',
+      },
+      renderEngine: {
+        name: 'Motor de Renderizado',
+        description: 'Genera HTML/CSS para cada diapositiva',
+      },
     },
   },
 

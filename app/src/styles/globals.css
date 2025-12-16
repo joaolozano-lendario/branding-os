@@ -3,21 +3,21 @@
 /* Academia Lendaria Design System v4.1 */
 /* Custom Theme Configuration */
 @theme {
-  /* Primary Color - Brand Gold (max 8% visual area) */
-  --color-primary: #C9B298;
-  --color-primary-foreground: #1A1A1A;
-  
-  /* Primary Scale */
-  --color-primary-50: #F2EBE4;
-  --color-primary-100: #E8DED2;
-  --color-primary-200: #D9CBB8;
-  --color-primary-300: #C9B298;
-  --color-primary-400: #B89F7E;
-  --color-primary-500: #A78C64;
-  --color-primary-600: #8A7352;
-  --color-primary-700: #6D5A40;
-  --color-primary-800: #50412E;
-  --color-primary-900: #383025;
+  /* Primary Color - Brand Purple (#5856D6) */
+  --color-primary: #5856D6;
+  --color-primary-foreground: #FFFFFF;
+
+  /* Primary Scale - Purple tones derived from #5856D6 */
+  --color-primary-50: #EDEDFC;
+  --color-primary-100: #DCDCFA;
+  --color-primary-200: #BBBAF5;
+  --color-primary-300: #9A99F0;
+  --color-primary-400: #7977EB;
+  --color-primary-500: #5856D6;
+  --color-primary-600: #4644AB;
+  --color-primary-700: #353380;
+  --color-primary-800: #232256;
+  --color-primary-900: #12112B;
   
   /* Semantic Colors */
   --color-destructive: #FF3B30;

@@ -23,6 +23,16 @@ interface GenerationStepV2Props {
   error: string | null
 }
 
+// Map agentId to translation key
+const AGENT_TRANSLATION_KEY: Record<AgentIdV2, 'brandStrategist' | 'storyArchitect' | 'copywriter' | 'visualCompositor' | 'qualityValidator' | 'renderEngine'> = {
+  'brand-strategist': 'brandStrategist',
+  'story-architect': 'storyArchitect',
+  'copywriter-v2': 'copywriter',
+  'visual-compositor': 'visualCompositor',
+  'quality-validator': 'qualityValidator',
+  'render-engine': 'renderEngine',
+}
+
 export function GenerationStepV2({
   progress,
   progressMessage,
@@ -31,6 +41,16 @@ export function GenerationStepV2({
   error,
 }: GenerationStepV2Props) {
   const { t } = useTranslation()
+
+  const getAgentName = (agentId: AgentIdV2): string => {
+    const key = AGENT_TRANSLATION_KEY[agentId]
+    return t.agents.v2[key]?.name || AGENT_METADATA_V2[agentId].name
+  }
+
+  const getAgentDescription = (agentId: AgentIdV2): string => {
+    const key = AGENT_TRANSLATION_KEY[agentId]
+    return t.agents.v2[key]?.description || AGENT_METADATA_V2[agentId].description
+  }
 
   const getAgentStatusText = (status: AgentStatus): string => {
     switch (status) {
@@ -115,9 +135,9 @@ export function GenerationStepV2({
 
               {/* Agent Info */}
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold">{meta.name}</h4>
+                <h4 className="font-semibold">{getAgentName(agentId)}</h4>
                 <p className="text-sm text-muted-foreground truncate">
-                  {meta.description}
+                  {getAgentDescription(agentId)}
                 </p>
               </div>
 

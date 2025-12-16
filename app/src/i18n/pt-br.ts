@@ -137,6 +137,7 @@ export const ptBr: Translation = {
       slide: 'Slide',
       post: 'Postagem',
       other: 'Outro',
+      contentPlaceholder: 'Cole aqui o conteudo que deseja transformar em carrossel...',
     },
   },
 
@@ -215,6 +216,32 @@ export const ptBr: Translation = {
       complete: 'Concluido',
       error: 'Erro',
       failed: 'Geracao Falhou',
+    },
+    v2: {
+      brandStrategist: {
+        name: 'Estrategista de Marca',
+        description: 'Seleciona template e define estrategia',
+      },
+      storyArchitect: {
+        name: 'Arquiteto de Narrativa',
+        description: 'Constroi estrutura narrativa slide-a-slide',
+      },
+      copywriter: {
+        name: 'Redator',
+        description: 'Escreve copy especifico para cada slide',
+      },
+      visualCompositor: {
+        name: 'Compositor Visual',
+        description: 'Cria especificacoes visuais pixel-perfect',
+      },
+      qualityValidator: {
+        name: 'Validador de Qualidade',
+        description: 'Valida conformidade com a marca',
+      },
+      renderEngine: {
+        name: 'Motor de Renderizacao',
+        description: 'Gera HTML/CSS para cada slide',
+      },
     },
   },
 

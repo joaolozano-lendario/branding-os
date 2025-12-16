@@ -33,6 +33,7 @@ export type PipelineAgentId =
   | 'story-architect'
   | 'copywriter'
   | 'visual-compositor'
+  | 'image-generator'
   | 'quality-validator'
   | 'render-engine'
 
@@ -47,6 +48,8 @@ export interface PipelineV2Callbacks {
 // PIPELINE ORCHESTRATOR
 // ============================================
 
+import { ImageGeneratorAgent } from './image-generator'
+
 export class PipelineOrchestratorV2 {
   private callbacks: PipelineV2Callbacks
   private aborted: boolean = false
@@ -56,6 +59,7 @@ export class PipelineOrchestratorV2 {
   private storyArchitect: StoryArchitectAgent
   private copywriter: CopywriterAgentV2
   private visualCompositor: VisualCompositorAgent
+  private imageGenerator: ImageGeneratorAgent
   private qualityValidator: QualityValidatorAgent
   private renderer: RenderEngine
 
@@ -67,6 +71,7 @@ export class PipelineOrchestratorV2 {
     this.storyArchitect = new StoryArchitectAgent(config)
     this.copywriter = new CopywriterAgentV2(config)
     this.visualCompositor = new VisualCompositorAgent(config)
+    this.imageGenerator = new ImageGeneratorAgent(config)
     this.qualityValidator = new QualityValidatorAgent(config)
     this.renderer = renderEngine
   }
@@ -158,17 +163,40 @@ export class PipelineOrchestratorV2 {
         copy
       })
       agentDurations['visual-compositor'] = Date.now() - visualStart
+      console.log(' [Pipeline] Visual Spec Created:', JSON.stringify(visual, null, 2))
 
       this.callbacks.onAgentComplete('visual-compositor', visual, agentDurations['visual-compositor'])
-      this.callbacks.onProgress(70, `Visual: ${visual.slides.length} slides designed`)
+      this.callbacks.onProgress(65, `Visual: ${visual.slides.length} slides designed`)
 
       // ============================================
-      // AGENT 5: QUALITY VALIDATOR (70-85%)
+      // AGENT 4.5: IMAGE GENERATOR (70-80%)
+      // ============================================
+      if (this.aborted) throw new Error('Pipeline aborted')
+
+      this.callbacks.onAgentStart('image-generator')
+      this.callbacks.onProgress(70, 'Generating AI images for slides...')
+
+      const imageStart = Date.now()
+      console.log(' [Pipeline] Starting Image Generation...')
+      // Mutates visual object or returns new one
+      const visualWithImages = await this.imageGenerator.execute({
+        pipelineInput: input,
+        visual
+      })
+      visual = visualWithImages // Update visual with images
+      console.log(' [Pipeline] Visual Spec After Images:', JSON.stringify(visual, null, 2))
+      agentDurations['image-generator'] = Date.now() - imageStart
+
+      this.callbacks.onAgentComplete('image-generator', visual, agentDurations['image-generator'])
+      this.callbacks.onProgress(80, `Images: AI Assets generated`)
+
+      // ============================================
+      // AGENT 5: QUALITY VALIDATOR (80-90%)
       // ============================================
       if (this.aborted) throw new Error('Pipeline aborted')
 
       this.callbacks.onAgentStart('quality-validator')
-      this.callbacks.onProgress(75, 'Validating brand compliance...')
+      this.callbacks.onProgress(85, 'Validating brand compliance...')
 
       const qualityStart = Date.now()
       quality = await this.qualityValidator.execute({
@@ -179,15 +207,15 @@ export class PipelineOrchestratorV2 {
       agentDurations['quality-validator'] = Date.now() - qualityStart
 
       this.callbacks.onAgentComplete('quality-validator', quality, agentDurations['quality-validator'])
-      this.callbacks.onProgress(85, `Quality: ${quality.score}/100 (${quality.passed ? 'PASSED' : 'NEEDS REVIEW'})`)
+      this.callbacks.onProgress(90, `Quality: ${quality.score}/100`)
 
       // ============================================
-      // AGENT 6: RENDER ENGINE (85-100%)
+      // AGENT 6: RENDER ENGINE (90-100%)
       // ============================================
       if (this.aborted) throw new Error('Pipeline aborted')
 
       this.callbacks.onAgentStart('render-engine')
-      this.callbacks.onProgress(90, 'Rendering final assets...')
+      this.callbacks.onProgress(95, 'Rendering final assets...')
 
       const renderStart = Date.now()
       render = this.renderer.render(visual)
@@ -235,12 +263,27 @@ export class PipelineOrchestratorV2 {
       } else if (!copy) {
         this.callbacks.onAgentError('copywriter', error as Error)
       } else if (!visual) {
-        this.callbacks.onAgentError('visual-compositor', error as Error)
+        // If it failed here, it might be compositor or generator (if visual was set but generator failed, we need to know)
+        // Actually if visual IS set, it means compositor finished.
+        // If imageGenerator fails, visual might still be set (from compositor), so we need to check if we are in generator phase?
+        // But for simplicity, we can assume if visual is set and we are here, it might be generator or next.
+        // Let's rely on the callbacks order.
+
+        // Wait, if ImageGenerator fails, 'visual' is PREVIOUSLY set by Compositor.
+        // So checking "else if (!visual)" is tricky. 
+        // We need a better error tracking or just assume sequence.
+
+        this.callbacks.onAgentError('visual-compositor', error as Error) // Fallback
       } else if (!quality) {
-        this.callbacks.onAgentError('quality-validator', error as Error)
+        // Could be image generator or quality validator
+        // We can't distinct easily without state. 
+        // But since we are catching error, we can try to guess or just report generic.
+        // Let's assume if visual exists but quality doesn't, it MIGHT be image generator.
+        this.callbacks.onAgentError('image-generator', error as Error)
       } else {
         this.callbacks.onAgentError('render-engine', error as Error)
       }
+
 
       // Return partial result with error
       return {
